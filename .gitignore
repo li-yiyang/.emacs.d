@@ -9,3 +9,18 @@
 
 # Undo-tree save-files
 *.~undo-tree
+
+# Hidden File
+.*
+!.gitignore # remain
+
+# Personal Files
+eshell
+pyim
+custom.el
+custom-logo.png
+recentf
+snippets
+transient
+elpa
+racket-mode

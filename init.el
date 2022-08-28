@@ -59,8 +59,9 @@
 (require 'init-org) ;; Org Mode
 (require 'init-paredit) ;; Paredit
 (require 'init-file-manager) ;; File Manager
-; (require 'init-window-manager) ;; Window Manager
-; (require 'init-terminal) ;; Terminal in Emacs
+(require 'init-window-manager) ;; Window Manager
+(if *is-macos*   ;; Terminal in Emacs
+    (require 'init-terminal))
 
 ;; Conditional Package Loading
 (if *enable-evil-mode*
@@ -84,6 +85,7 @@
 (require 'init-ruby) ;; Ruby
 (require 'init-racket) ;; Racket
 (require 'init-latex) ;; Latex
+(require 'init-markdown) ;; Markdown
 ; (require 'init-c) ;; C
 ; (require 'init-...
 
