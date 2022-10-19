@@ -18,15 +18,28 @@
 (defconst *enable-evil-mode* t)
 
 (defconst *is-macos* (eq system-type 'darwin))
+(setq delete-old-versions t
+  kept-new-versions 2
+  kept-old-versions 1
+  version-control t)
 
 ;; Basics
 (tool-bar-mode -1) ;; remove tool bar
 (scroll-bar-mode -1) ;; remove scroll bar
 (delete-selection-mode t) ;; delete selected text
 (electric-pair-mode t) ;; auto complete pairs
+(global-display-line-numbers-mode) ;; line number
 
-;; Disable auto backups
-(setq make-backup-files nil)
+;; ;; Disable auto backups
+;; (setq make-backup-files nil)
+
+;; I changed my mind, that there still need some auto backups
+(setq backup-directory-alist `(("." . "~/.emacs.bak")))
+(setq backup-by-copying t)
+(setq delete-old-versions t
+  kept-new-versions 6
+  kept-old-versions 2
+  version-control t)
 
 ;; Mouse Wheeling
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))

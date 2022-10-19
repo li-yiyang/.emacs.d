@@ -35,5 +35,28 @@
 	magic-latex-enable-inline-image    t
 	magic-latex-enable-minibuffer-echo t))
 
+;; Prettify Math
+;; https://github.com/shaqxu/prettify-math
+(use-package prettify-math
+  ;; :host nil
+  ;; :repo "https://gitee.com/shaqxu/prettify-math"
+  ;; :files (:defaults "mathjax-jsonrpc.js")
+  :config
+  (setq prettify-math-delimiters-alist
+  '(("$" tex)
+    ("$$" tex block)
+    (("\\(" . "\\)") tex block)
+    ("`" asciimath)
+    ("``" asciimath block)))
+  (setq prettify-math-default-scale 1.1)
+  (add-hook 'latex-mode-hook 'prettify-math-mode)
+  (add-hook 'markdown-mode-hook 'prettify-math-mode))
+
+;; Latex Math complete for company
+;; https://github.com/vspinu/company-math
+(use-package company-math
+  :config
+  (add-to-list 'company-backends 'company-math-symbols-unicode))
+
 (provide 'init-latex)
 ;;; init-latex.el ends here
