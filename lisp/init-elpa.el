@@ -10,9 +10,12 @@
 (package-initialize)
 
 ;; Set source: [refer: https://mirrors.ustc.edu.cn/help/elpa.html]
-(setq package-archives '(("gnu" . "http://mirrors.ustc.edu.cn/elpa/gnu/")
-                         ("melpa" . "http://mirrors.ustc.edu.cn/elpa/melpa/")
-                         ("nongnu" . "http://mirrors.ustc.edu.cn/elpa/nongnu/")))
+;; [2022-10-21] changed to emacs-china
+;; https://elpamirror.emacs-china.org
+(setq package-archives '(("gnu"   . "http://1.15.88.122/gnu/")
+                         ("melpa" . "http://1.15.88.122/melpa/")
+                         ("nongnu" . "http://1.15.88.122/nongnu/")
+                         ("org" . "http://1.15.88.122/org/")))
 
 ;; Update local cache
 (package-refresh-contents)

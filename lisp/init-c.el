@@ -19,4 +19,7 @@
 (use-package company-irony
   :config
   (add-to-list 'company-backends 'company-irony))
+
+
+(provide 'init-c)
 ;;; init-c.el ends here

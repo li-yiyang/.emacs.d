@@ -26,16 +26,17 @@
 ;; magic-latex-buffer
 ;; repo: https://github.com/zk-phi/magic-latex-buffer
 (use-package magic-latex-buffer
-  :config
-  (add-hook 'LaTeX-mode-hook 'magic-latex-buffer)
-  (setq magic-latex-enable-block-highlight t
-	magic-latex-enable-suscript        t
-	magic-latex-enable-pretty-symbols  t
-	magic-latex-enable-block-align     t
-	magic-latex-enable-inline-image    t
-	magic-latex-enable-minibuffer-echo t))
+ :config
+ (add-hook 'LaTeX-mode-hook 'magic-latex-buffer)
+ (setq magic-latex-enable-block-highlight t
+       magic-latex-enable-suscript        t
+       magic-latex-enable-pretty-symbols  t
+       magic-latex-enable-block-align     nil
+       magic-latex-enable-inline-image    t
+       magic-latex-enable-minibuffer-echo t
+       ))
 
-;; Prettify Math
+;; Prettify Math (too slow...)
 ;; https://github.com/shaqxu/prettify-math
 (use-package prettify-math
   ;; :host nil
@@ -48,15 +49,29 @@
     (("\\(" . "\\)") tex block)
     ("`" asciimath)
     ("``" asciimath block)))
-  (setq prettify-math-default-scale 1.1)
-  (add-hook 'latex-mode-hook 'prettify-math-mode)
-  (add-hook 'markdown-mode-hook 'prettify-math-mode))
+  (setq prettify-math-default-scale 1.2)
+  ; (add-hook 'latex-mode-hook 'prettify-math-mode)
+  ; (add-hook 'markdown-mode-hook 'prettify-math-mode)
+  )
+
+;; Math preview
+;; https://gitlab.com/matsievskiysv/math-preview
+;(use-package math-preview
+;  :custom
+;  (math-preview-command "/opt/homebrew/bin/math-preview"))
 
 ;; Latex Math complete for company
 ;; https://github.com/vspinu/company-math
 (use-package company-math
   :config
-  (add-to-list 'company-backends 'company-math-symbols-unicode))
+  (add-to-list 'company-backends 'company-math-symbols-unicode)
+  )
+
+;; Latex company auctex
+;; https://github.com/alexeyr/company-auctex/
+(use-package company-auctex
+  :config
+  (company-auctex-init))
 
 (provide 'init-latex)
 ;;; init-latex.el ends here

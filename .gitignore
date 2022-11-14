@@ -1,3 +1,6 @@
+# cashed file
+\#*\#
+
 # Compiled
 *.elc
 
@@ -24,3 +27,9 @@ snippets
 transient
 elpa
 racket-mode
+eaf
+emacs-application-framework
+emacs-jupyter
+npm
+projectile-bookmarks.eld
+request

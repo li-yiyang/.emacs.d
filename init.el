@@ -31,15 +31,7 @@
 (global-display-line-numbers-mode) ;; line number
 
 ;; ;; Disable auto backups
-;; (setq make-backup-files nil)
-
-;; I changed my mind, that there still need some auto backups
-(setq backup-directory-alist `(("." . "~/.emacs.bak")))
-(setq backup-by-copying t)
-(setq delete-old-versions t
-  kept-new-versions 6
-  kept-old-versions 2
-  version-control t)
+(setq make-backup-files nil)
 
 ;; Mouse Wheeling
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1) ((control) . nil)))
@@ -49,8 +41,9 @@
 (when *is-macos*
   (add-to-list 'default-frame-alist
                '(ns-transparent-titlebar . t))
-  (add-to-list 'default-frame-alist
-               '(alpha . (99 . 99))))
+(add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+(add-to-list 'default-frame-alist '(ns-appearance . dark))
+(setq ns-use-proxy-icon nil))
 
 ;; Network...
 ;; (setq url-proxy-services
@@ -72,7 +65,7 @@
 (require 'init-org) ;; Org Mode
 (require 'init-paredit) ;; Paredit
 (require 'init-file-manager) ;; File Manager
-(require 'init-window-manager) ;; Window Manager
+; (require 'init-window-manager) ;; Window Manager
 (if *is-macos*   ;; Terminal in Emacs
     (require 'init-terminal))
 
@@ -80,7 +73,7 @@
 (if *enable-evil-mode*
  (require 'init-evil)) ;; Evil Mode
 
-; (require 'init-proj-man) ;; Project Manager
+(require 'init-proj-man) ;; Project Manager
 
 ;; Not many configuration package
 (use-package magit) ;; Git
@@ -99,7 +92,8 @@
 (require 'init-racket) ;; Racket
 (require 'init-latex) ;; Latex
 (require 'init-markdown) ;; Markdown
-; (require 'init-c) ;; C
+(require 'init-c) ;; C
+(require 'init-jupyter) ;; Jupyter Notebook FontEnd
 ; (require 'init-...
 
 ;; Custom configuration

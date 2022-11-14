@@ -5,6 +5,7 @@
 
 ;;; Code:
 (use-package org)
+(use-package ox-pandoc)
 
 (provide 'init-org)
 ;;; init-org.el ends here

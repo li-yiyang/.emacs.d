@@ -13,5 +13,7 @@
              (global-flycheck-mode)
 	     (setq flycheck-emacs-lisp-load-path 'inherit))
 
+; (use-package )
+
 (provide 'init-error-warning)
 ;;; init-error-warning.el ends here
