@@ -18,52 +18,6 @@
   (setf debug-on-error t)
 #+end_src
 
-** Indention
-#+name: indention-with-space
-#+begin_src elisp
-  ;; Use space by default instead of tab for indention
-  (setq-default indent-tabs-mode nil)
-
-  ;; Use 2 whitespace for indention rather than tabs
-  (setq-default tab-width 2)
-#+end_src
-
-** Autosave and Backups
-#+name: autosaves-settings
-#+begin_src elisp
-  (defvar ryo:autosaves-dir
-    (expand-file-name "autosaves" user-emacs-directory)
-    "All autosaves files goes into `ryo:autosaves-dir'.")
-
-  ;; make `ryo:autosaves-dir' if it's not exists
-  (unless (file-exists-p ryo:autosaves-dir)
-    (make-directory ryo:autosaves-dir t))
-
-  (setf auto-save-file-name-transforms
-        `(("\(?:[^/]/\)\(.*\)" ,(expand-file-name "\\1" ryo:autosaves-dir) t)))
-
-  (setf auto-save-default t
-        auto-save-timeout 30   ; second
-        auto-save-interval 233 ; after 233 input events, trigger autosave
-        )
-#+end_src
-
-#+name: backup-settings
-#+begin_src elisp
-  (defvar ryo:backups-dir
-    (expand-file-name "backups" user-emacs-directory)
-    "All backup file goes into `ryo:backups-dir'.")
-
-  ;; make `ryo:backups-dir' if it's not exists
-  (unless (file-exists-p ryo:backups-dir)
-    (make-directory ryo:autosaves-dir t))
-
-  ;; All backups shall be stored into `backups' folder
-  (setf backup-directory-alist `((".*" . ,ryo:backups-dir)))
-#+end_src
-
-Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
-
 ** Basic Looking
 *** For macOS
 #+name: basic-looking-macos
@@ -93,6 +47,52 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
     ;; font scale
     (set-face-attribute 'default nil :height 130))
 #+end_src
+
+** Indention
+#+name: indention-with-space
+#+begin_src elisp
+  ;; Use space by default instead of tab for indention
+  (setq-default indent-tabs-mode nil)
+
+  ;; Use 2 whitespace for indention rather than tabs
+  (setq-default tab-width 2)
+#+end_src
+
+** Autosave and Backups
+#+name: autosaves-settings
+#+begin_src elisp
+  (defvar ryo:autosaves-dir
+    (expand-file-name "autosaves" user-emacs-directory)
+    "All autosaves files goes into `ryo:autosaves-dir'.")
+
+  ;; make `ryo:autosaves-dir' if it's not exists
+  (unless (file-exists-p ryo:autosaves-dir)
+    (make-directory ryo:autosaves-dir t))
+
+  (setf auto-save-file-name-transforms
+        `(("\(?:[^/]/\)\(.*\)" ,(expand-file-name "\\1" ryo:autosaves-dir) t)))
+
+  (setf auto-save-default t
+        auto-save-timeout 10   ; second
+        auto-save-interval 100 ; after 233 input events, trigger autosave
+        )
+#+end_src
+
+#+name: backup-settings
+#+begin_src elisp
+  (defvar ryo:backups-dir
+    (expand-file-name "backups" user-emacs-directory)
+    "All backup file goes into `ryo:backups-dir'.")
+
+  ;; make `ryo:backups-dir' if it's not exists
+  (unless (file-exists-p ryo:backups-dir)
+    (make-directory ryo:backups-dir t))
+
+  ;; All backups shall be stored into `backups' folder
+  (setf backup-directory-alist `((".*" . ,ryo:backups-dir)))
+#+end_src
+
+Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
 
 * Packages
 #+name: init-packages
@@ -198,3 +198,25 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
     :after '(sly))
 #+end_src
 
+** For Editing Documents
+*** Markup Lanugages
+**** Markdown
+#+name: markdown-mode
+#+begin_src elisp
+  (use-package markdown-mode
+    :config
+    ;; hide markups symbols and urls for better lookings
+    (setq-default markdown-hide-markup t
+                  markdown-hide-urls   t)
+  
+    ;; show code colorized
+    (setq-default markdown-fontify-code-blocks-natively t))
+
+  (use-package markdown-toc
+    :after (markdown-mode)
+    :config
+    (defun ryo:add-markdown-toc-hook-before-save ()
+      "Add locally hook for `before-save-hook'."
+      (add-hook 'before-save-hook #'markdown-toc-generate-or-refresh-toc 0 'local))
+    (add-hook 'markdown-mode-hook #'ryo:add-markdown-toc-hook-before-save))
+#+end_src

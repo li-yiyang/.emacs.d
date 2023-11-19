@@ -4,39 +4,6 @@
 ;; Enable debug when encounter errors
 (setf debug-on-error t)
 
-;; Use space by default instead of tab for indention
-(setq-default indent-tabs-mode nil)
-
-;; Use 2 whitespace for indention rather than tabs
-(setq-default tab-width 2)
-
-(defvar ryo:autosaves-dir
-  (expand-file-name "autosaves" user-emacs-directory)
-  "All autosaves files goes into `ryo:autosaves-dir'.")
-
-;; make `ryo:autosaves-dir' if it's not exists
-(unless (file-exists-p ryo:autosaves-dir)
-  (make-directory ryo:autosaves-dir t))
-
-(setf auto-save-file-name-transforms
-      `(("\(?:[^/]/\)\(.*\)" ,(expand-file-name "\\1" ryo:autosaves-dir) t)))
-
-(setf auto-save-default t
-      auto-save-timeout 30   ; second
-      auto-save-interval 233 ; after 233 input events, trigger autosave
-      )
-
-(defvar ryo:backups-dir
-  (expand-file-name "backups" user-emacs-directory)
-  "All backup file goes into `ryo:backups-dir'.")
-
-;; make `ryo:backups-dir' if it's not exists
-(unless (file-exists-p ryo:backups-dir)
-  (make-directory ryo:autosaves-dir t))
-
-;; All backups shall be stored into `backups' folder
-(setf backup-directory-alist `((".*" . ,ryo:backups-dir)))
-
 (when (eq system-type 'darwin)
   ;; font scale
   (set-face-attribute 'default nil :height 140)
@@ -57,6 +24,39 @@
 (when (eq system-type 'gnu/linux)
   ;; font scale
   (set-face-attribute 'default nil :height 130))
+
+;; Use space by default instead of tab for indention
+(setq-default indent-tabs-mode nil)
+
+;; Use 2 whitespace for indention rather than tabs
+(setq-default tab-width 2)
+
+(defvar ryo:autosaves-dir
+  (expand-file-name "autosaves" user-emacs-directory)
+  "All autosaves files goes into `ryo:autosaves-dir'.")
+
+;; make `ryo:autosaves-dir' if it's not exists
+(unless (file-exists-p ryo:autosaves-dir)
+  (make-directory ryo:autosaves-dir t))
+
+(setf auto-save-file-name-transforms
+      `(("\(?:[^/]/\)\(.*\)" ,(expand-file-name "\\1" ryo:autosaves-dir) t)))
+
+(setf auto-save-default t
+      auto-save-timeout 10   ; second
+      auto-save-interval 100 ; after 233 input events, trigger autosave
+      )
+
+(defvar ryo:backups-dir
+  (expand-file-name "backups" user-emacs-directory)
+  "All backup file goes into `ryo:backups-dir'.")
+
+;; make `ryo:backups-dir' if it's not exists
+(unless (file-exists-p ryo:backups-dir)
+  (make-directory ryo:backups-dir t))
+
+;; All backups shall be stored into `backups' folder
+(setf backup-directory-alist `((".*" . ,ryo:backups-dir)))
 
 (require 'package)
 (package-initialize)
@@ -140,8 +140,32 @@ for example:
 (use-package sly-quicklisp
   :after '(sly))
 
-(use-package dashboard
+(use-package markdown-mode
   :config
-  (setf dashboard-items '((recents  . 5)
-                          (agenda   . 5)
-                          (projects . 5))))
+  ;; hide markups symbols and urls for better lookings
+  (setq-default markdown-hide-markup t
+                markdown-hide-urls   t)
+
+  ;; show code colorized
+  (setq-default markdown-fontify-code-blocks-natively t))
+
+(use-package markdown-toc
+  :after (markdown-mode)
+  :config
+  (defun ryo:add-markdown-toc-hook-before-save ()
+    "Add locally hook for `before-save-hook'."
+    (add-hook 'before-save-hook #'markdown-toc-generate-or-refresh-toc 0 'local))
+  (add-hook 'markdown-mode-hook #'ryo:add-markdown-toc-hook-before-save))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(markdown-toc markdown-mode sly-quicklisp sly paredit magit company)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
