@@ -152,7 +152,7 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
             eval-expression-minibuffer-setup)
            . enable-paredit-mode)
     :bind (:map paredit-mode-map
-                ("C-<return>" . ryo/paredit-C-RET))
+                ("C-<return>" . ryo:paredit-C-RET))
     :init
     (defvar ryo:paredit-C-RET-probe-method '()
       "Probes to trigger corresponding methods.
