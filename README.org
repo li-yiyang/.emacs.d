@@ -45,7 +45,14 @@
 #+begin_src elisp
   (when (eq system-type 'gnu/linux)
     ;; font scale
-    (set-face-attribute 'default nil :height 130))
+    (set-face-attribute 'default nil :height 130)
+
+    ;; set for default frame
+    (setq default-frame-alist '((menu-bar-lines . nil)
+                                (tool-bar-lines . nil)))
+
+    ;; pixel scroll mode
+    (pixel-scroll-precision-mode))
 #+end_src
 
 ** Indention
