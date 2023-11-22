@@ -207,6 +207,62 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
 
 ** For Editing Documents
 *** Markup Lanugages
+**** Org-Mode
+***** Basic Org-Mode
+#+name: org-mode
+#+begin_src elisp
+  (use-package org
+    :config
+    ;; org-mode and babel
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((emacs-lisp . t)
+       (gnuplot . t)))
+
+    ;; auto display image after babel eval
+    (defun ryo:org-babel-display-image-after-eval ()
+      "Switch on auto image display after babel eval."
+      (interactive)
+      (add-hook 'org-babel-after-execute-hook #'org-display-inline-images))
+  
+    (defun ryo:org-babel-no-display-image-after-eval ()
+      "Swtich off auto image display after babel eval."
+      (interactive)
+      (remove-hook 'org-babel-after-execute-hook #'org-display-inline-images))
+
+    (ryo:org-babel-display-image-after-eval) ; default on
+  
+    ;; org-mode and image preview
+    (setf org-image-actual-width nil)
+
+    ;; org-mode and latex preview
+    ;; org pretty symbol for raw input
+    (setf org-pretty-entities t
+          org-pretty-entities-include-sub-superscripts nil)
+
+    ;; Use dvisvgm for SVG preview
+    (setf org-preview-latex-default-process 'dvisvgm)
+    (setf (plist-get org-format-latex-options :scale) 1.6))
+#+end_src
+
+***** Org-Mode with LaTeX Support
+#+name: cdlatex-for-equation
+#+begin_src elisp
+  ;;; Use CDLaTeX for quick LaTeX equation input
+  (use-package cdlatex
+    :hook ((org-mode . turn-on-org-cdlatex)))
+#+end_src
+
+***** Org-Mode for Separedit
+#+name: separedit-using-org-mode
+#+begin_src elisp
+  (use-package separedit
+    :bind (:map prog-mode-map
+                ("C-c '" . separedit))
+    :config
+    (setq separedit-default-mode 'org-mode))
+#+end_src
+
 **** Markdown
 #+name: markdown-mode
 #+begin_src elisp
@@ -226,4 +282,11 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
       "Add locally hook for `before-save-hook'."
       (add-hook 'before-save-hook #'markdown-toc-generate-or-refresh-toc 0 'local))
     (add-hook 'markdown-mode-hook #'ryo:add-markdown-toc-hook-before-save))
+#+end_src
+
+*** Graphic Lanugages
+**** Gnuplot
+#+name: gnuplot
+#+begin_src elisp
+  (use-package gnuplot)
 #+end_src

@@ -23,7 +23,14 @@
 
 (when (eq system-type 'gnu/linux)
   ;; font scale
-  (set-face-attribute 'default nil :height 130))
+  (set-face-attribute 'default nil :height 130)
+
+  ;; set for default frame
+  (setq default-frame-alist '((menu-bar-lines . nil)
+                              (tool-bar-lines . nil)))
+
+  ;; pixel scroll mode
+  (pixel-scroll-precision-mode))
 
 ;; Use space by default instead of tab for indention
 (setq-default indent-tabs-mode nil)
@@ -92,7 +99,7 @@
           eval-expression-minibuffer-setup)
          . enable-paredit-mode)
   :bind (:map paredit-mode-map
-              ("C-<return>" . ryo/paredit-C-RET))
+              ("C-<return>" . ryo:paredit-C-RET))
   :init
   (defvar ryo:paredit-C-RET-probe-method '()
     "Probes to trigger corresponding methods.
@@ -140,6 +147,49 @@ for example:
 (use-package sly-quicklisp
   :after '(sly))
 
+(use-package org
+  :config
+  ;; org-mode and babel
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (gnuplot . t)))
+
+  ;; auto display image after babel eval
+  (defun ryo:org-babel-display-image-after-eval ()
+    "Switch on auto image display after babel eval."
+    (interactive)
+    (add-hook 'org-babel-after-execute-hook #'org-display-inline-images))
+
+  (defun ryo:org-babel-no-display-image-after-eval ()
+    "Swtich off auto image display after babel eval."
+    (interactive)
+    (remove-hook 'org-babel-after-execute-hook #'org-display-inline-images))
+
+  (ryo:org-babel-display-image-after-eval) ; default on
+
+  ;; org-mode and image preview
+  (setf org-image-actual-width nil)
+
+  ;; org-mode and latex preview
+  ;; org pretty symbol for raw input
+  (setf org-pretty-entities t
+        org-pretty-entities-include-sub-superscripts nil)
+
+  ;; Use dvisvgm for SVG preview
+  (setf org-preview-latex-default-process 'dvisvgm)
+  (setf (plist-get org-format-latex-options :scale) 1.6))
+
+;;; Use CDLaTeX for quick LaTeX equation input
+(use-package cdlatex
+  :hook ((org-mode . turn-on-org-cdlatex)))
+
+(use-package separedit
+  :bind (:map prog-mode-map
+              ("C-c '" . separedit))
+  :config
+  (setq separedit-default-mode 'org-mode))
+
 (use-package markdown-mode
   :config
   ;; hide markups symbols and urls for better lookings
@@ -156,16 +206,5 @@ for example:
     "Add locally hook for `before-save-hook'."
     (add-hook 'before-save-hook #'markdown-toc-generate-or-refresh-toc 0 'local))
   (add-hook 'markdown-mode-hook #'ryo:add-markdown-toc-hook-before-save))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(markdown-toc markdown-mode sly-quicklisp sly paredit magit company)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
+(use-package gnuplot)
