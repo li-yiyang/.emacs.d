@@ -23,8 +23,13 @@
 #+name: basic-looking-macos
 #+begin_src elisp
   (when (eq system-type 'darwin)
-    ;; font scale
-    (set-face-attribute 'default nil :height 140)
+    ;; font scale and fonts
+    (cond
+     ((find-font (font-spec :family "Sarasa Term SC"))
+      (set-face-attribute 'default nil
+                           :family "Sarasa Term SC"
+                           :height 160))
+     (t (set-face-attribute :height 130)))
 
     ;; Set for how default frame looks like
     (setq default-frame-alist '((menu-bar-lines . nil)
