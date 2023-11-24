@@ -146,6 +146,175 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
   (use-package magit)
 #+end_src
 
+*** Tramp
+#+name: tramp
+#+begin_src elisp
+  (use-package tramp)
+#+end_src
+
+*** Eshell
+#+name: eshell
+#+headers: :noweb yes
+#+begin_src elisp
+  (use-package eshell
+    :config
+    <<ryo:eshell-prompt>>
+    (setf eshell-prompt-function #'ryo:eshell-emoji-prompt))
+#+end_src
+
+The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prompt-extras/][eshell-prompt-extras]].
+
+#+name: ryo:eshell-prompt
+#+headers: :tangle no
+#+begin_src elisp
+  ;;; This is the defination of `ryo:eshell',
+  ;;; which give some customization of my personal eshell.
+
+  ;; require vc-git for `ryo:eshell-git'.
+  (autoload 'vc-git-branches "vc-git")
+
+  ;; custom variables
+  (defcustom ryo:eshell-normal-emoji-sets
+    '("´･ᴗ･`" "´･ω･`" "（ •_•）" "（'•_• ）")
+    "A set of char displayed for normal prompt."
+    :group 'ryo:eshell)
+
+  (defcustom ryo:eshell-error-emoji-sets
+    '("ﾍ(´Д`)ﾉ" "(;◔౪◔)")
+    "A set of char displayed for error prompt."
+    :group 'ryo:eshell)
+
+  (defcustom ryo:eshell-remote-emoji-sets
+    '("|ω・)")
+    "A set of char displayed for remote status."
+    :group 'ryo:eshell)
+
+  (defcustom ryo:eshell-path-name-shorten-trigger-length 40
+    "The minimum path length to trigger `ryo:eshell-shorten-path-name'."
+    :group 'ryo:eshell)
+
+  (defcustom ryo:eshell-path-name-maximum-length 80
+    "The maximum path length after `ryo:eshell-shorten-path-name'.")
+
+  ;; custom faces
+  (defface ryo:eshell-emoji-normal-face
+    '((t :background "gold" :foreground "black"))
+    "Eshell normal emoji prompt face."
+    :group 'ryo:eshell)
+
+  (defface ryo:eshell-emoji-error-face
+    '((t :background "red" :foreground "white"))
+    "Eshell error emoji prompt face."
+    :group 'ryo:eshell)
+
+  (defface ryo:eshell-remote-face
+    '((t :foreground "red"))
+    "Eshell remote face."
+    :group 'ryo:eshell)
+
+  (defface ryo:eshell-path-face
+    '((t :foreground "dim gray"))
+    "Eshell path face."
+    :group 'ryo:eshell)
+
+  (defface ryo:eshell-git-branch-face
+    '((t :foreground "gray"))
+    "Eshell git branch face."
+    :group 'ryo:eshell)
+
+  (defface ryo:eshell-prompt-face
+    '((t :foreground "gold"))
+    "Eshell prompt face."
+    :group 'ryo:eshell)
+
+  ;; custom functions
+  (defun ryo:eshell-remote-p ()
+    "Check if work remotely."
+    (tramp-tramp-file-p default-directory))
+
+  (defun ryo:eshell-git-branch ()
+    "Return current git branch, if no, return `nil'."
+    (let ((branch (car (vc-git-branches))))
+      (if branch branch nil)))
+
+  (defun ryo:eshell-shorten-path-name (path-name)
+    "Try to make the `path-name' shorten than 
+  `ryo:eshell-path-name-shorten-trigger-length'. "
+    (let* ((path (split-string path-name "/"))
+           (cnt  (1- (length path)))
+           (len  (length path-name)))
+      (string-join
+       (cl-loop for rest = path then (cdr rest)
+                for elem = (car rest)
+                for i below cnt
+                for name = (string-join
+                            (mapcar (lambda (s) (substring s 0 1))
+                                    (string-split elem "[-_\\. ]+" t))) 
+                while (> len ryo:eshell-path-name-shorten-trigger-length)
+                do (setf len (- len (length name)))
+                collect name into shortened
+                finally (return (append shortened rest)))
+       "/")))
+
+  (defun ryo:eshell-path ()
+    "Return path of current working directory. 
+  If the length of path name is longer `ryo:eshell-path-name-shorten-trigger-length',
+  try to shorten the path name; and if the shortened path name is still longer than
+  `ryo:eshell-path-name-maximum-length', try to cutoff the path name directly."
+    (let ((path-name (abbreviate-file-name (eshell/pwd))))
+      (if (length> path-name ryo:eshell-path-name-shorten-trigger-length)
+          (let ((shortend (ryo:eshell-shorten-path-name path-name)))
+            (if (length> path-name ryo:eshell-path-name-maximum-length)
+                (concat "..."
+                        (substring path-name
+                                   (- (length path-name)
+                                      ryo:eshell-path-name-maximum-length)
+                                   (1- (length path-name))))
+              path-name))
+        path-name)))
+
+  (defun ryo:luck-in (&optional posibility limit)
+    "Return `t' or `nil' at `possibility' chance."
+    (let ((p (or posibility 0.5))
+          (lim (or limit 100)))
+      (if (< (/ (random lim) (float lim)) p) t nil)))
+
+  (defun ryo:pick (lst)
+    "Pick random element from `lst'."
+    (cl-loop for elem in lst
+             for count from (length lst) downto 1
+             if (ryo:luck-in (/ 1.0 count)) return elem))
+
+  (defmacro ryo:with-face (string face)
+    "Bind `string' with `face'."
+    `(propertize ,string 'face ,face))
+
+  (defun ryo:eshell-emoji-prompt ()
+    "Eshell emoji prompt."
+    (setf eshell-prompt-regexp "^[#>] ")
+    (concat
+     ;; first line: remote path git
+     (when (ryo:eshell-remote-p)
+       (concat (ryo:with-face (ryo:pick ryo:eshell-remote-emoji-sets)
+                              'ryo:eshell-remote-face)
+               " "))
+     (ryo:with-face (ryo:eshell-path) 'ryo:eshell-path-face)
+     (let ((branch (ryo:eshell-git-branch)))
+       (when branch
+         (concat " " (ryo:with-face branch 'ryo:eshell-git-branch-face))))
+     "\n"
+
+     ;; second line: status-emoji prompt
+     (if (zerop eshell-last-command-status)
+         (ryo:with-face (ryo:pick ryo:eshell-normal-emoji-sets)
+                        'ryo:eshell-emoji-normal-face)
+         (ryo:with-face (ryo:pick ryo:eshell-error-emoji-sets)
+                        'ryo:eshell-emoji-error-face))
+
+     (ryo:with-face (if (= (user-uid) 0) " #" " >") 'ryo:eshell-prompt-face)
+     " "))
+#+end_src
+
 ** Lisp
 *** Paredit
 #+name: lisp-paredit
