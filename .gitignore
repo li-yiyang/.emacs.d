@@ -5,3 +5,5 @@ transient
 autosaves
 eshell
 tramp
+.*
+!.gitignore

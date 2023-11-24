@@ -175,17 +175,17 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
 
   ;; custom variables
   (defcustom ryo:eshell-normal-emoji-sets
-    '("´･ᴗ･`" "´･ω･`" "（ •_•）" "（'•_• ）")
+    '("[´･ᴗ･`]" "[´･ω･`]" "[ •_•]" "[•_• ]")
     "A set of char displayed for normal prompt."
     :group 'ryo:eshell)
 
   (defcustom ryo:eshell-error-emoji-sets
-    '("ﾍ(´Д`)ﾉ" "(;◔౪◔)")
+    '("ﾍ[´Д`]ﾉ" "[;◔౪◔]")
     "A set of char displayed for error prompt."
     :group 'ryo:eshell)
 
   (defcustom ryo:eshell-remote-emoji-sets
-    '("|ω・)")
+    '("|ω・]")
     "A set of char displayed for remote status."
     :group 'ryo:eshell)
 
@@ -289,9 +289,33 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
     "Bind `string' with `face'."
     `(propertize ,string 'face ,face))
 
+  (defun eshell-previous-matching-input-from-input (arg)
+    "Search backwards through input history for match for current input.
+  \(Previous history elements are earlier commands.)
+  With prefix argument N, search for Nth previous match.
+  If N is negative, search forwards for the -Nth following match.
+
+  This is a patch for `eshell-previous-matching-input-from-input' which fails
+  to match if you're using custom prompt that change every time."
+    (interactive "p")
+    (if (not (memq last-command '(eshell-previous-matching-input-from-input
+          eshell-next-matching-input-from-input)))
+        ;; Starting a new search
+        (setq eshell-matching-input-from-input-string
+        (buffer-substring (save-excursion (eshell-bol) (point))
+              (point))
+        eshell-history-index nil))
+    (eshell-previous-matching-input
+     (concat eshell-prompt-regexp
+             (regexp-quote
+              (replace-regexp-in-string
+               eshell-prompt-regexp ""
+               eshell-matching-input-from-input-string)))
+     arg))
+
   (defun ryo:eshell-emoji-prompt ()
     "Eshell emoji prompt."
-    (setf eshell-prompt-regexp "^[#>] ")
+    (setf eshell-prompt-regexp "^[^#>]* [#>] ")
     (concat
      ;; first line: remote path git
      (when (ryo:eshell-remote-p)
@@ -308,8 +332,8 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
      (if (zerop eshell-last-command-status)
          (ryo:with-face (ryo:pick ryo:eshell-normal-emoji-sets)
                         'ryo:eshell-emoji-normal-face)
-         (ryo:with-face (ryo:pick ryo:eshell-error-emoji-sets)
-                        'ryo:eshell-emoji-error-face))
+       (ryo:with-face (ryo:pick ryo:eshell-error-emoji-sets)
+                      'ryo:eshell-emoji-error-face))
 
      (ryo:with-face (if (= (user-uid) 0) " #" " >") 'ryo:eshell-prompt-face)
      " "))
