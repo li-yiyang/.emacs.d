@@ -123,7 +123,7 @@
     "A set of char displayed for remote status."
     :group 'ryo:eshell)
   
-  (defcustom ryo:eshell-path-name-shorten-trigger-length 40
+  (defcustom ryo:eshell-path-name-shorten-trigger-length 30
     "The minimum path length to trigger `ryo:eshell-shorten-path-name'."
     :group 'ryo:eshell)
   
@@ -197,14 +197,14 @@
   `ryo:eshell-path-name-maximum-length', try to cutoff the path name directly."
     (let ((path-name (abbreviate-file-name (eshell/pwd))))
       (if (length> path-name ryo:eshell-path-name-shorten-trigger-length)
-          (let ((shortend (ryo:eshell-shorten-path-name path-name)))
+          (let ((shortened (ryo:eshell-shorten-path-name path-name)))
             (if (length> path-name ryo:eshell-path-name-maximum-length)
                 (concat "..."
                         (substring path-name
-                                   (- (length path-name)
+                                   (- (length shortened)
                                       ryo:eshell-path-name-maximum-length)
-                                   (1- (length path-name))))
-              path-name))
+                                   (1- (length shortened))))
+              shortened))
         path-name)))
   
   (defun ryo:luck-in (&optional posibility limit)
