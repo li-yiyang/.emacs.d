@@ -408,39 +408,55 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
 **** Org-Mode
 ***** Basic Org-Mode
 #+name: org-mode
+#+headers: :noweb yes
 #+begin_src elisp
   (use-package org
     :config
-    ;; org-mode and babel
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((emacs-lisp . t)
-       (gnuplot . t)))
+    <<ryo:org-babel>>
+    <<ryo:org-preview>>
+    <<ryo:org-latex-config>>
+    )
+#+end_src
 
-    ;; auto display image after babel eval
-    (defun ryo:org-babel-display-image-after-eval ()
-      "Switch on auto image display after babel eval."
-      (interactive)
-      (add-hook 'org-babel-after-execute-hook #'org-display-inline-images))
-  
-    (defun ryo:org-babel-no-display-image-after-eval ()
-      "Swtich off auto image display after babel eval."
-      (interactive)
-      (remove-hook 'org-babel-after-execute-hook #'org-display-inline-images))
+****** Org Babel
+#+name: ryo:org-babel
+#+headers: :tangle no
+#+begin_src elisp
+  ;; org-mode and babel
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (gnuplot . t)))
 
-    (ryo:org-babel-display-image-after-eval) ; default on
-  
-    ;; org-mode and image preview
-    (setf org-image-actual-width nil)
+  ;; auto display image after babel eval
+  (defun ryo:org-babel-display-image-after-eval ()
+    "Switch on auto image display after babel eval."
+    (interactive)
+    (add-hook 'org-babel-after-execute-hook #'org-display-inline-images))
 
-    ;; org-mode and latex preview
-    ;; org pretty symbol for raw input
-    (setf org-pretty-entities t
-          org-pretty-entities-include-sub-superscripts nil)
+  (defun ryo:org-babel-no-display-image-after-eval ()
+    "Swtich off auto image display after babel eval."
+    (interactive)
+    (remove-hook 'org-babel-after-execute-hook #'org-display-inline-images))
 
-    ;; Use dvisvgm for SVG preview
-    (setf org-preview-latex-default-process 'dvisvgm)
-    (setf (plist-get org-format-latex-options :scale) 1.6))
+  (ryo:org-babel-display-image-after-eval) ; default on
+#+end_src
+
+****** Org Preview
+#+name: ryo:org-preview
+#+headers: :tangle no
+#+begin_src elisp
+  ;; org-mode and image preview
+  (setf org-image-actual-width nil)
+
+  ;; org-mode and latex preview
+  ;; org pretty symbol for raw input
+  (setf org-pretty-entities t
+        org-pretty-entities-include-sub-superscripts nil)
+
+  ;; Use dvisvgm for SVG preview
+  (setf org-preview-latex-default-process 'dvisvgm)
+  (setf (plist-get org-format-latex-options :scale) 1.6)
 #+end_src
 
 ***** Org-Mode with LaTeX Support
@@ -449,6 +465,17 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
   ;;; Use CDLaTeX for quick LaTeX equation input
   (use-package cdlatex
     :hook ((org-mode . turn-on-org-cdlatex)))
+#+end_src
+
+#+name: ryo:org-latex-config
+#+headers: :tangle no
+#+begin_src elisp
+  ;; set default latex compiler to xelatex
+  (setf org-latex-compiler "xelatex")
+
+  ;; add xeCJK for Chinese support
+  (add-to-list 'org-latex-packages-alist
+               '("" "xeCJK" t ("xelatex")))
 #+end_src
 
 ***** Org-Mode for Separedit

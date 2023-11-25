@@ -335,31 +335,37 @@ for example:
    'org-babel-load-languages
    '((emacs-lisp . t)
      (gnuplot . t)))
-
+  
   ;; auto display image after babel eval
   (defun ryo:org-babel-display-image-after-eval ()
     "Switch on auto image display after babel eval."
     (interactive)
     (add-hook 'org-babel-after-execute-hook #'org-display-inline-images))
-
+  
   (defun ryo:org-babel-no-display-image-after-eval ()
     "Swtich off auto image display after babel eval."
     (interactive)
     (remove-hook 'org-babel-after-execute-hook #'org-display-inline-images))
-
+  
   (ryo:org-babel-display-image-after-eval) ; default on
-
   ;; org-mode and image preview
   (setf org-image-actual-width nil)
-
+  
   ;; org-mode and latex preview
   ;; org pretty symbol for raw input
   (setf org-pretty-entities t
         org-pretty-entities-include-sub-superscripts nil)
-
+  
   ;; Use dvisvgm for SVG preview
   (setf org-preview-latex-default-process 'dvisvgm)
-  (setf (plist-get org-format-latex-options :scale) 1.6))
+  (setf (plist-get org-format-latex-options :scale) 1.6)
+  ;; set default latex compiler to xelatex
+  (setf org-latex-compiler "xelatex")
+  
+  ;; add xeCJK for Chinese support
+  (add-to-list 'org-latex-packages-alist
+               '("" "xeCJK" t ("xelatex")))
+  )
 
 ;;; Use CDLaTeX for quick LaTeX equation input
 (use-package cdlatex
