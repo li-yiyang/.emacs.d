@@ -334,7 +334,12 @@ for example:
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
-     (gnuplot . t)))
+     (lisp       . t)
+     (dot        . t)
+     (C          . t)
+     (python     . t)
+     (ruby       . t)
+     (gnuplot    . t)))
   
   ;; auto display image after babel eval
   (defun ryo:org-babel-display-image-after-eval ()
