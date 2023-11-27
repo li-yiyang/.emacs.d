@@ -7,3 +7,4 @@ eshell
 tramp
 .*
 !.gitignore
+irony

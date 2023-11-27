@@ -95,6 +95,13 @@
   :config
   (global-company-mode))
 
+(use-package flycheck
+  :init
+  (global-flycheck-mode)
+  :config
+  (setq-default flycheck-disabled-checkers
+                '(emacs-lisp-checkdoc)))
+
 (use-package magit)
 
 (use-package tramp)
@@ -198,7 +205,7 @@
     (let ((path-name (abbreviate-file-name (eshell/pwd))))
       (if (length> path-name ryo:eshell-path-name-shorten-trigger-length)
           (let ((shortened (ryo:eshell-shorten-path-name path-name)))
-            (if (length> path-name ryo:eshell-path-name-maximum-length)
+            (if (length> shortened ryo:eshell-path-name-maximum-length)
                 (concat "..."
                         (substring path-name
                                    (- (length shortened)
@@ -328,6 +335,16 @@ for example:
 (use-package sly-quicklisp
   :after '(sly))
 
+(use-package irony
+  :hook (((c++-mode c-mode) . irony-mode)))
+
+(use-package flycheck-irony
+  :after (irony))
+
+(use-package irony-eldoc
+  :hook ((irony-mode . irony-eldoc))
+  :after (irony))
+
 (use-package org
   :config
   ;; org-mode and babel
@@ -339,6 +356,7 @@ for example:
      (C          . t)
      (python     . t)
      (ruby       . t)
+     (shell      . t)
      (gnuplot    . t)))
   
   ;; auto display image after babel eval

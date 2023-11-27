@@ -139,6 +139,17 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
     (global-company-mode))
 #+end_src
 
+** Check
+#+name: flycheck-mode
+#+begin_src elisp
+  (use-package flycheck
+    :init
+    (global-flycheck-mode)
+    :config
+    (setq-default flycheck-disabled-checkers
+                  '(emacs-lisp-checkdoc)))
+#+end_src
+
 ** Project Management
 *** Magit
 #+name: magit
@@ -264,7 +275,7 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
     (let ((path-name (abbreviate-file-name (eshell/pwd))))
       (if (length> path-name ryo:eshell-path-name-shorten-trigger-length)
           (let ((shortened (ryo:eshell-shorten-path-name path-name)))
-            (if (length> path-name ryo:eshell-path-name-maximum-length)
+            (if (length> shortened ryo:eshell-path-name-maximum-length)
                 (concat "..."
                         (substring path-name
                                    (- (length shortened)
@@ -403,6 +414,21 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
     :after '(sly))
 #+end_src
 
+** C Programming Language
+*** Irony
+#+name: irony
+#+begin_src elisp
+  (use-package irony
+    :hook (((c++-mode c-mode) . irony-mode)))
+
+  (use-package flycheck-irony
+    :after (irony))
+
+  (use-package irony-eldoc
+    :hook ((irony-mode . irony-eldoc))
+    :after (irony))
+#+end_src
+
 ** For Editing Documents
 *** Markup Lanugages
 **** Org-Mode
@@ -431,6 +457,7 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
      (C          . t)
      (python     . t)
      (ruby       . t)
+     (shell      . t)
      (gnuplot    . t)))
 
   ;; auto display image after babel eval
@@ -520,3 +547,4 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
 #+begin_src elisp
   (use-package gnuplot)
 #+end_src
+
