@@ -418,3 +418,7 @@ for example:
   (add-hook 'markdown-mode-hook #'ryo:add-markdown-toc-hook-before-save))
 
 (use-package gnuplot)
+
+(use-package doc-view
+  :config
+  (setf doc-view-resolution 400))

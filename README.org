@@ -548,3 +548,11 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
   (use-package gnuplot)
 #+end_src
 
+** For Reading Documents
+*** Docview
+#+name: docview
+#+begin_src elisp
+  (use-package doc-view
+    :config
+    (setf doc-view-resolution 400))
+#+end_src
