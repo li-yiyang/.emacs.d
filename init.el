@@ -430,6 +430,12 @@ for example:
   :config
   (setq separedit-default-mode 'org-mode))
 
+(use-package ox-pandoc)
+
+(use-package ox-reveal
+  :config
+  (setq-default org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"))
+
 (use-package markdown-mode
   :config
   ;; hide markups symbols and urls for better lookings

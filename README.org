@@ -559,6 +559,19 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
     (setq separedit-default-mode 'org-mode))
 #+end_src
 
+***** Org-Mode and File Export
+#+name: ox-pandoc
+#+begin_src elisp
+  (use-package ox-pandoc)
+#+end_src
+
+#+name: ox-reveal
+#+begin_src elisp
+  (use-package ox-reveal
+    :config
+    (setq-default org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"))
+#+end_src
+
 **** Markdown
 #+name: markdown-mode
 #+begin_src elisp
