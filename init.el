@@ -116,26 +116,32 @@
   
   ;; custom variables
   (defcustom ryo:eshell-normal-emoji-sets
-    '("[´･ᴗ･`]" "[´･ω･`]" "[ •_•]" "[•_• ]")
+    '("[´･ᴗ･`]" "[´･ω･`]" "[ •_•]" "[•_• ]" "[੧ᐛ੭]" "[ง˙o˙]ว" "૧[●´৺`●]૭" "[ﾟ∀ﾟ*]")
     "A set of char displayed for normal prompt."
+    :type 'list
     :group 'ryo:eshell)
   
   (defcustom ryo:eshell-error-emoji-sets
-    '("ﾍ[´Д`]ﾉ" "[;◔౪◔]")
+    '("ﾍ[´Д`]ﾉ" "[;◔౪◔]" "ε=ε=ヾ[;ﾟдﾟ]/" "[ﾟДﾟ≡ﾟдﾟ]" "[||ﾟДﾟ]" "[▼皿▼#]")
     "A set of char displayed for error prompt."
+    :type 'list
     :group 'ryo:eshell)
   
   (defcustom ryo:eshell-remote-emoji-sets
     '("|ω・]")
     "A set of char displayed for remote status."
+    :type 'list
     :group 'ryo:eshell)
   
   (defcustom ryo:eshell-path-name-shorten-trigger-length 30
     "The minimum path length to trigger `ryo:eshell-shorten-path-name'."
+    :type 'list
     :group 'ryo:eshell)
   
   (defcustom ryo:eshell-path-name-maximum-length 80
-    "The maximum path length after `ryo:eshell-shorten-path-name'.")
+    "The maximum path length after `ryo:eshell-shorten-path-name'."
+    :type 'integer
+    :group 'ryo:eshell)
   
   ;; custom faces
   (defface ryo:eshell-emoji-normal-face
