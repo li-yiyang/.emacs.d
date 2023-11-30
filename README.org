@@ -435,6 +435,39 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
     :after (irony))
 #+end_src
 
+** LSP
+#+name: lsp-mode
+#+begin_src elisp
+  (use-package lsp-mode
+    :init
+    (setq lsp-keymap-prefix "C-c l")
+    :hook ((lsp-mode . lsp-enable-which-key-integration))
+    :commands (lsp))
+
+  (use-package which-key
+    :config
+    (which-key-mode))
+#+end_src
+
+** Other Programming Language
+*** Java
+#+name: java
+#+begin_src elisp
+  (use-package lsp-java
+    :hook ((java-mode . lsp))
+    :after (lsp)
+    :config
+    (add-hook 'java-mode-hook
+              (lambda ()
+                (setq c-default-style "java"
+                      c-basic-offset 2
+                      tab-width 2
+                      indent-tabs-mode nil)
+                (c-set-offset 'arglist-intro '+)
+                (c-set-offset 'arglist-close '0)
+                (c-set-offset 'case-label '+))))
+#+end_src
+
 ** For Editing Documents
 *** Markup Lanugages
 **** Org-Mode
