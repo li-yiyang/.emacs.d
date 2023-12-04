@@ -424,6 +424,10 @@ for example:
 (use-package cdlatex
   :hook ((org-mode . turn-on-org-cdlatex)))
 
+(use-package ebib
+  :config
+  (global-set-key (kbd "C-c e") 'ebib))
+
 (use-package separedit
   :bind (:map prog-mode-map
               ("C-c '" . separedit))

@@ -549,6 +549,14 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
                '("" "xeCJK" t ("xelatex")))
 #+end_src
 
+***** Ebib
+#+name: ebib
+#+begin_src elisp
+  (use-package ebib
+    :config
+    (global-set-key (kbd "C-c e") 'ebib))
+#+end_src
+
 ***** Org-Mode for Separedit
 #+name: separedit-using-org-mode
 #+begin_src elisp
