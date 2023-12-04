@@ -43,13 +43,17 @@
 ;; Use 2 whitespace for indention rather than tabs
 (setq-default tab-width 2)
 
+(defun ryo:ensure-dir (path)
+  "Make sure `path' is existing."
+  (unless (file-exists-p path)
+    (make-directory path t)))
+
 (defvar ryo:autosaves-dir
   (expand-file-name "autosaves" user-emacs-directory)
   "All autosaves files goes into `ryo:autosaves-dir'.")
 
 ;; make `ryo:autosaves-dir' if it's not exists
-(unless (file-exists-p ryo:autosaves-dir)
-  (make-directory ryo:autosaves-dir t))
+(ryo:ensure-dir ryo:autosaves-dir)
 
 (setf auto-save-file-name-transforms
       `(("\(?:[^/]/\)\(.*\)" ,(expand-file-name "\\1" ryo:autosaves-dir) t)))
@@ -64,8 +68,7 @@
   "All backup file goes into `ryo:backups-dir'.")
 
 ;; make `ryo:backups-dir' if it's not exists
-(unless (file-exists-p ryo:backups-dir)
-  (make-directory ryo:backups-dir t))
+(ryo:ensure-dir ryo:backups-dir)
 
 ;; All backups shall be stored into `backups' folder
 (setf backup-directory-alist `((".*" . ,ryo:backups-dir)))
@@ -94,6 +97,25 @@
 (use-package company
   :config
   (global-company-mode))
+
+(use-package yasnippet
+  :config
+  (defvar ryo:yas-snippet-path
+    (expand-file-name "snippets" user-emacs-directory)
+    "Path of snippet dirs (synced with git).")
+
+  (defvar ryo:yas-snippet-path-local-only
+    (expand-file-name "local-snippets" user-emacs-directory)
+    "Path of local only snippets (not synced with git).")
+
+  (ryo:ensure-dir ryo:yas-snippet-path)
+  (ryo:ensure-dir ryo:yas-snippet-path-local-only)
+
+  (setq yas-snippet-dirs
+        (list ryo:yas-snippet-path
+              ryo:yas-snippet-path-local-only))
+
+  (yas-global-mode 1))
 
 (use-package flycheck
   :init

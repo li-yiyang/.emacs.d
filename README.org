@@ -71,6 +71,14 @@
 #+end_src
 
 ** Autosave and Backups
+#+name: ensure-dir
+#+begin_src elisp
+  (defun ryo:ensure-dir (path)
+    "Make sure `path' is existing."
+    (unless (file-exists-p path)
+      (make-directory path t)))
+#+end_src
+
 #+name: autosaves-settings
 #+begin_src elisp
   (defvar ryo:autosaves-dir
@@ -78,8 +86,7 @@
     "All autosaves files goes into `ryo:autosaves-dir'.")
 
   ;; make `ryo:autosaves-dir' if it's not exists
-  (unless (file-exists-p ryo:autosaves-dir)
-    (make-directory ryo:autosaves-dir t))
+  (ryo:ensure-dir ryo:autosaves-dir)
 
   (setf auto-save-file-name-transforms
         `(("\(?:[^/]/\)\(.*\)" ,(expand-file-name "\\1" ryo:autosaves-dir) t)))
@@ -97,8 +104,7 @@
     "All backup file goes into `ryo:backups-dir'.")
 
   ;; make `ryo:backups-dir' if it's not exists
-  (unless (file-exists-p ryo:backups-dir)
-    (make-directory ryo:backups-dir t))
+  (ryo:ensure-dir ryo:backups-dir)
 
   ;; All backups shall be stored into `backups' folder
   (setf backup-directory-alist `((".*" . ,ryo:backups-dir)))
@@ -132,11 +138,35 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
 #+end_src
 
 ** Complete
+*** Complete Box
 #+name: company-mode
 #+begin_src elisp
   (use-package company
     :config
     (global-company-mode))
+#+end_src
+
+*** Complete via Yasnippet
+#+name: yasnippet
+#+begin_src elisp
+  (use-package yasnippet
+    :config
+    (defvar ryo:yas-snippet-path
+      (expand-file-name "snippets" user-emacs-directory)
+      "Path of snippet dirs (synced with git).")
+
+    (defvar ryo:yas-snippet-path-local-only
+      (expand-file-name "local-snippets" user-emacs-directory)
+      "Path of local only snippets (not synced with git).")
+
+    (ryo:ensure-dir ryo:yas-snippet-path)
+    (ryo:ensure-dir ryo:yas-snippet-path-local-only)
+
+    (setq yas-snippet-dirs
+          (list ryo:yas-snippet-path
+                ryo:yas-snippet-path-local-only))
+  
+    (yas-global-mode 1))
 #+end_src
 
 ** Check
