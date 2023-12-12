@@ -180,6 +180,21 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
                   '(emacs-lisp-checkdoc)))
 #+end_src
 
+** Editing Feals
+*** Autopair
+#+name: autopair-pars
+#+begin_src elisp
+  (setf electric-pair-mode t)
+#+end_src
+
+*** Puni
+#+name: puni
+#+begin_src elisp
+  (use-package puni
+    :config
+    (puni-global-mode))
+#+end_src
+
 ** Project Management
 *** Magit
 #+name: magit
@@ -203,6 +218,7 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
     (setf eshell-prompt-function #'ryo:eshell-emoji-prompt))
 #+end_src
 
+**** EmojiShell
 The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prompt-extras/][eshell-prompt-extras]].
 
 #+name: ryo:eshell-prompt
@@ -387,7 +403,9 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
 #+end_src
 
 ** Lisp
-*** Paredit
+*** COMMENT Paredit
+I am using [[puni]] to replace paredit.
+
 #+name: lisp-paredit
 #+begin_src elisp
   (use-package paredit
@@ -442,12 +460,19 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
     ;; sbcl with larger dynamic space size
     (setf inferior-lisp-program '("sbcl" "--dynamic-space-size" "4GB"))
 
-    ;; ryo/paredit-C-RET
-    (add-to-list 'ryo:paredit-C-RET-probe-method
-                 (cons 'sly-mrepl-mode #'sly-mrepl-return)))
+    ;; add sly-mrepl hook for C-return
+    (add-hook 'sly-mrepl-hook
+              (lambda () (local-set-key "C-<return>" #'sly-mrepl-return))))
 
   (use-package sly-quicklisp
-    :after '(sly))
+    :after '(sly)
+    :config
+    (add-to-list 'sly-contribs 'sly-quicklisp 'append))
+
+  (use-package sly-asdf
+    :after '(sly)
+    :config
+    (add-to-list 'sly-contribs 'sly-asdf 'append))
 #+end_src
 
 ** C Programming Language
@@ -583,8 +608,32 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
 #+name: ebib
 #+begin_src elisp
   (use-package ebib
+    :bind ("C-c e" . ebib)
     :config
-    (global-set-key (kbd "C-c e") 'ebib))
+    ;; support for ebib link
+    (org-link-set-parameters
+     "ebib"
+     :follow #'org-ebib-open
+     :store  #'org-ebib-store-link
+     :export (lambda (&rest args)
+               (apply #'org-ref-cite-export (cons "cite" args))))
+
+    (setf org-latex-pdf-process
+          '("%latex -interaction nonstopmode -output-directory %o %f"
+            "biber %b"                ; make sure to use bibtex backend
+            "%latex -interaction nonstopmode -output-directory %o %f"
+            "%latex -interaction nonstopmode -output-directory %o %f"))
+    (cl-pushnew '("cite" "\\cite%<[%A]%>[%A]{%(%K%,)}")
+                (cadr (assoc 'org-mode ebib-citation-commands))))
+
+  (use-package biblio
+    :config
+    (require 'ebib-biblio))
+
+  ;;; Note: in my machine, org-ref will arise signature failure
+  (setf package-check-signature nil)
+
+  (use-package org-ref)
 #+end_src
 
 ***** Org-Mode for Separedit

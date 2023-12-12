@@ -124,6 +124,10 @@
   (setq-default flycheck-disabled-checkers
                 '(emacs-lisp-checkdoc)))
 
+(use-package puni
+  :config
+  (puni-global-mode))
+
 (use-package magit)
 
 (use-package tramp)
@@ -306,44 +310,14 @@
   
      (ryo:with-face (if (= (user-uid) 0) " #" " >") 'ryo:eshell-prompt-face)
      " "))
+  
   (setf eshell-prompt-function #'ryo:eshell-emoji-prompt))
 
-(use-package paredit
-  :hook ((emacs-lisp-mode
-          lisp-mode
-          ielm-mode
-          eval-expression-minibuffer-setup)
-         . enable-paredit-mode)
-  :bind (:map paredit-mode-map
-              ("C-<return>" . ryo:paredit-C-RET))
-  :init
-  (defvar ryo:paredit-C-RET-probe-method '()
-    "Probes to trigger corresponding methods.
-
-The elements of `ryo:paredit-C-RET-probe-method' should be a pair like:
-
-  (probe-function-to-trigger . methods-responding)
-
-for example: 
-
-  (#'minibufferp . #'read--expression-try-read)")
-
-  :config
-  (defun ryo:paredit-C-RET ()
-    "Trigger by `ryo:paredit-C-RET-probe-method', fall back to `paredit-RET'."
-    (interactive)
-    (cl-loop for (trigger . method) in ryo:paredit-C-RET-probe-method
-             if (or (and (symbolp trigger) (eq major-mode trigger))
-                    (and (functionp trigger) (funcall trigger)))
-             do (cl-return (funcall method))
-             finally (paredit-RET)))
-
-  ;; eval-expression-minibuffer-setup
-  (add-to-list 'ryo:paredit-C-RET-probe-method
-               (cons #'minibufferp #'read--expression-try-read))
-  ;; ielm
-  (add-to-list 'ryo:paredit-C-RET-probe-method
-               (cons 'inferior-emacs-lisp-mode #'ielm-return)))
+(defun eshell/imagecat (&rest args)
+  "Display image files in eshell."
+  (unless args (error "Usage: imagecat FILE ..."))
+  (dolist (img (flatten-tree args))
+    (eshell-printn (propertize " " 'display (create-image img)))))
 
 (use-package sly
   :hook ((sly-mrepl-mode . enable-paredit-mode))
@@ -354,14 +328,17 @@ for example:
   (setf org-babel-lisp-eval-fn #'sly-eval)
 
   ;; sbcl with larger dynamic space size
-  (setf inferior-lisp-program '("sbcl" "--dynamic-space-size" "4GB"))
-
-  ;; ryo/paredit-C-RET
-  (add-to-list 'ryo:paredit-C-RET-probe-method
-               (cons 'sly-mrepl-mode #'sly-mrepl-return)))
+  (setf inferior-lisp-program '("sbcl" "--dynamic-space-size" "4GB")))
 
 (use-package sly-quicklisp
-  :after '(sly))
+  :after '(sly)
+  :config
+  (add-to-list 'sly-contribs 'sly-quicklisp 'append))
+
+(use-package sly-asdf
+  :after '(sly)
+  :config
+  (add-to-list 'sly-contribs 'sly-asdf 'append))
 
 (use-package irony
   :hook (((c++-mode c-mode) . irony-mode)))
@@ -447,8 +424,32 @@ for example:
   :hook ((org-mode . turn-on-org-cdlatex)))
 
 (use-package ebib
+  :bind ("C-c e" . ebib)
   :config
-  (global-set-key (kbd "C-c e") 'ebib))
+  ;; support for ebib link
+  (org-link-set-parameters
+   "ebib"
+   :follow #'org-ebib-open
+   :store  #'org-ebib-store-link
+   :export (lambda (&rest args)
+             (apply #'org-ref-cite-export (cons "cite" args))))
+
+  (setf org-latex-pdf-process
+        '("%latex -interaction nonstopmode -output-directory %o %f"
+          "biber %b"                ; make sure to use bibtex backend
+          "%latex -interaction nonstopmode -output-directory %o %f"
+          "%latex -interaction nonstopmode -output-directory %o %f"))
+  (cl-pushnew '("cite" "\\cite%<[%A]%>[%A]{%(%K%,)}")
+              (cadr (assoc 'org-mode ebib-citation-commands))))
+
+(use-package biblio
+  :config
+  (require 'ebib-biblio))
+
+;;; Note: in my machine, org-ref will arise signature failure
+(setf package-check-signature nil)
+
+(use-package org-ref)
 
 (use-package separedit
   :bind (:map prog-mode-map
