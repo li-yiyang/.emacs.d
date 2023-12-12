@@ -98,6 +98,11 @@
   :config
   (global-company-mode))
 
+;; company with posframe for better UI
+(use-package company-posframe
+  :config
+  (company-posframe-mode t))
+
 (use-package yasnippet
   :config
   (defvar ryo:yas-snippet-path

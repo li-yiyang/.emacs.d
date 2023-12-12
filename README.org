@@ -144,6 +144,11 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
   (use-package company
     :config
     (global-company-mode))
+
+  ;; company with posframe for better UI
+  (use-package company-posframe
+    :config
+    (company-posframe-mode t))
 #+end_src
 
 *** Complete via Yasnippet
