@@ -124,6 +124,8 @@
   (setq-default flycheck-disabled-checkers
                 '(emacs-lisp-checkdoc)))
 
+(setf electric-pair-mode t)
+
 (use-package puni
   :config
   (puni-global-mode))
@@ -310,14 +312,7 @@
   
      (ryo:with-face (if (= (user-uid) 0) " #" " >") 'ryo:eshell-prompt-face)
      " "))
-  
   (setf eshell-prompt-function #'ryo:eshell-emoji-prompt))
-
-(defun eshell/imagecat (&rest args)
-  "Display image files in eshell."
-  (unless args (error "Usage: imagecat FILE ..."))
-  (dolist (img (flatten-tree args))
-    (eshell-printn (propertize " " 'display (create-image img)))))
 
 (use-package sly
   :hook ((sly-mrepl-mode . enable-paredit-mode))
@@ -328,7 +323,11 @@
   (setf org-babel-lisp-eval-fn #'sly-eval)
 
   ;; sbcl with larger dynamic space size
-  (setf inferior-lisp-program '("sbcl" "--dynamic-space-size" "4GB")))
+  (setf inferior-lisp-program '("sbcl" "--dynamic-space-size" "4GB"))
+
+  ;; add sly-mrepl hook for C-return
+  (add-hook 'sly-mrepl-hook
+            (lambda () (local-set-key "C-<return>" #'sly-mrepl-return))))
 
 (use-package sly-quicklisp
   :after '(sly)
