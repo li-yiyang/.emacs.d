@@ -332,7 +332,7 @@
 
   ;; add sly-mrepl hook for C-return
   (add-hook 'sly-mrepl-hook
-            (lambda () (local-set-key "C-<return>" #'sly-mrepl-return))))
+            (lambda () (local-set-key (kbd "C-<return>") #'sly-mrepl-return))))
 
 (use-package sly-quicklisp
   :after '(sly)
