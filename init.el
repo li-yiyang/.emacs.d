@@ -443,8 +443,8 @@
           "biber %b"                ; make sure to use bibtex backend
           "%latex -interaction nonstopmode -output-directory %o %f"
           "%latex -interaction nonstopmode -output-directory %o %f"))
-  (cl-pushnew '("cite" "\\cite%<[%A]%>[%A]{%(%K%,)}")
-              (cadr (assoc 'org-mode ebib-citation-commands))))
+  (setf (cdr (assoc 'org-mode ebib-citation-commands))
+        '((("ebib" "[[ebib:%K]]")))))
 
 (use-package biblio
   :config
