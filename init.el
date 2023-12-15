@@ -135,6 +135,9 @@
   :config
   (puni-global-mode))
 
+(use-package blink-search
+  :load-path "blink-search")
+
 (use-package magit)
 
 (use-package tramp)

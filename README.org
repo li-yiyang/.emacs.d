@@ -201,6 +201,13 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
 #+end_src
 
 ** Project Management
+*** Blink-Search
+#+name: blink-search
+#+begin_src elisp
+  (use-package blink-search
+    :load-path "blink-search")
+#+end_src
+
 *** Magit
 #+name: magit
 #+begin_src elisp

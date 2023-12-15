@@ -1,0 +1,3 @@
+[submodule "blink-search"]
+	path = blink-search
+	url = https://github.com/manateelazycat/blink-search.git

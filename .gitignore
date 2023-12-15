@@ -8,3 +8,5 @@ tramp
 .*
 !.gitignore
 irony
+blink-search.db
+recentf
