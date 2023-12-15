@@ -136,7 +136,32 @@
   (puni-global-mode))
 
 (use-package blink-search
-  :load-path "blink-search")
+  :load-path "blink-search"
+  :bind ("C-s" . blink-search)
+  :config
+  (setf blink-search-enable-posframe t
+        blink-search-posframe-standalone nil
+        blink-search-posframe-width-ratio 0.8
+        blink-search-posframe-height-ratio 0.6
+        blink-search-browser-function #'browse-url-default-browser
+        blink-search-search-backends '("Buffer List" "Current Buffer" "Find File"))
+
+  ;; Note: change how the posframe is shown
+  (defun blink-search-posframe-show (buffer)
+    (let* ((posframe-height (round (* (frame-height) blink-search-posframe-height-ratio)))
+           (posframe-width (round (* (frame-width) blink-search-posframe-width-ratio))))
+      (apply #'posframe-show
+             (get-buffer buffer)
+             :poshandler #'posframe-poshandler-frame-bottom-center
+             (list
+              :max-height (frame-height)
+              :min-height posframe-height
+              :min-width  posframe-width
+              :max-width  (frame-width)
+              :border-width 2
+              :border-color "gray"
+              :accept-focus (equal buffer blink-search-input-buffer)
+              )))))
 
 (use-package magit)
 
