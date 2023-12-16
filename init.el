@@ -392,20 +392,6 @@
   :config
   (which-key-mode))
 
-(use-package lsp-java
-  :hook ((java-mode . lsp))
-  :after (lsp)
-  :config
-  (add-hook 'java-mode-hook
-            (lambda ()
-              (setq c-default-style "java"
-                    c-basic-offset 2
-                    tab-width 2
-                    indent-tabs-mode nil)
-              (c-set-offset 'arglist-intro '+)
-              (c-set-offset 'arglist-close '0)
-              (c-set-offset 'case-label '+))))
-
 (use-package org
   :config
   ;; org-mode and babel
