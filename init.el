@@ -392,6 +392,11 @@
   :config
   (which-key-mode))
 
+(use-package lsp-pyright
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp))))
+
 (use-package org
   :config
   ;; org-mode and babel

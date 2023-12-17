@@ -540,6 +540,14 @@ I am using [[puni]] to replace paredit.
     :config
     (which-key-mode))
 #+end_src
+** Python
+#+name: python
+#+begin_src elisp
+  (use-package lsp-pyright
+    :hook (python-mode . (lambda ()
+                           (require 'lsp-pyright)
+                           (lsp))))
+#+end_src
 
 ** Other Programming Language
 *** COMMENT Java
