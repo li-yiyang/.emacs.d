@@ -643,6 +643,16 @@ Unused, since I hardly touch Java.
                '("" "xeCJK" t ("xelatex")))
 #+end_src
 
+Using pix2tex as LaTeX math equation OCR backend:
+
+#+name: pix2tex-el
+#+begin_src elisp
+  (use-package epc)
+
+  (use-package pix2tex-el
+    :load-path "pix2tex")
+#+end_src
+
 ***** Ebib
 #+name: ebib
 #+begin_src elisp

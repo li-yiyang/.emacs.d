@@ -441,6 +441,11 @@
 (use-package cdlatex
   :hook ((org-mode . turn-on-org-cdlatex)))
 
+(use-package epc)
+
+(use-package pix2tex-el
+  :load-path "pix2tex")
+
 (use-package ebib
   :bind ("C-c e" . ebib)
   :config

@@ -1,3 +1,6 @@
 [submodule "blink-search"]
 	path = blink-search
 	url = https://github.com/manateelazycat/blink-search.git
+[submodule "pix2tex-el"]
+	path = pix2tex-el
+	url = https://github.com/li-yiyang/pix2tex-el.git
