@@ -434,6 +434,26 @@
   ;; Use dvisvgm for SVG preview
   (setf org-preview-latex-default-process 'dvisvgm)
   (setf (plist-get org-format-latex-options :scale) 1.6)
+  
+  ;; Pretty symbol for org-mode
+  (defvar ryo:org-prettify-symbols-alist
+    '(("\\begin"  . ?▼)
+      ("\\end"    . ?▲)
+      ("\\mapsto" . ?↦)
+      ("\\frac"   . ?𝐟)
+      ("\\sqrt"   . ?√)
+      ("\\updownarrow" . ?↕)
+      ("\\boldsymbol" . ?𝐛)
+      ("\\mathrm" . ?𝐫)
+      ("\\mathcal" . ?𝐜)))
+  
+  (defun ryo:setup-org-pretty-symbol-mode ()
+    (prettify-symbols-mode t)
+    (setq-local prettify-symbols-alist
+                (append prettify-symbols-alist
+                        ryo:org-prettify-symbols-alist)))
+  
+  (add-hook 'org-mode-hook #'ryo:setup-org-pretty-symbol-mode)
   ;; set default latex compiler to xelatex
   (setf org-latex-compiler "xelatex")
   
@@ -449,7 +469,12 @@
 (use-package epc)
 
 (use-package pix2tex-el
-  :load-path "pix2tex")
+  :load-path "pix2tex-el"
+  :config
+  (defun ryo:turn-on-pix2tex-el-in-org-mode ()
+    (local-set-key (kbd "C-c l") #'pix2tex-el-insert)
+    (add-hook 'pix2tex-el-insert-hook #'org-latex-preview 0 nil))
+  (add-hook 'org-mode-hook #'ryo:turn-on-pix2tex-el-in-org-mode))
 
 (use-package ebib
   :bind ("C-c e" . ebib)

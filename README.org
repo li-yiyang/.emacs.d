@@ -630,6 +630,26 @@ Unused, since I hardly touch Java.
   ;; Use dvisvgm for SVG preview
   (setf org-preview-latex-default-process 'dvisvgm)
   (setf (plist-get org-format-latex-options :scale) 1.6)
+
+  ;; Pretty symbol for org-mode
+  (defvar ryo:org-prettify-symbols-alist
+    '(("\\begin"  . ?▼)
+      ("\\end"    . ?▲)
+      ("\\mapsto" . ?↦)
+      ("\\frac"   . ?𝐟)
+      ("\\sqrt"   . ?√)
+      ("\\updownarrow" . ?↕)
+      ("\\boldsymbol" . ?𝐛)
+      ("\\mathrm" . ?𝐫)
+      ("\\mathcal" . ?𝐜)))
+
+  (defun ryo:setup-org-pretty-symbol-mode ()
+    (prettify-symbols-mode t)
+    (setq-local prettify-symbols-alist
+                (append prettify-symbols-alist
+                        ryo:org-prettify-symbols-alist)))
+
+  (add-hook 'org-mode-hook #'ryo:setup-org-pretty-symbol-mode)
 #+end_src
 
 ***** Org-Mode with LaTeX Support
