@@ -129,7 +129,7 @@
   (setq-default flycheck-disabled-checkers
                 '(emacs-lisp-checkdoc)))
 
-(setf electric-pair-mode t)
+(electric-pair-mode 1)
 
 (use-package puni
   :config

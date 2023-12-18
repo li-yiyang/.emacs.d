@@ -189,7 +189,7 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
 *** Autopair
 #+name: autopair-pars
 #+begin_src elisp
-  (setf electric-pair-mode t)
+  (electric-pair-mode 1)
 #+end_src
 
 *** Puni
