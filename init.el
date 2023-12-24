@@ -392,10 +392,41 @@
   :config
   (which-key-mode))
 
+(use-package inf-ruby
+  :hook ((ruby-mode . inf-ruby-minor-mode)))
+
 (use-package lsp-pyright
   :hook (python-mode . (lambda ()
                          (require 'lsp-pyright)
                          (lsp))))
+
+(use-package verilog-mode)
+
+(use-package verilog-ext
+  :hook ((verilog-mode . verilog-ext-mode))
+  :init
+  (setf verilog-ext-feature-list
+        '(font-lock
+          xref
+          capf
+          hierarchy
+          eglot
+          lsp
+          flycheck
+          beautify
+          navigation
+          template
+          formatter
+          compilation
+          imenu
+          which-func
+          hideshow
+          typedefs
+          time-stamp
+          block-end-comments
+          ports))
+  :config
+  (verilog-ext-mode-setup))
 
 (use-package org
   :config

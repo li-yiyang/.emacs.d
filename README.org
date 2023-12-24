@@ -540,6 +540,13 @@ I am using [[puni]] to replace paredit.
     :config
     (which-key-mode))
 #+end_src
+** Ruby
+#+name: ruby
+#+begin_src elisp
+  (use-package inf-ruby
+    :hook ((ruby-mode . inf-ruby-minor-mode)))
+#+end_src
+
 ** Python
 #+name: python
 #+begin_src elisp
@@ -550,6 +557,37 @@ I am using [[puni]] to replace paredit.
 #+end_src
 
 ** Other Programming Language
+*** Verilog
+#+name: verilog
+#+begin_src elisp
+  (use-package verilog-mode)
+
+  (use-package verilog-ext
+    :hook ((verilog-mode . verilog-ext-mode))
+    :init
+    (setf verilog-ext-feature-list
+          '(font-lock
+            xref
+            capf
+            hierarchy
+            eglot
+            lsp
+            flycheck
+            beautify
+            navigation
+            template
+            formatter
+            compilation
+            imenu
+            which-func
+            hideshow
+            typedefs
+            time-stamp
+            block-end-comments
+            ports))
+    :config
+    (verilog-ext-mode-setup))
+#+end_src
 *** COMMENT Java
 Unused, since I hardly touch Java.
 
