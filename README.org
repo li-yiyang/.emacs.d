@@ -545,6 +545,8 @@ I am using [[puni]] to replace paredit.
 #+begin_src elisp
   (use-package inf-ruby
     :hook ((ruby-mode . inf-ruby-minor-mode)))
+
+  (use-package rvm)
 #+end_src
 
 ** Python
@@ -682,10 +684,10 @@ Unused, since I hardly touch Java.
       ("\\mathcal" . ?𝐜)))
 
   (defun ryo:setup-org-pretty-symbol-mode ()
-    (prettify-symbols-mode t)
     (setq-local prettify-symbols-alist
                 (append prettify-symbols-alist
-                        ryo:org-prettify-symbols-alist)))
+                        ryo:org-prettify-symbols-alist))
+    (prettify-symbols-mode t))
 
   (add-hook 'org-mode-hook #'ryo:setup-org-pretty-symbol-mode)
 #+end_src

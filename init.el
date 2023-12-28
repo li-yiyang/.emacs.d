@@ -395,6 +395,8 @@
 (use-package inf-ruby
   :hook ((ruby-mode . inf-ruby-minor-mode)))
 
+(use-package rvm)
+
 (use-package lsp-pyright
   :hook (python-mode . (lambda ()
                          (require 'lsp-pyright)
@@ -479,10 +481,10 @@
       ("\\mathcal" . ?𝐜)))
   
   (defun ryo:setup-org-pretty-symbol-mode ()
-    (prettify-symbols-mode t)
     (setq-local prettify-symbols-alist
                 (append prettify-symbols-alist
-                        ryo:org-prettify-symbols-alist)))
+                        ryo:org-prettify-symbols-alist))
+    (prettify-symbols-mode t))
   
   (add-hook 'org-mode-hook #'ryo:setup-org-pretty-symbol-mode)
   ;; set default latex compiler to xelatex
