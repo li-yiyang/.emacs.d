@@ -430,6 +430,15 @@
   :config
   (verilog-ext-mode-setup))
 
+(use-package swift-mode)
+
+(use-package lsp-sourcekit
+  :after (lsp-mode)
+  :config
+  (when (eq system-type 'darwin)
+    (setf lsp-sourcekit-executable
+          (string-trim (shell-command-to-string "xcrun --find sourcekit-lsp")))))
+
 (use-package org
   :config
   ;; org-mode and babel

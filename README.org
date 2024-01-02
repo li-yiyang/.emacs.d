@@ -590,6 +590,19 @@ I am using [[puni]] to replace paredit.
     :config
     (verilog-ext-mode-setup))
 #+end_src
+*** Swift
+#+name: swift
+#+begin_src elisp
+  (use-package swift-mode)
+
+  (use-package lsp-sourcekit
+    :after (lsp-mode)
+    :config
+    (when (eq system-type 'darwin)
+      (setf lsp-sourcekit-executable
+            (string-trim (shell-command-to-string "xcrun --find sourcekit-lsp")))))
+#+end_src
+
 *** COMMENT Java
 Unused, since I hardly touch Java.
 
