@@ -373,7 +373,8 @@
   (add-to-list 'sly-contribs 'sly-asdf 'append))
 
 (use-package irony
-  :hook (((c++-mode c-mode) . irony-mode)))
+  :hook (((c++-mode c-mode) . irony-mode)
+         ((c++-mode c-mode) . lsp)))
 
 (use-package flycheck-irony
   :after (irony))
@@ -393,7 +394,8 @@
   (which-key-mode))
 
 (use-package inf-ruby
-  :hook ((ruby-mode . inf-ruby-minor-mode)))
+  :hook ((ruby-mode . inf-ruby-minor-mode)
+         (ruby-mode . lsp)))
 
 (use-package rvm)
 
@@ -430,7 +432,8 @@
   :config
   (verilog-ext-mode-setup))
 
-(use-package swift-mode)
+(use-package swift-mode
+  :hook ((swift-mode . lsp)))
 
 (use-package lsp-sourcekit
   :after (lsp-mode)
