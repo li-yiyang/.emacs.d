@@ -144,7 +144,10 @@
         blink-search-posframe-width-ratio 0.8
         blink-search-posframe-height-ratio 0.6
         blink-search-browser-function #'browse-url-default-browser
-        blink-search-search-backends '("Buffer List" "Current Buffer" "Find File"))
+        blink-search-search-backends '("Buffer List"
+                                       "Current Buffer"
+                                       "Find File"
+                                       "Elisp Symbol"))
 
   ;; Note: change how the posframe is shown
   (defun blink-search-posframe-show (buffer)
