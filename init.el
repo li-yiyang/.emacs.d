@@ -186,7 +186,7 @@
     :group 'ryo:eshell)
   
   (defcustom ryo:eshell-error-emoji-sets
-    '("ﾍ[´Д`]ﾉ" "[;◔౪◔]" "ε=ε=ヾ[;ﾟдﾟ]/" "[ﾟДﾟ≡ﾟдﾟ]" "[||ﾟДﾟ]" "[▼皿▼#]")
+    '("ﾍ[´Д`]ﾉ" "[;◔౪◔]" "ε=ε=ヾ[;ﾟдﾟ]/" "[ﾟДﾟ≡ﾟдﾟ]" "[||ﾟДﾟ]" "[▼皿▼]")
     "A set of char displayed for error prompt."
     :type 'list
     :group 'ryo:eshell)
@@ -452,6 +452,7 @@
    'org-babel-load-languages
    '((emacs-lisp . t)
      (lisp       . t)
+     (org        . t)
      (dot        . t)
      (C          . t)
      (python     . t)
