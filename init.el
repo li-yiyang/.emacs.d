@@ -442,6 +442,29 @@
           block-end-comments
           ports))
   :config
+  (defconst verilog-ext-block-end-keywords-complete-re
+    (concat
+     ; Blanks and block end keyword
+     "^\\(?1:\\s-*" verilog-ext-block-end-keywords-re "\\)\\s-*"
+     ; Comments
+     ":\\s-*\\(\\(block:\\|" verilog-identifier-sym-re "\\s-*::\\)\\s-*\\)*"
+     ; Block name to be replaced
+     "\\(?2:" verilog-identifier-sym-re "\\)\\s-*$"))                 
+
+  (defun verilog-ext-block-end-comments-to-names ()
+    "Convert valid block-end comments to ': BLOCK_NAME'.
+
+Examples: endmodule // module_name             → endmodule : module_name
+          endfunction // some comment          → endfunction // some comment
+          endfunction // class_name::func_name → endfunction : func_name
+          end // block: block_name             → end : block_name"
+    (interactive)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward verilog-ext-block-end-keywords-complete-re nil :noerror)
+        (when (not (member (match-string-no-properties 2) verilog-keywords))
+          (replace-match "\\1 // \\2")))))
+
   (verilog-ext-mode-setup))
 
 (use-package swift-mode
