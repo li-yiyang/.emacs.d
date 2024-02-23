@@ -200,6 +200,15 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
     (puni-global-mode))
 #+end_src
 
+*** atomic-chrome
+#+name: atomic-chrome
+#+begin_src elisp
+  (use-package atomic-chrome
+    :config
+    (atomic-chrome-start-server)
+    (setf atomic-chrome-default-major-mode 'markdown-mode))
+#+end_src
+
 ** Project Management
 *** Blink-Search
 #+name: blink-search

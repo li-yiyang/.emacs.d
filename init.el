@@ -135,6 +135,11 @@
   :config
   (puni-global-mode))
 
+(use-package atomic-chrome
+  :config
+  (atomic-chrome-start-server)
+  (setf atomic-chrome-default-major-mode 'markdown-mode))
+
 (use-package blink-search
   :load-path "blink-search"
   :bind ("C-s" . blink-search)
