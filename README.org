@@ -813,7 +813,7 @@ Using pix2tex as LaTeX math equation OCR backend:
     :bind (:map prog-mode-map
                 ("C-c '" . separedit))
     :config
-    (setq separedit-default-mode 'org-mode))
+    (setq separedit-default-mode 'text-mode))
 #+end_src
 
 ***** Org-Mode and File Export

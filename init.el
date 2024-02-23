@@ -573,7 +573,7 @@
   :bind (:map prog-mode-map
               ("C-c '" . separedit))
   :config
-  (setq separedit-default-mode 'org-mode))
+  (setq separedit-default-mode 'text-mode))
 
 (use-package ox-pandoc)
 
