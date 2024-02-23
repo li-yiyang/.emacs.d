@@ -735,7 +735,17 @@ Unused, since I hardly touch Java.
 #+begin_src elisp
   ;;; Use CDLaTeX for quick LaTeX equation input
   (use-package cdlatex
-    :hook ((org-mode . turn-on-org-cdlatex)))
+    :hook ((org-mode . turn-on-org-cdlatex))
+    :config
+    (setf cdlatex-math-modify-alist
+          '(( ?b "\\boldsymbol" "\\textbf" t nil nil ))))
+#+end_src
+
+#+name: auclatex
+#+begin_src elisp
+  ;;; AUCTeX
+  (use-package tex
+    :ensure auctex)
 #+end_src
 
 #+name: ryo:org-latex-config

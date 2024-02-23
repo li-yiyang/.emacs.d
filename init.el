@@ -522,7 +522,14 @@
 
 ;;; Use CDLaTeX for quick LaTeX equation input
 (use-package cdlatex
-  :hook ((org-mode . turn-on-org-cdlatex)))
+  :hook ((org-mode . turn-on-org-cdlatex))
+  :config
+  (setf cdlatex-math-modify-alist
+        '(( ?b "\\boldsymbol" "\\textbf" t nil nil ))))
+
+;;; AUCTeX
+(use-package tex
+  :ensure auctex)
 
 (use-package epc)
 
