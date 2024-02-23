@@ -574,6 +574,14 @@ I am using [[puni]] to replace paredit.
 #+end_src
 
 ** Other Programming Language
+*** ROOT
+#+name: root
+#+begin_src elisp
+  (use-package cern-root-mode
+    :config
+    (setf cern-root-filepath (executable-find "root")))
+#+end_src
+
 *** Verilog
 #+name: verilog
 #+begin_src elisp

@@ -412,6 +412,10 @@
                          (require 'lsp-pyright)
                          (lsp))))
 
+(use-package cern-root-mode
+  :config
+  (setf cern-root-filepath (executable-find "root")))
+
 (use-package verilog-mode)
 
 (use-package verilog-ext
