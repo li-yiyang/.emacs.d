@@ -391,15 +391,9 @@
   :hook ((irony-mode . irony-eldoc))
   :after (irony))
 
-(use-package lsp-mode
-  :init
-  (setq lsp-keymap-prefix "C-c l")
-  :hook ((lsp-mode . lsp-enable-which-key-integration))
-  :commands (lsp))
-
-(use-package which-key
-  :config
-  (which-key-mode))
+(use-package lsp-bridge
+  :load-path "lsp-bridge"
+  :config (global-lsp-bridge-mode))
 
 (use-package inf-ruby
   :hook ((ruby-mode . inf-ruby-minor-mode)
@@ -407,10 +401,11 @@
 
 (use-package rvm)
 
-(use-package lsp-pyright
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-pyright)
-                         (lsp))))
+;; Ensure Python Command
+(setf org-babel-python-command
+      (cond ((executable-find "python3") "python3")
+            ((executable-find "python2") "python2")
+            (t "python")))
 
 (use-package cern-root-mode
   :config

@@ -541,17 +541,11 @@ I am using [[puni]] to replace paredit.
 #+end_src
 
 ** LSP
-#+name: lsp-mode
+#+name: lsp-bridge
 #+begin_src elisp
-  (use-package lsp-mode
-    :init
-    (setq lsp-keymap-prefix "C-c l")
-    :hook ((lsp-mode . lsp-enable-which-key-integration))
-    :commands (lsp))
-
-  (use-package which-key
-    :config
-    (which-key-mode))
+  (use-package lsp-bridge
+    :load-path "lsp-bridge"
+    :config (global-lsp-bridge-mode))
 #+end_src
 
 ** Ruby
@@ -565,12 +559,14 @@ I am using [[puni]] to replace paredit.
 #+end_src
 
 ** Python
-#+name: python
+*** Org-Babel
+#+name: org-babel-python-command
 #+begin_src elisp
-  (use-package lsp-pyright
-    :hook (python-mode . (lambda ()
-                           (require 'lsp-pyright)
-                           (lsp))))
+  ;; Ensure Python Command
+  (setf org-babel-python-command
+        (cond ((executable-find "python3") "python3")
+              ((executable-find "python2") "python2")
+              (t "python")))
 #+end_src
 
 ** Other Programming Language
@@ -649,26 +645,6 @@ I am using [[puni]] to replace paredit.
     (when (eq system-type 'darwin)
       (setf lsp-sourcekit-executable
             (string-trim (shell-command-to-string "xcrun --find sourcekit-lsp")))))
-#+end_src
-
-*** COMMENT Java
-Unused, since I hardly touch Java.
-
-#+name: java
-#+begin_src elisp
-  (use-package lsp-java
-    :hook ((java-mode . lsp))
-    :after (lsp)
-    :config
-    (add-hook 'java-mode-hook
-              (lambda ()
-                (setq c-default-style "java"
-                      c-basic-offset 2
-                      tab-width 2
-                      indent-tabs-mode nil)
-                (c-set-offset 'arglist-intro '+)
-                (c-set-offset 'arglist-close '0)
-                (c-set-offset 'case-label '+))))
 #+end_src
 
 ** For Editing Documents
