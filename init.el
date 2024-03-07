@@ -2,7 +2,8 @@
 ;;; Commentary:
 
 ;; Enable debug when encounter errors
-(setf debug-on-error t)
+(setf debug-on-error nil)
+(setf warning-minimum-level :error)
 
 (when (eq system-type 'darwin)
   ;; font scale and fonts
