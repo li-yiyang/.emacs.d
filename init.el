@@ -352,7 +352,6 @@
   (dirvish-override-dired-mode))
 
 (use-package sly
-  :hook ((sly-mrepl-mode . enable-paredit-mode))
   :config
   (require 'sly-autoloads)
 

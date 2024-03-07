@@ -495,7 +495,6 @@ I am using [[puni]] to replace paredit.
 #+name: lisp-sly
 #+begin_src elisp
   (use-package sly
-    :hook ((sly-mrepl-mode . enable-paredit-mode))
     :config
     (require 'sly-autoloads)
 
