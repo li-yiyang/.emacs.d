@@ -439,6 +439,14 @@ The [[ryo:eshell-prompt]] get inspired by [[https://github.com/zwild/eshell-prom
      " "))
 #+end_src
 
+*** Dirvish
+#+name: dirvish
+#+begin_src elisp
+  (use-package dirvish
+    :config
+    (dirvish-override-dired-mode))
+#+end_src
+
 ** Lisp
 *** COMMENT Paredit
 I am using [[puni]] to replace paredit.
@@ -549,6 +557,10 @@ than company-mode.
     :load-path "lsp-bridge"
     :config
     (setf lsp-bridge-enable-org-babel t)
+
+    ;; acm key binding
+    (define-key acm-mode-map (kbd "TAB")  nil)
+
     (global-lsp-bridge-mode))
 #+end_src
 
@@ -870,6 +882,21 @@ Using pix2tex as LaTeX math equation OCR backend:
   (use-package ox-reveal
     :config
     (setq-default org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"))
+#+end_src
+
+***** Pretty Looking
+#+name: org-appear
+#+begin_src elisp
+  (use-package org-appear
+    :hook ((org-mode . org-appear-mode))
+    :config
+    (setf org-hide-emphasis-markers t
+          org-appear-autolinks      nil
+          org-pretty-entities       t
+          org-appear-autoentities   t
+          org-hidden-keywords       t
+          org-appear-autokeywords   t
+          org-appear-inside-latex   t))
 #+end_src
 
 **** Markdown

@@ -347,6 +347,10 @@
      " "))
   (setf eshell-prompt-function #'ryo:eshell-emoji-prompt))
 
+(use-package dirvish
+  :config
+  (dirvish-override-dired-mode))
+
 (use-package sly
   :hook ((sly-mrepl-mode . enable-paredit-mode))
   :config
@@ -394,6 +398,10 @@
   :load-path "lsp-bridge"
   :config
   (setf lsp-bridge-enable-org-babel t)
+
+  ;; acm key binding
+  (define-key acm-mode-map (kbd "TAB")  nil)
+
   (global-lsp-bridge-mode))
 
 (use-package inf-ruby
@@ -620,6 +628,17 @@ Examples: endmodule // module_name             → endmodule : module_name
 (use-package ox-reveal
   :config
   (setq-default org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"))
+
+(use-package org-appear
+  :hook ((org-mode . org-appear-mode))
+  :config
+  (setf org-hide-emphasis-markers t
+        org-appear-autolinks      nil
+        org-pretty-entities       t
+        org-appear-autoentities   t
+        org-hidden-keywords       t
+        org-appear-autokeywords   t
+        org-appear-inside-latex   t))
 
 (use-package markdown-mode
   :config
