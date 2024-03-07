@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: equation
-# key: ,eqs
+# key:  eqs
 # --
 \begin{equation}
 \begin{array}{$1}

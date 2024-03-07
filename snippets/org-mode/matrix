@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: matrix
-# key: ,mat
+# key:  mat
 # --
 \begin{matrix}$0\end{matrix}
