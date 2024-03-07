@@ -407,6 +407,23 @@
             ((executable-find "python2") "python2")
             (t "python")))
 
+;; emacs-jupyter manual installation
+(use-package simple-httpd)
+
+(use-package zmq)
+
+(use-package jupyter
+  :load-path "jupyter")
+
+(use-package code-cells
+  :config
+  (setq code-cells-convert-ipynb-style
+        '(("pandoc" "--to" "ipynb" "--from" "org")
+          ("pandoc" "--to" "org" "--from" "ipynb")
+          (lambda () #'org-mode))))
+
+(setf python-indent-guess-indent-offset nil)
+
 (use-package cern-root-mode
   :config
   (setf cern-root-filepath (executable-find "root")))
@@ -485,7 +502,11 @@ Examples: endmodule // module_name             → endmodule : module_name
      (python     . t)
      (ruby       . t)
      (shell      . t)
-     (gnuplot    . t)))
+     (gnuplot    . t)
+     (jupyter    . t)))
+  
+  ;; emacs-jupyter patch
+  (org-babel-jupyter-override-src-block "python")
   
   ;; auto display image after babel eval
   (defun ryo:org-babel-display-image-after-eval ()

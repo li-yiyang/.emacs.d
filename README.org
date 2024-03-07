@@ -569,6 +569,41 @@ I am using [[puni]] to replace paredit.
               (t "python")))
 #+end_src
 
+*** Jupyter
+Note: though i still like to use org-mode much... but you know,
+homework things (balabala). 
+
+[[https://github.com/emacs-jupyter/jupyter][emacs-jupyter]] is used for interaction with Jupyter kernel. 
+
+#+name: emacs-jupyter
+#+begin_src elisp
+  ;; emacs-jupyter manual installation
+  (use-package simple-httpd)
+
+  (use-package zmq)
+
+  (use-package jupyter
+    :load-path "jupyter")
+#+end_src
+
+#+name: code-cell-mode
+#+begin_src elisp
+  (use-package code-cells
+    :config
+    (setq code-cells-convert-ipynb-style
+          '(("pandoc" "--to" "ipynb" "--from" "org")
+            ("pandoc" "--to" "org" "--from" "ipynb")
+            (lambda () #'org-mode))))
+#+end_src
+
+*Ref*: [[https://martibosch.github.io/jupyter-emacs-universe/][Jupyter in the Emacs universe]]. 
+
+*** Misc
+#+name: misc-about-python
+#+begin_src elisp
+  (setf python-indent-guess-indent-offset nil)
+#+end_src
+
 ** Other Programming Language
 *** ROOT
 #+name: root
@@ -677,7 +712,11 @@ I am using [[puni]] to replace paredit.
      (python     . t)
      (ruby       . t)
      (shell      . t)
-     (gnuplot    . t)))
+     (gnuplot    . t)
+     (jupyter    . t)))
+
+  ;; emacs-jupyter patch
+  (org-babel-jupyter-override-src-block "python")
 
   ;; auto display image after babel eval
   (defun ryo:org-babel-display-image-after-eval ()
