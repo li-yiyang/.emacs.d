@@ -95,15 +95,6 @@
 ;; Always ensure the package
 (setq use-package-always-ensure t)
 
-(use-package company
-  :config
-  (global-company-mode))
-
-;; company with posframe for better UI
-(use-package company-posframe
-  :config
-  (company-posframe-mode t))
-
 (use-package yasnippet
   :config
   (defvar ryo:yas-snippet-path
@@ -125,7 +116,7 @@
 
 (use-package flycheck
   :init
-  (global-flycheck-mode)
+  ; (global-flycheck-mode)
   :config
   (setq-default flycheck-disabled-checkers
                 '(emacs-lisp-checkdoc)))
@@ -381,6 +372,13 @@
   :config
   (add-to-list 'sly-contribs 'sly-asdf 'append))
 
+(use-package company
+  :hook (((lisp-mode sly-mrepl-mode) . company-mode)))
+
+;; company with posframe for better UI
+(use-package company-posframe
+  :hook (((company-mode) . company-posframe-mode)))
+
 (use-package irony
   :hook (((c++-mode c-mode) . irony-mode)
          ((c++-mode c-mode) . lsp)))
@@ -394,7 +392,9 @@
 
 (use-package lsp-bridge
   :load-path "lsp-bridge"
-  :config (global-lsp-bridge-mode))
+  :config
+  (setf lsp-bridge-enable-org-babel t)
+  (global-lsp-bridge-mode))
 
 (use-package inf-ruby
   :hook ((ruby-mode . inf-ruby-minor-mode)

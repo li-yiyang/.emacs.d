@@ -139,19 +139,6 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
 #+end_src
 
 ** Complete
-*** Complete Box
-#+name: company-mode
-#+begin_src elisp
-  (use-package company
-    :config
-    (global-company-mode))
-
-  ;; company with posframe for better UI
-  (use-package company-posframe
-    :config
-    (company-posframe-mode t))
-#+end_src
-
 *** Complete via Yasnippet
 #+name: yasnippet
 #+begin_src elisp
@@ -180,7 +167,7 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
 #+begin_src elisp
   (use-package flycheck
     :init
-    (global-flycheck-mode)
+    ; (global-flycheck-mode)
     :config
     (setq-default flycheck-disabled-checkers
                   '(emacs-lisp-checkdoc)))
@@ -525,6 +512,20 @@ I am using [[puni]] to replace paredit.
     (add-to-list 'sly-contribs 'sly-asdf 'append))
 #+end_src
 
+*** Complete Box
+Note: I will using company right now til I found something better
+than company-mode.
+
+#+name: company-mode
+#+begin_src elisp
+  (use-package company
+    :hook (((lisp-mode sly-mrepl-mode) . company-mode)))
+
+  ;; company with posframe for better UI
+  (use-package company-posframe
+    :hook (((company-mode) . company-posframe-mode)))
+#+end_src
+
 ** C Programming Language
 *** Irony
 #+name: irony
@@ -546,7 +547,9 @@ I am using [[puni]] to replace paredit.
 #+begin_src elisp
   (use-package lsp-bridge
     :load-path "lsp-bridge"
-    :config (global-lsp-bridge-mode))
+    :config
+    (setf lsp-bridge-enable-org-babel t)
+    (global-lsp-bridge-mode))
 #+end_src
 
 ** Ruby
