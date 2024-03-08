@@ -161,7 +161,7 @@
 (use-package emojishell
   :load-path "emojishell"
   :config
-  (setf eshell-prompt-function #'ryo:eshell-emoji-prompt))
+  (setf eshell-prompt-function #'emojishell-emoji-prompt))
 
 (use-package dirvish
   :config
@@ -215,7 +215,8 @@
   (setf lsp-bridge-enable-org-babel t)
 
   ;; acm key binding
-  (define-key acm-mode-map (kbd "TAB")  nil)
+  (define-key acm-mode-map [tab] nil)
+  (define-key acm-mode-map "\t"  nil)
 
   (global-lsp-bridge-mode))
 
@@ -329,7 +330,7 @@ Examples: endmodule // module_name             → endmodule : module_name
      (jupyter    . t)))
   
   ;; emacs-jupyter patch
-  (org-babel-jupyter-override-src-block "python")
+  ;; (org-babel-jupyter-override-src-block "python")
   
   ;; auto display image after babel eval
   (defun ryo:org-babel-display-image-after-eval ()
@@ -446,8 +447,7 @@ Examples: endmodule // module_name             → endmodule : module_name
            (org-pretty-entities       t)
            (org-appear-autoentities   t)
            (org-hidden-keywords       t)
-           (org-appear-autokeywords   t)
-           (org-appear-inside-latex   t)))
+           (org-appear-autokeywords   t)))
 
 (use-package olivetti
   :custom ((olivetti-body-width   82)
