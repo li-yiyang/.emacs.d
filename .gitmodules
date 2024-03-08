@@ -10,3 +10,6 @@
 [submodule "jupyter"]
 	path = jupyter
 	url = https://github.com/emacs-jupyter/jupyter.git
+[submodule "emojishell"]
+	path = emojishell
+	url = https://github.com/li-yiyang/emojishell.git

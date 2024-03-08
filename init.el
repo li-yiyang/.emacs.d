@@ -78,12 +78,12 @@
 (package-initialize)
 
 ;; Use emacs-china mirror for better connection
-(setq package-archives '(("gnu" . "http://1.15.88.122/gnu/")
-                         ("melpa" . "http://1.15.88.122/melpa/")
+(setq package-archives '(("gnu"    . "http://1.15.88.122/gnu/")
+                         ("melpa"  . "http://1.15.88.122/melpa/")
                          ("nongnu" . "http://1.15.88.122/nongnu/")
-                         ("org" . "http://1.15.88.122/org/")))
+                         ("org"    . "http://1.15.88.122/org/")))
 
-;; not refresh every time for better start up time
+;; not refresh every time for quicker start up time
 ;; (package-refresh-contents)
 
 ;; use-package was built in after emacs 29
@@ -114,13 +114,6 @@
 
   (yas-global-mode 1))
 
-(use-package flycheck
-  :init
-  ; (global-flycheck-mode)
-  :config
-  (setq-default flycheck-disabled-checkers
-                '(emacs-lisp-checkdoc)))
-
 (electric-pair-mode 1)
 
 (use-package puni
@@ -135,21 +128,19 @@
 (use-package blink-search
   :load-path "blink-search"
   :bind ("C-s" . blink-search)
-  :config
-  (setf blink-search-enable-posframe t
-        blink-search-posframe-standalone nil
-        blink-search-posframe-width-ratio 0.8
-        blink-search-posframe-height-ratio 0.6
-        blink-search-browser-function #'browse-url-default-browser
-        blink-search-search-backends '("Buffer List"
-                                       "Current Buffer"
-                                       "Find File"
-                                       "Elisp Symbol"))
-
+  :custom ((blink-search-enable-posframe       t)
+           (blink-search-posframe-standalone   nil)
+           (blink-search-posframe-width-ratio  0.8)
+           (blink-search-posframe-height-ratio 0.6)
+           (blink-search-search-backends       '("Buffer List"
+                                                 "Current Buffer"
+                                                 "Find File"
+                                                 "Elisp Symbol")))
+  :cofig
   ;; Note: change how the posframe is shown
   (defun blink-search-posframe-show (buffer)
     (let* ((posframe-height (round (* (frame-height) blink-search-posframe-height-ratio)))
-           (posframe-width (round (* (frame-width) blink-search-posframe-width-ratio))))
+           (posframe-width  (round (* (frame-width) blink-search-posframe-width-ratio))))
       (apply #'posframe-show
              (get-buffer buffer)
              :poshandler #'posframe-poshandler-frame-bottom-center
@@ -167,184 +158,9 @@
 
 (use-package tramp)
 
-(use-package eshell
+(use-package emojishell
+  :load-path "emojishell"
   :config
-  ;;; This is the defination of `ryo:eshell',
-  ;;; which give some customization of my personal eshell.
-  
-  ;; require vc-git for `ryo:eshell-git'.
-  (autoload 'vc-git-branches "vc-git")
-  
-  ;; custom variables
-  (defcustom ryo:eshell-normal-emoji-sets
-    '("[´･ᴗ･`]" "[´･ω･`]" "[ •_•]" "[•_• ]" "[੧ᐛ੭]" "[ง˙o˙]ว" "૧[●´৺`●]૭" "[ﾟ∀ﾟ*]")
-    "A set of char displayed for normal prompt."
-    :type 'list
-    :group 'ryo:eshell)
-  
-  (defcustom ryo:eshell-error-emoji-sets
-    '("ﾍ[´Д`]ﾉ" "[;◔౪◔]" "ε=ε=ヾ[;ﾟдﾟ]/" "[ﾟДﾟ≡ﾟдﾟ]" "[||ﾟДﾟ]" "[▼皿▼]")
-    "A set of char displayed for error prompt."
-    :type 'list
-    :group 'ryo:eshell)
-  
-  (defcustom ryo:eshell-remote-emoji-sets
-    '("|ω・]")
-    "A set of char displayed for remote status."
-    :type 'list
-    :group 'ryo:eshell)
-  
-  (defcustom ryo:eshell-path-name-shorten-trigger-length 30
-    "The minimum path length to trigger `ryo:eshell-shorten-path-name'."
-    :type 'list
-    :group 'ryo:eshell)
-  
-  (defcustom ryo:eshell-path-name-maximum-length 80
-    "The maximum path length after `ryo:eshell-shorten-path-name'."
-    :type 'integer
-    :group 'ryo:eshell)
-  
-  ;; custom faces
-  (defface ryo:eshell-emoji-normal-face
-    '((t :background "gold" :foreground "black"))
-    "Eshell normal emoji prompt face."
-    :group 'ryo:eshell)
-  
-  (defface ryo:eshell-emoji-error-face
-    '((t :background "red" :foreground "white"))
-    "Eshell error emoji prompt face."
-    :group 'ryo:eshell)
-  
-  (defface ryo:eshell-remote-face
-    '((t :foreground "red"))
-    "Eshell remote face."
-    :group 'ryo:eshell)
-  
-  (defface ryo:eshell-path-face
-    '((t :foreground "dim gray"))
-    "Eshell path face."
-    :group 'ryo:eshell)
-  
-  (defface ryo:eshell-git-branch-face
-    '((t :foreground "gray"))
-    "Eshell git branch face."
-    :group 'ryo:eshell)
-  
-  (defface ryo:eshell-prompt-face
-    '((t :foreground "gold"))
-    "Eshell prompt face."
-    :group 'ryo:eshell)
-  
-  ;; custom functions
-  (defun ryo:eshell-remote-p ()
-    "Check if work remotely."
-    (tramp-tramp-file-p default-directory))
-  
-  (defun ryo:eshell-git-branch ()
-    "Return current git branch, if no, return `nil'."
-    (let ((branch (car (vc-git-branches))))
-      (if branch branch nil)))
-  
-  (defun ryo:eshell-shorten-path-name (path-name)
-    "Try to make the `path-name' shorten than 
-  `ryo:eshell-path-name-shorten-trigger-length'. "
-    (let* ((path (split-string path-name "/"))
-           (cnt  (1- (length path)))
-           (len  (length path-name)))
-      (string-join
-       (cl-loop for rest = path then (cdr rest)
-                for elem = (car rest)
-                for i below cnt
-                for name = (string-join
-                            (mapcar (lambda (s) (substring s 0 1))
-                                    (string-split elem "[-_\\. ]+" t))) 
-                while (> len ryo:eshell-path-name-shorten-trigger-length)
-                do (setf len (- len (length name)))
-                collect name into shortened
-                finally (return (append shortened rest)))
-       "/")))
-  
-  (defun ryo:eshell-path ()
-    "Return path of current working directory. 
-  If the length of path name is longer `ryo:eshell-path-name-shorten-trigger-length',
-  try to shorten the path name; and if the shortened path name is still longer than
-  `ryo:eshell-path-name-maximum-length', try to cutoff the path name directly."
-    (let ((path-name (abbreviate-file-name (eshell/pwd))))
-      (if (length> path-name ryo:eshell-path-name-shorten-trigger-length)
-          (let ((shortened (ryo:eshell-shorten-path-name path-name)))
-            (if (length> shortened ryo:eshell-path-name-maximum-length)
-                (concat "..."
-                        (substring path-name
-                                   (- (length shortened)
-                                      ryo:eshell-path-name-maximum-length)
-                                   (1- (length shortened))))
-              shortened))
-        path-name)))
-  
-  (defun ryo:luck-in (&optional posibility limit)
-    "Return `t' or `nil' at `possibility' chance."
-    (let ((p (or posibility 0.5))
-          (lim (or limit 100)))
-      (if (< (/ (random lim) (float lim)) p) t nil)))
-  
-  (defun ryo:pick (lst)
-    "Pick random element from `lst'."
-    (cl-loop for elem in lst
-             for count from (length lst) downto 1
-             if (ryo:luck-in (/ 1.0 count)) return elem))
-  
-  (defmacro ryo:with-face (string face)
-    "Bind `string' with `face'."
-    `(propertize ,string 'face ,face))
-  
-  (defun eshell-previous-matching-input-from-input (arg)
-    "Search backwards through input history for match for current input.
-  \(Previous history elements are earlier commands.)
-  With prefix argument N, search for Nth previous match.
-  If N is negative, search forwards for the -Nth following match.
-  
-  This is a patch for `eshell-previous-matching-input-from-input' which fails
-  to match if you're using custom prompt that change every time."
-    (interactive "p")
-    (if (not (memq last-command '(eshell-previous-matching-input-from-input
-          eshell-next-matching-input-from-input)))
-        ;; Starting a new search
-        (setq eshell-matching-input-from-input-string
-        (buffer-substring (save-excursion (eshell-bol) (point))
-              (point))
-        eshell-history-index nil))
-    (eshell-previous-matching-input
-     (concat eshell-prompt-regexp
-             (regexp-quote
-              (replace-regexp-in-string
-               eshell-prompt-regexp ""
-               eshell-matching-input-from-input-string)))
-     arg))
-  
-  (defun ryo:eshell-emoji-prompt ()
-    "Eshell emoji prompt."
-    (setf eshell-prompt-regexp "^[^#>]* [#>] ")
-    (concat
-     ;; first line: remote path git
-     (when (ryo:eshell-remote-p)
-       (concat (ryo:with-face (ryo:pick ryo:eshell-remote-emoji-sets)
-                              'ryo:eshell-remote-face)
-               " "))
-     (ryo:with-face (ryo:eshell-path) 'ryo:eshell-path-face)
-     (let ((branch (ryo:eshell-git-branch)))
-       (when branch
-         (concat " " (ryo:with-face branch 'ryo:eshell-git-branch-face))))
-     "\n"
-  
-     ;; second line: status-emoji prompt
-     (if (zerop eshell-last-command-status)
-         (ryo:with-face (ryo:pick ryo:eshell-normal-emoji-sets)
-                        'ryo:eshell-emoji-normal-face)
-       (ryo:with-face (ryo:pick ryo:eshell-error-emoji-sets)
-                      'ryo:eshell-emoji-error-face))
-  
-     (ryo:with-face (if (= (user-uid) 0) " #" " >") 'ryo:eshell-prompt-face)
-     " "))
   (setf eshell-prompt-function #'ryo:eshell-emoji-prompt))
 
 (use-package dirvish
@@ -424,11 +240,10 @@
   :load-path "jupyter")
 
 (use-package code-cells
-  :config
-  (setq code-cells-convert-ipynb-style
-        '(("pandoc" "--to" "ipynb" "--from" "org")
-          ("pandoc" "--to" "org" "--from" "ipynb")
-          (lambda () #'org-mode))))
+  :custom ((code-cells-convert-ipynb-style
+            '(("pandoc" "--to" "ipynb" "--from" "org")
+              ("pandoc" "--to" "org" "--from" "ipynb")
+              (lambda () #'org-mode)))))
 
 (setf python-indent-guess-indent-offset nil)
 
@@ -624,20 +439,19 @@ Examples: endmodule // module_name             → endmodule : module_name
 
 (use-package ox-pandoc)
 
-(use-package ox-reveal
-  :config
-  (setq-default org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"))
-
 (use-package org-appear
   :hook ((org-mode . org-appear-mode))
-  :config
-  (setf org-hide-emphasis-markers t
-        org-appear-autolinks      nil
-        org-pretty-entities       t
-        org-appear-autoentities   t
-        org-hidden-keywords       t
-        org-appear-autokeywords   t
-        org-appear-inside-latex   t))
+  :custom ((org-hide-emphasis-markers t)
+           (org-appear-autolinks      nil)
+           (org-pretty-entities       t)
+           (org-appear-autoentities   t)
+           (org-hidden-keywords       t)
+           (org-appear-autokeywords   t)
+           (org-appear-inside-latex   t)))
+
+(use-package olivetti
+  :custom ((olivetti-body-width   82)
+           (olivetti-margin-width 0)))
 
 (use-package markdown-mode
   :config
