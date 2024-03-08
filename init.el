@@ -136,7 +136,7 @@
                                                  "Current Buffer"
                                                  "Find File"
                                                  "Elisp Symbol")))
-  :cofig
+  :config
   ;; Note: change how the posframe is shown
   (defun blink-search-posframe-show (buffer)
     (let* ((posframe-height (round (* (frame-height) blink-search-posframe-height-ratio)))
