@@ -399,6 +399,7 @@ Examples: endmodule // module_name             → endmodule : module_name
 (use-package pix2tex-el
   :load-path "pix2tex-el"
   :config
+  (setf pix2tex-el-python-path "python3.11")
   (defun ryo:turn-on-pix2tex-el-in-org-mode ()
     (local-set-key (kbd "C-c l") #'pix2tex-el-insert)
     (add-hook 'pix2tex-el-insert-hook #'org-latex-preview 0 nil))
