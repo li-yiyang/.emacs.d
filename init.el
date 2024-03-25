@@ -211,8 +211,9 @@
 
 (use-package lsp-bridge
   :load-path "lsp-bridge"
+  :custom ((lsp-bridge-enable-org-babel t)
+           (lsp-bridge-enable-hover-diagnostic t))
   :config
-  (setf lsp-bridge-enable-org-babel t)
 
   ;; acm key binding
   (define-key acm-mode-map [tab] nil)
