@@ -26,6 +26,10 @@
   (when (eq system-type 'darwin)
     ;; font scale and fonts
     (cond
+     ((find-font (font-spec :family "Unifont"))
+      (set-face-attribute 'default nil
+                          :font "Unifont"
+                          :height 160))
      ((find-font (font-spec :family "Sarasa Term SC"))
       (set-face-attribute 'default nil
                            :family "Sarasa Term SC"
