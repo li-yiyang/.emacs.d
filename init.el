@@ -178,8 +178,11 @@
   (setf inferior-lisp-program '("sbcl" "--dynamic-space-size" "4GB"))
 
   ;; add sly-mrepl hook for C-return
-  (add-hook 'sly-mrepl-hook
-            (lambda () (local-set-key (kbd "C-<return>") #'sly-mrepl-return))))
+  (add-hook
+   'sly-mrepl-mode-hook
+   #'(lambda ()
+       (define-key sly-mrepl-mode-map (kbd "RET") nil)
+       (define-key sly-mrepl-mode-map (kbd "C-<return>") #'sly-mrepl-return))))
 
 (use-package sly-quicklisp
   :after '(sly)
