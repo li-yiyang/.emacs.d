@@ -443,12 +443,12 @@ Examples: endmodule // module_name             → endmodule : module_name
 
 (use-package org-appear
   :hook ((org-mode . org-appear-mode))
-  :custom ((org-hide-emphasis-markers t)
-           (org-appear-autolinks      nil)
-           (org-pretty-entities       t)
-           (org-appear-autoentities   t)
-           (org-hidden-keywords       t)
-           (org-appear-autokeywords   t)))
+  :config
+  (setf org-hide-emphasis-markers t
+        org-appear-autolinks      nil
+        org-pretty-entities       t
+        org-appear-autoentities   t
+        org-appear-autokeywords   t))
 
 (use-package olivetti
   :custom ((olivetti-body-width   82)
