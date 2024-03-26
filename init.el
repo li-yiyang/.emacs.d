@@ -135,11 +135,7 @@
   :custom ((blink-search-enable-posframe       t)
            (blink-search-posframe-standalone   nil)
            (blink-search-posframe-width-ratio  0.8)
-           (blink-search-posframe-height-ratio 0.6)
-           (blink-search-search-backends       '("Buffer List"
-                                                 "Current Buffer"
-                                                 "Find File"
-                                                 "Elisp Symbol")))
+           (blink-search-posframe-height-ratio 0.6))
   :config
   ;; Note: change how the posframe is shown
   (defun blink-search-posframe-show (buffer)
@@ -320,6 +316,24 @@ Examples: endmodule // module_name             → endmodule : module_name
   (when (eq system-type 'darwin)
     (setf lsp-sourcekit-executable
           (string-trim (shell-command-to-string "xcrun --find sourcekit-lsp")))))
+
+(use-package sis
+  :config
+  ;; For MacOS
+  (when (eq system-type 'darwin)
+    (sis-ism-lazyman-config
+     ;; English input source
+     "com.apple.keylayout.ABC"
+     ;; Chinese input
+     "com.apple.inputmethod.SCIM.ITABC"))
+
+  ;; enable the /respect/ mode
+  (sis-global-respect-mode t)
+  ;; enable the /context/ mode for all buffers
+  (sis-global-context-mode t)
+  ;; enable the /inline english/ mode for all buffers
+  (sis-global-inline-mode t)
+  )
 
 (use-package org
   :config

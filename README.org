@@ -200,11 +200,7 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
     :custom ((blink-search-enable-posframe       t)
              (blink-search-posframe-standalone   nil)
              (blink-search-posframe-width-ratio  0.8)
-             (blink-search-posframe-height-ratio 0.6)
-             (blink-search-search-backends       '("Buffer List"
-                                                   "Current Buffer"
-                                                   "Find File"
-                                                   "Elisp Symbol")))
+             (blink-search-posframe-height-ratio 0.6))
     :config
     ;; Note: change how the posframe is shown
     (defun blink-search-posframe-show (buffer)
@@ -465,6 +461,28 @@ homework things (balabala).
 #+end_src
 
 ** For Editing Documents
+*** Smart Input Sources
+#+name: sis
+#+begin_src elisp
+  (use-package sis
+    :config
+    ;; For MacOS
+    (when (eq system-type 'darwin)
+      (sis-ism-lazyman-config
+       ;; English input source
+       "com.apple.keylayout.ABC"
+       ;; Chinese input
+       "com.apple.inputmethod.SCIM.ITABC"))
+
+    ;; enable the /respect/ mode
+    (sis-global-respect-mode t)
+    ;; enable the /context/ mode for all buffers
+    (sis-global-context-mode t)
+    ;; enable the /inline english/ mode for all buffers
+    (sis-global-inline-mode t)
+    )
+#+end_src
+
 *** Markup Lanugages
 **** Org-Mode
 ***** Basic Org-Mode
