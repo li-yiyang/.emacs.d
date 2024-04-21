@@ -78,7 +78,7 @@
 ;; All backups shall be stored into `backups' folder
 (setf backup-directory-alist `((".*" . ,ryo:backups-dir)))
 
-(load-file "pre-custom.el")
+(load-file (expand-file-name "pre-custom.el" user-emacs-directory))
 
 (require 'package)
 (package-initialize)
@@ -487,4 +487,7 @@ Examples: endmodule // module_name             → endmodule : module_name
   :config
   (setf doc-view-resolution 400))
 
-(load-file "custom.el")
+(load-file (expand-file-name "custom.el" user-emacs-directory))
+
+(provide 'init)
+;; init.el ends here

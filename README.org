@@ -120,7 +120,7 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
 * Pre-Custom
 #+name: pre-custom
 #+begin_src elisp
-  (load-file "pre-custom.el")
+  (load-file (expand-file-name "pre-custom.el" user-emacs-directory))
 #+end_src
 
 * Packages
@@ -715,5 +715,12 @@ Using pix2tex as LaTeX math equation OCR backend:
 * Custom
 #+name: custom
 #+begin_src elisp
-  (load-file "custom.el")
+  (load-file (expand-file-name "custom.el" user-emacs-directory))
+#+end_src
+
+* End Of Init File
+#+name: eof
+#+begin_src elisp
+  (provide 'init)
+  ;; init.el ends here
 #+end_src
