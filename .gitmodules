@@ -61,3 +61,6 @@
 [submodule "gnuplot"]
 	path = gnuplot
 	url = https://github.com/emacs-gnuplot/gnuplot.git
+[submodule "gnu-apl-mode"]
+	path = gnu-apl-mode
+	url = https://github.com/lokedhs/gnu-apl-mode.git

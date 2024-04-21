@@ -12,3 +12,5 @@ blink-search.db
 recentf
 var
 /tmp/
+/pre-custom.el
+/custom.el

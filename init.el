@@ -263,9 +263,6 @@
 (use-package company-posframe
   :hook (((company-mode) . company-posframe-mode)))
 
-(use-package anaphora
-  :load-path "anaphora")
-
 (use-package gnu-apl-mode
   :load-path "gnu-apl-mode"
   :config
@@ -289,29 +286,6 @@
   (defvar org-babel-default-header-args:gnu-apl
     '((:results . "table") (:exports . "results"))
     "Default arguments to use when evaluating a GNU APL source block. "))
-
-(use-package jpt-apl-mode
-  :load-path "apl-mode"
-  :config
-  (defun ryo:april-help ()
-    "Print a helper table for inserting with jpt-apl-mode. "
-    (interactive)
-    (with-current-buffer (get-buffer-create "*APRIL Table*")
-      (tabulated-list-mode)
-      (setq tabulated-list-format
-            '[("APL"  5 nil)
-              ("CHAR" 10 nil)
-              ("NAME" 20 nil)])
-      (tabulated-list-init-header)
-      (setq tabulated-list-entries
-            (cl-loop for (apl name . chars) in jpt-apl-data
-                     collect (list nil
-                                   (vector (string apl)
-                                           (apply #'string chars)
-                                           name))))
-      (setq tabulated-list-padding 2)
-      (tabulated-list-print t)
-      (switch-to-buffer "*APRIL Table*"))))
 
 (use-package lsp-bridge
   :load-path "lsp-bridge"
