@@ -13,3 +13,51 @@
 [submodule "emojishell"]
 	path = emojishell
 	url = https://github.com/li-yiyang/emojishell.git
+[submodule "org-mode"]
+	path = org-mode
+	url = https://code.tecosaur.net/tec/org-mode.git
+[submodule "yasnippet"]
+	path = yasnippet
+	url = https://github.com/joaotavora/yasnippet.git
+[submodule "puni"]
+	path = puni
+	url = https://github.com/AmaiKinono/puni.git
+[submodule "atomic-chrome"]
+	path = atomic-chrome
+	url = https://github.com/alpha22jp/atomic-chrome.git
+[submodule "magit"]
+	path = magit
+	url = https://github.com/magit/magit.git
+[submodule "dirvish"]
+	path = dirvish
+	url = https://github.com/alexluigit/dirvish.git
+[submodule "sly"]
+	path = sly
+	url = https://github.com/joaotavora/sly.git
+[submodule "emacs-smart-input-source"]
+	path = emacs-smart-input-source
+	url = https://github.com/laishulu/emacs-smart-input-source.git
+[submodule "cdlatex"]
+	path = cdlatex
+	url = https://github.com/cdominik/cdlatex.git
+[submodule "auctex"]
+	path = auctex
+	url = https://github.com/emacsmirror/auctex.git
+[submodule "ebib"]
+	path = ebib
+	url = https://github.com/joostkremers/ebib.git
+[submodule "ox-pandoc"]
+	path = ox-pandoc
+	url = https://github.com/kawabata/ox-pandoc.git
+[submodule "org-appear"]
+	path = org-appear
+	url = https://github.com/awth13/org-appear.git
+[submodule "markdown-mode"]
+	path = markdown-mode
+	url = https://github.com/jrblevin/markdown-mode.git
+[submodule "separedit"]
+	path = separedit
+	url = https://github.com/twlz0ne/separedit.el.git
+[submodule "gnuplot"]
+	path = gnuplot
+	url = https://github.com/emacs-gnuplot/gnuplot.git

@@ -78,14 +78,10 @@
 ;; All backups shall be stored into `backups' folder
 (setf backup-directory-alist `((".*" . ,ryo:backups-dir)))
 
+(load-file "pre-custom.el")
+
 (require 'package)
 (package-initialize)
-
-;; Use emacs-china mirror for better connection
-(setq package-archives '(("gnu"    . "http://1.15.88.122/gnu/")
-                         ("melpa"  . "http://1.15.88.122/melpa/")
-                         ("nongnu" . "http://1.15.88.122/nongnu/")
-                         ("org"    . "http://1.15.88.122/org/")))
 
 ;; not refresh every time for quicker start up time
 ;; (package-refresh-contents)
@@ -99,7 +95,80 @@
 ;; Always ensure the package
 (setq use-package-always-ensure t)
 
+;; Note: this is a dirty patch to use enhanced latex preview org mode
+;; I should change this in the future, but this did make the org mode
+;; load before emacs org. 
+(use-package org
+  :load-path "org-mode/lisp"
+  :config
+  ;; org-mode and babel
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (lisp       . t)     
+     (dot        . t)
+     (C          . t)
+     (python     . t)    
+     (shell      . t)
+     (gnuplot    . t)))
+  
+  ;; auto display image after babel eval
+  (defun ryo:org-babel-display-image-after-eval ()
+    "Switch on auto image display after babel eval."
+    (interactive)
+    (add-hook 'org-babel-after-execute-hook #'org-display-inline-images))
+  
+  (defun ryo:org-babel-no-display-image-after-eval ()
+    "Swtich off auto image display after babel eval."
+    (interactive)
+    (remove-hook 'org-babel-after-execute-hook #'org-display-inline-images))
+  
+  (ryo:org-babel-display-image-after-eval) ; default on
+  ;; org-mode and image preview
+  (setf org-image-actual-width nil)
+  
+  ;; org-mode and latex preview
+  ;; org pretty symbol for raw input
+  (setf org-pretty-entities t
+        org-pretty-entities-include-sub-superscripts nil)
+  
+  ;; Use dvisvgm for SVG preview
+  (setf org-preview-latex-default-process 'dvisvgm)  
+  
+  ;; Pretty symbol for org-mode
+  (defvar ryo:org-prettify-symbols-alist
+    '(("\\begin"  . ?▼)
+      ("\\end"    . ?▲)
+      ("\\mapsto" . ?↦)
+      ("\\frac"   . ?𝐟)
+      ("\\sqrt"   . ?√)
+      ("\\updownarrow" . ?↕)
+      ("\\boldsymbol" . ?𝐛)
+      ("\\mathrm" . ?𝐫)
+      ("\\mathcal" . ?𝐜)))
+  
+  (defun ryo:setup-org-pretty-symbol-mode ()
+    (setq-local prettify-symbols-alist
+                (append prettify-symbols-alist
+                        ryo:org-prettify-symbols-alist))
+    (prettify-symbols-mode t))
+  
+  (add-hook 'org-mode-hook #'ryo:setup-org-pretty-symbol-mode)
+  ;; set default latex compiler to xelatex
+  (setf org-latex-compiler "xelatex")
+  
+  ;; add xeCJK for Chinese support
+  (add-to-list 'org-latex-packages-alist
+               '("" "xeCJK" t ("xelatex")))
+  
+  ;; org-mode latex-preview enable
+  (plist-put (cdr (assoc 'dvisvgm org-latex-preview-process-alist))
+             :image-converter
+             '("dvisvgm --page=1- --optimize --clipjoin --relative --no-fonts --bbox=preview -o %B-%%9p.svg %f"))
+  )
+
 (use-package yasnippet
+  :load-path "yasnippet"
   :config
   (defvar ryo:yas-snippet-path
     (expand-file-name "snippets" user-emacs-directory)
@@ -121,10 +190,12 @@
 (electric-pair-mode 1)
 
 (use-package puni
+  :load-path "puni"
   :config
   (puni-global-mode))
 
 (use-package atomic-chrome
+  :load-path "atomic-chrome"
   :config
   (atomic-chrome-start-server)
   (setf atomic-chrome-default-major-mode 'markdown-mode))
@@ -154,9 +225,8 @@
               :accept-focus (equal buffer blink-search-input-buffer)
               )))))
 
-(use-package magit)
-
-(use-package tramp)
+(use-package magit
+  :load-path "magit")
 
 (use-package emojishell
   :load-path "emojishell"
@@ -164,10 +234,12 @@
   (setf eshell-prompt-function #'emojishell-emoji-prompt))
 
 (use-package dirvish
+  :load-path "dirvish"
   :config
   (dirvish-override-dired-mode))
 
 (use-package sly
+  :load-path "sly"
   :config
   (require 'sly-autoloads)
 
@@ -184,16 +256,6 @@
        (define-key sly-mrepl-mode-map (kbd "RET") nil)
        (define-key sly-mrepl-mode-map (kbd "C-<return>") #'sly-mrepl-return))))
 
-(use-package sly-quicklisp
-  :after '(sly)
-  :config
-  (add-to-list 'sly-contribs 'sly-quicklisp 'append))
-
-(use-package sly-asdf
-  :after '(sly)
-  :config
-  (add-to-list 'sly-contribs 'sly-asdf 'append))
-
 (use-package company
   :hook (((lisp-mode sly-mrepl-mode) . company-mode)))
 
@@ -201,16 +263,55 @@
 (use-package company-posframe
   :hook (((company-mode) . company-posframe-mode)))
 
-(use-package irony
-  :hook (((c++-mode c-mode) . irony-mode)
-         ((c++-mode c-mode) . lsp)))
+(use-package anaphora
+  :load-path "anaphora")
 
-(use-package flycheck-irony
-  :after (irony))
+(use-package gnu-apl-mode
+  :load-path "gnu-apl-mode"
+  :config
+  (let ((last-output ""))
+    (defun org-babel-gnu-apl-capture-output (raw-output)
+      (setf last-output (car (string-split raw-output ""))))
+    (defun org-babel-execute:gnu-apl (body params)
+      (with-temp-buffer
+        (gnu-apl-mode)
+        (insert body)
+        (gnu-apl-interactive-send-string body)
+        (gnu-apl-interactive-send-string "⊣⍬\n")
+        (mapcar #'split-string (string-split last-output "\n")))))  
 
-(use-package irony-eldoc
-  :hook ((irony-mode . irony-eldoc))
-  :after (irony))
+  (add-hook 'gnu-apl-interactive-mode-hook
+            (lambda ()
+              (add-hook 'comint-output-filter-functions
+                        'org-babel-gnu-apl-capture-output
+                        nil 'local)))
+
+  (defvar org-babel-default-header-args:gnu-apl
+    '((:results . "table") (:exports . "results"))
+    "Default arguments to use when evaluating a GNU APL source block. "))
+
+(use-package jpt-apl-mode
+  :load-path "apl-mode"
+  :config
+  (defun ryo:april-help ()
+    "Print a helper table for inserting with jpt-apl-mode. "
+    (interactive)
+    (with-current-buffer (get-buffer-create "*APRIL Table*")
+      (tabulated-list-mode)
+      (setq tabulated-list-format
+            '[("APL"  5 nil)
+              ("CHAR" 10 nil)
+              ("NAME" 20 nil)])
+      (tabulated-list-init-header)
+      (setq tabulated-list-entries
+            (cl-loop for (apl name . chars) in jpt-apl-data
+                     collect (list nil
+                                   (vector (string apl)
+                                           (apply #'string chars)
+                                           name))))
+      (setq tabulated-list-padding 2)
+      (tabulated-list-print t)
+      (switch-to-buffer "*APRIL Table*"))))
 
 (use-package lsp-bridge
   :load-path "lsp-bridge"
@@ -224,37 +325,13 @@
 
   (global-lsp-bridge-mode))
 
-(use-package inf-ruby
-  :hook ((ruby-mode . inf-ruby-minor-mode)
-         (ruby-mode . lsp)))
-
-(use-package rvm)
-
 ;; Ensure Python Command
 (setf org-babel-python-command
       (cond ((executable-find "python3") "python3")
             ((executable-find "python2") "python2")
             (t "python")))
 
-;; emacs-jupyter manual installation
-(use-package simple-httpd)
-
-(use-package zmq)
-
-(use-package jupyter
-  :load-path "jupyter")
-
-(use-package code-cells
-  :custom ((code-cells-convert-ipynb-style
-            '(("pandoc" "--to" "ipynb" "--from" "org")
-              ("pandoc" "--to" "org" "--from" "ipynb")
-              (lambda () #'org-mode)))))
-
 (setf python-indent-guess-indent-offset nil)
-
-(use-package cern-root-mode
-  :config
-  (setf cern-root-filepath (executable-find "root")))
 
 (use-package verilog-mode)
 
@@ -307,17 +384,8 @@ Examples: endmodule // module_name             → endmodule : module_name
 
   (verilog-ext-mode-setup))
 
-(use-package swift-mode
-  :hook ((swift-mode . lsp)))
-
-(use-package lsp-sourcekit
-  :after (lsp-mode)
-  :config
-  (when (eq system-type 'darwin)
-    (setf lsp-sourcekit-executable
-          (string-trim (shell-command-to-string "xcrun --find sourcekit-lsp")))))
-
 (use-package sis
+  :load-path "emacs-smart-input-source"
   :config
   ;; For MacOS
   (when (eq system-type 'darwin)
@@ -333,80 +401,13 @@ Examples: endmodule // module_name             → endmodule : module_name
   (sis-global-context-mode t)
   ;; enable the /inline english/ mode for all buffers
   (sis-global-inline-mode t)
-  )
 
-(use-package org
-  :config
-  ;; org-mode and babel
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (lisp       . t)
-     (org        . t)
-     (dot        . t)
-     (C          . t)
-     (python     . t)
-     (ruby       . t)
-     (shell      . t)
-     (gnuplot    . t)
-     (jupyter    . t)))
-  
-  ;; emacs-jupyter patch
-  ;; (org-babel-jupyter-override-src-block "python")
-  
-  ;; auto display image after babel eval
-  (defun ryo:org-babel-display-image-after-eval ()
-    "Switch on auto image display after babel eval."
-    (interactive)
-    (add-hook 'org-babel-after-execute-hook #'org-display-inline-images))
-  
-  (defun ryo:org-babel-no-display-image-after-eval ()
-    "Swtich off auto image display after babel eval."
-    (interactive)
-    (remove-hook 'org-babel-after-execute-hook #'org-display-inline-images))
-  
-  (ryo:org-babel-display-image-after-eval) ; default on
-  ;; org-mode and image preview
-  (setf org-image-actual-width nil)
-  
-  ;; org-mode and latex preview
-  ;; org pretty symbol for raw input
-  (setf org-pretty-entities t
-        org-pretty-entities-include-sub-superscripts nil)
-  
-  ;; Use dvisvgm for SVG preview
-  (setf org-preview-latex-default-process 'dvisvgm)
-  (setf (plist-get org-format-latex-options :scale) 1.6)
-  
-  ;; Pretty symbol for org-mode
-  (defvar ryo:org-prettify-symbols-alist
-    '(("\\begin"  . ?▼)
-      ("\\end"    . ?▲)
-      ("\\mapsto" . ?↦)
-      ("\\frac"   . ?𝐟)
-      ("\\sqrt"   . ?√)
-      ("\\updownarrow" . ?↕)
-      ("\\boldsymbol" . ?𝐛)
-      ("\\mathrm" . ?𝐫)
-      ("\\mathcal" . ?𝐜)))
-  
-  (defun ryo:setup-org-pretty-symbol-mode ()
-    (setq-local prettify-symbols-alist
-                (append prettify-symbols-alist
-                        ryo:org-prettify-symbols-alist))
-    (prettify-symbols-mode t))
-  
-  (add-hook 'org-mode-hook #'ryo:setup-org-pretty-symbol-mode)
-  ;; set default latex compiler to xelatex
-  (setf org-latex-compiler "xelatex")
-  
-  ;; add xeCJK for Chinese support
-  (add-to-list 'org-latex-packages-alist
-               '("" "xeCJK" t ("xelatex")))
+  (set-face-foreground 'sis-inline-face "gray60")
   )
 
 ;;; Use CDLaTeX for quick LaTeX equation input
 (use-package cdlatex
+  :load-path "cdlatex"
   :hook ((org-mode . turn-on-org-cdlatex))
   :config
   (setf cdlatex-math-modify-alist
@@ -414,6 +415,7 @@ Examples: endmodule // module_name             → endmodule : module_name
 
 ;;; AUCTeX
 (use-package tex
+  :load-path "auctex"
   :ensure auctex)
 
 (use-package epc)
@@ -428,6 +430,7 @@ Examples: endmodule // module_name             → endmodule : module_name
   (add-hook 'org-mode-hook #'ryo:turn-on-pix2tex-el-in-org-mode))
 
 (use-package ebib
+  :load-path "ebib"
   :bind ("C-c e" . ebib)
   :config
   ;; support for ebib link
@@ -446,24 +449,12 @@ Examples: endmodule // module_name             → endmodule : module_name
   (setf (cdr (assoc 'org-mode ebib-citation-commands))
         '((("ebib" "[[ebib:%K]]")))))
 
-(use-package biblio
-  :config
-  (require 'ebib-biblio))
-
-;;; Note: in my machine, org-ref will arise signature failure
-(setf package-check-signature nil)
-
-(use-package org-ref)
-
-(use-package separedit
-  :bind (:map prog-mode-map
-              ("C-c '" . separedit))
-  :config
-  (setq separedit-default-mode 'text-mode))
-
-(use-package ox-pandoc)
+(use-package ox-pandoc
+  :load-path "ox-pandoc")
 
 (use-package org-appear
+  :load-path "org-appear"
+  :after org
   :hook ((org-mode . org-appear-mode))
   :config
   (setf org-hide-emphasis-markers t
@@ -472,11 +463,8 @@ Examples: endmodule // module_name             → endmodule : module_name
         org-appear-autoentities   t
         org-appear-autokeywords   t))
 
-(use-package olivetti
-  :custom ((olivetti-body-width   82)
-           (olivetti-margin-width 0)))
-
 (use-package markdown-mode
+  :load-path "markdown-mode"
   :config
   ;; hide markups symbols and urls for better lookings
   (setq-default markdown-hide-markup t
@@ -485,16 +473,18 @@ Examples: endmodule // module_name             → endmodule : module_name
   ;; show code colorized
   (setq-default markdown-fontify-code-blocks-natively t))
 
-(use-package markdown-toc
-  :after (markdown-mode)
+(use-package separedit
+  :load-path "separedit"
+  :bind (:map prog-mode-map
+              ("C-c '" . separedit))
   :config
-  (defun ryo:add-markdown-toc-hook-before-save ()
-    "Add locally hook for `before-save-hook'."
-    (add-hook 'before-save-hook #'markdown-toc-generate-or-refresh-toc 0 'local))
-  (add-hook 'markdown-mode-hook #'ryo:add-markdown-toc-hook-before-save))
+  (setq separedit-default-mode 'text-mode))
 
-(use-package gnuplot)
+(use-package gnuplot
+  :load-path "gnuplot")
 
 (use-package doc-view
   :config
   (setf doc-view-resolution 400))
+
+(load-file "custom.el")

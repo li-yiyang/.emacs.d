@@ -117,17 +117,17 @@
 
 Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
 
+* Pre-Custom
+#+name: pre-custom
+#+begin_src elisp
+  (load-file "pre-custom.el")
+#+end_src
+
 * Packages
 #+name: init-packages
 #+begin_src elisp
   (require 'package)
   (package-initialize)
-
-  ;; Use emacs-china mirror for better connection
-  (setq package-archives '(("gnu"    . "http://1.15.88.122/gnu/")
-                           ("melpa"  . "http://1.15.88.122/melpa/")
-                           ("nongnu" . "http://1.15.88.122/nongnu/")
-                           ("org"    . "http://1.15.88.122/org/")))
 
   ;; not refresh every time for quicker start up time
   ;; (package-refresh-contents)
@@ -142,11 +142,25 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
   (setq use-package-always-ensure t)
 #+end_src
 
-** Complete
-*** Complete via Yasnippet
+#+name: org-mode
+#+begin_src elisp :noweb yes
+  ;; Note: this is a dirty patch to use enhanced latex preview org mode
+  ;; I should change this in the future, but this did make the org mode
+  ;; load before emacs org. 
+  (use-package org
+    :load-path "org-mode/lisp"
+    :config
+    <<ryo:org-babel>>
+    <<ryo:org-preview>>
+    <<ryo:org-latex-config>>
+    )
+#+end_src
+
+** Yasnippet
 #+name: yasnippet
 #+begin_src elisp
   (use-package yasnippet
+    :load-path "yasnippet"
     :config
     (defvar ryo:yas-snippet-path
       (expand-file-name "snippets" user-emacs-directory)
@@ -162,11 +176,11 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
     (setq yas-snippet-dirs
           (list ryo:yas-snippet-path
                 ryo:yas-snippet-path-local-only))
-  
+
     (yas-global-mode 1))
 #+end_src
 
-** Editing Feals
+** Editing
 *** Autopair
 #+name: autopair-pars
 #+begin_src elisp
@@ -177,6 +191,7 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
 #+name: puni
 #+begin_src elisp
   (use-package puni
+    :load-path "puni"
     :config
     (puni-global-mode))
 #+end_src
@@ -185,6 +200,7 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
 #+name: atomic-chrome
 #+begin_src elisp
   (use-package atomic-chrome
+    :load-path "atomic-chrome"
     :config
     (atomic-chrome-start-server)
     (setf atomic-chrome-default-major-mode 'markdown-mode))
@@ -223,13 +239,8 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
 *** Magit
 #+name: magit
 #+begin_src elisp
-  (use-package magit)
-#+end_src
-
-*** Tramp
-#+name: tramp
-#+begin_src elisp
-  (use-package tramp)
+  (use-package magit
+    :load-path "magit")
 #+end_src
 
 *** Emojishell
@@ -245,6 +256,7 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
 #+name: dirvish
 #+begin_src elisp
   (use-package dirvish
+    :load-path "dirvish"
     :config
     (dirvish-override-dired-mode))
 #+end_src
@@ -254,6 +266,7 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
 #+name: lisp-sly
 #+begin_src elisp
   (use-package sly
+    :load-path "sly"
     :config
     (require 'sly-autoloads)
 
@@ -269,16 +282,6 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
      #'(lambda ()
          (define-key sly-mrepl-mode-map (kbd "RET") nil)
          (define-key sly-mrepl-mode-map (kbd "C-<return>") #'sly-mrepl-return))))
-
-  (use-package sly-quicklisp
-    :after '(sly)
-    :config
-    (add-to-list 'sly-contribs 'sly-quicklisp 'append))
-
-  (use-package sly-asdf
-    :after '(sly)
-    :config
-    (add-to-list 'sly-contribs 'sly-asdf 'append))
 #+end_src
 
 *** Complete Box
@@ -295,7 +298,61 @@ than company-mode.
     :hook (((company-mode) . company-posframe-mode)))
 #+end_src
 
-** C Programming Language
+*** April (APL)
+#+name: april
+#+begin_src elisp
+  (use-package anaphora
+    :load-path "anaphora")
+
+  (use-package gnu-apl-mode
+    :load-path "gnu-apl-mode"
+    :config
+    (let ((last-output ""))
+      (defun org-babel-gnu-apl-capture-output (raw-output)
+        (setf last-output (car (string-split raw-output ""))))
+      (defun org-babel-execute:gnu-apl (body params)
+        (with-temp-buffer
+          (gnu-apl-mode)
+          (insert body)
+          (gnu-apl-interactive-send-string body)
+          (gnu-apl-interactive-send-string "⊣⍬\n")
+          (mapcar #'split-string (string-split last-output "\n")))))  
+
+    (add-hook 'gnu-apl-interactive-mode-hook
+              (lambda ()
+                (add-hook 'comint-output-filter-functions
+                          'org-babel-gnu-apl-capture-output
+                          nil 'local)))
+
+    (defvar org-babel-default-header-args:gnu-apl
+      '((:results . "table") (:exports . "results"))
+      "Default arguments to use when evaluating a GNU APL source block. "))
+
+  (use-package jpt-apl-mode
+    :load-path "apl-mode"
+    :config
+    (defun ryo:april-help ()
+      "Print a helper table for inserting with jpt-apl-mode. "
+      (interactive)
+      (with-current-buffer (get-buffer-create "*APRIL Table*")
+        (tabulated-list-mode)
+        (setq tabulated-list-format
+              '[("APL"  5 nil)
+                ("CHAR" 10 nil)
+                ("NAME" 20 nil)])
+        (tabulated-list-init-header)
+        (setq tabulated-list-entries
+              (cl-loop for (apl name . chars) in jpt-apl-data
+                       collect (list nil
+                                     (vector (string apl)
+                                             (apply #'string chars)
+                                             name))))
+        (setq tabulated-list-padding 2)
+        (tabulated-list-print t)
+        (switch-to-buffer "*APRIL Table*"))))
+#+end_src
+
+** COMMENT C Programming Language
 *** Irony
 #+name: irony
 #+begin_src elisp
@@ -327,16 +384,6 @@ than company-mode.
     (global-lsp-bridge-mode))
 #+end_src
 
-** Ruby
-#+name: ruby
-#+begin_src elisp
-  (use-package inf-ruby
-    :hook ((ruby-mode . inf-ruby-minor-mode)
-           (ruby-mode . lsp)))
-
-  (use-package rvm)
-#+end_src
-
 ** Python
 *** Org-Babel
 #+name: org-babel-python-command
@@ -348,34 +395,6 @@ than company-mode.
               (t "python")))
 #+end_src
 
-*** Jupyter
-Note: though i still like to use org-mode much... but you know,
-homework things (balabala). 
-
-[[https://github.com/emacs-jupyter/jupyter][emacs-jupyter]] is used for interaction with Jupyter kernel. 
-
-#+name: emacs-jupyter
-#+begin_src elisp
-  ;; emacs-jupyter manual installation
-  (use-package simple-httpd)
-
-  (use-package zmq)
-
-  (use-package jupyter
-    :load-path "jupyter")
-#+end_src
-
-#+name: code-cell-mode
-#+begin_src elisp
-  (use-package code-cells
-    :custom ((code-cells-convert-ipynb-style
-              '(("pandoc" "--to" "ipynb" "--from" "org")
-                ("pandoc" "--to" "org" "--from" "ipynb")
-                (lambda () #'org-mode)))))
-#+end_src
-
-*Ref*: [[https://martibosch.github.io/jupyter-emacs-universe/][Jupyter in the Emacs universe]]. 
-
 *** Misc
 #+name: misc-about-python
 #+begin_src elisp
@@ -383,7 +402,7 @@ homework things (balabala).
 #+end_src
 
 ** Other Programming Language
-*** ROOT
+*** COMMENT ROOT
 #+name: root
 #+begin_src elisp
   (use-package cern-root-mode
@@ -446,7 +465,7 @@ homework things (balabala).
     (verilog-ext-mode-setup))
 #+end_src
 
-*** Swift
+*** COMMENT Swift
 #+name: swift
 #+begin_src elisp
   (use-package swift-mode
@@ -465,6 +484,7 @@ homework things (balabala).
 #+name: sis
 #+begin_src elisp
   (use-package sis
+    :load-path "emacs-smart-input-source"
     :config
     ;; For MacOS
     (when (eq system-type 'darwin)
@@ -480,24 +500,14 @@ homework things (balabala).
     (sis-global-context-mode t)
     ;; enable the /inline english/ mode for all buffers
     (sis-global-inline-mode t)
+
+    (set-face-foreground 'sis-inline-face "gray60")
     )
 #+end_src
 
 *** Markup Lanugages
 **** Org-Mode
-***** Basic Org-Mode
-#+name: org-mode
-#+headers: :noweb yes
-#+begin_src elisp
-  (use-package org
-    :config
-    <<ryo:org-babel>>
-    <<ryo:org-preview>>
-    <<ryo:org-latex-config>>
-    )
-#+end_src
-
-****** Org Babel
+***** Org Babel
 #+name: ryo:org-babel
 #+headers: :tangle no
 #+begin_src elisp
@@ -505,18 +515,12 @@ homework things (balabala).
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
-     (lisp       . t)
-     (org        . t)
+     (lisp       . t)     
      (dot        . t)
      (C          . t)
-     (python     . t)
-     (ruby       . t)
+     (python     . t)    
      (shell      . t)
-     (gnuplot    . t)
-     (jupyter    . t)))
-
-  ;; emacs-jupyter patch
-  ;; (org-babel-jupyter-override-src-block "python")
+     (gnuplot    . t)))
 
   ;; auto display image after babel eval
   (defun ryo:org-babel-display-image-after-eval ()
@@ -532,7 +536,7 @@ homework things (balabala).
   (ryo:org-babel-display-image-after-eval) ; default on
 #+end_src
 
-****** Org Preview
+***** Org Preview
 #+name: ryo:org-preview
 #+headers: :tangle no
 #+begin_src elisp
@@ -545,8 +549,7 @@ homework things (balabala).
         org-pretty-entities-include-sub-superscripts nil)
 
   ;; Use dvisvgm for SVG preview
-  (setf org-preview-latex-default-process 'dvisvgm)
-  (setf (plist-get org-format-latex-options :scale) 1.6)
+  (setf org-preview-latex-default-process 'dvisvgm)  
 
   ;; Pretty symbol for org-mode
   (defvar ryo:org-prettify-symbols-alist
@@ -574,6 +577,7 @@ homework things (balabala).
 #+begin_src elisp
   ;;; Use CDLaTeX for quick LaTeX equation input
   (use-package cdlatex
+    :load-path "cdlatex"
     :hook ((org-mode . turn-on-org-cdlatex))
     :config
     (setf cdlatex-math-modify-alist
@@ -584,6 +588,7 @@ homework things (balabala).
 #+begin_src elisp
   ;;; AUCTeX
   (use-package tex
+    :load-path "auctex"
     :ensure auctex)
 #+end_src
 
@@ -596,6 +601,11 @@ homework things (balabala).
   ;; add xeCJK for Chinese support
   (add-to-list 'org-latex-packages-alist
                '("" "xeCJK" t ("xelatex")))
+
+  ;; org-mode latex-preview enable
+  (plist-put (cdr (assoc 'dvisvgm org-latex-preview-process-alist))
+             :image-converter
+             '("dvisvgm --page=1- --optimize --clipjoin --relative --no-fonts --bbox=preview -o %B-%%9p.svg %f"))
 #+end_src
 
 Using pix2tex as LaTeX math equation OCR backend:
@@ -618,6 +628,7 @@ Using pix2tex as LaTeX math equation OCR backend:
 #+name: ebib
 #+begin_src elisp
   (use-package ebib
+    :load-path "ebib"
     :bind ("C-c e" . ebib)
     :config
     ;; support for ebib link
@@ -635,37 +646,21 @@ Using pix2tex as LaTeX math equation OCR backend:
             "%latex -interaction nonstopmode -output-directory %o %f"))
     (setf (cdr (assoc 'org-mode ebib-citation-commands))
           '((("ebib" "[[ebib:%K]]")))))
-
-  (use-package biblio
-    :config
-    (require 'ebib-biblio))
-
-  ;;; Note: in my machine, org-ref will arise signature failure
-  (setf package-check-signature nil)
-
-  (use-package org-ref)
-#+end_src
-
-***** Org-Mode for Separedit
-#+name: separedit-using-org-mode
-#+begin_src elisp
-  (use-package separedit
-    :bind (:map prog-mode-map
-                ("C-c '" . separedit))
-    :config
-    (setq separedit-default-mode 'text-mode))
 #+end_src
 
 ***** Org-Mode and File Export
 #+name: ox-pandoc
 #+begin_src elisp
-  (use-package ox-pandoc)
+  (use-package ox-pandoc
+    :load-path "ox-pandoc")
 #+end_src
 
 ***** Pretty Looking
 #+name: org-appear
 #+begin_src elisp
   (use-package org-appear
+    :load-path "org-appear"
+    :after org
     :hook ((org-mode . org-appear-mode))
     :config
     (setf org-hide-emphasis-markers t
@@ -675,39 +670,37 @@ Using pix2tex as LaTeX math equation OCR backend:
           org-appear-autokeywords   t))
 #+end_src
 
-#+name: olivetti
-#+begin_src elisp
-  (use-package olivetti
-    :custom ((olivetti-body-width   82)
-             (olivetti-margin-width 0)))
-#+end_src
-
 **** Markdown
 #+name: markdown-mode
 #+begin_src elisp
   (use-package markdown-mode
+    :load-path "markdown-mode"
     :config
     ;; hide markups symbols and urls for better lookings
     (setq-default markdown-hide-markup t
                   markdown-hide-urls   t)
-  
-    ;; show code colorized
-    (setq-default markdown-fontify-code-blocks-natively t))
 
-  (use-package markdown-toc
-    :after (markdown-mode)
+    ;; show code colorized
+    (setq-default markdown-fontify-code-blocks-natively t))  
+#+end_src
+
+**** Separedit
+#+name: separedit-using-org-mode
+#+begin_src elisp
+  (use-package separedit
+    :load-path "separedit"
+    :bind (:map prog-mode-map
+                ("C-c '" . separedit))
     :config
-    (defun ryo:add-markdown-toc-hook-before-save ()
-      "Add locally hook for `before-save-hook'."
-      (add-hook 'before-save-hook #'markdown-toc-generate-or-refresh-toc 0 'local))
-    (add-hook 'markdown-mode-hook #'ryo:add-markdown-toc-hook-before-save))
+    (setq separedit-default-mode 'text-mode))
 #+end_src
 
 *** Graphic Lanugages
 **** Gnuplot
 #+name: gnuplot
 #+begin_src elisp
-  (use-package gnuplot)
+  (use-package gnuplot
+    :load-path "gnuplot")
 #+end_src
 
 ** For Reading Documents
@@ -717,4 +710,10 @@ Using pix2tex as LaTeX math equation OCR backend:
   (use-package doc-view
     :config
     (setf doc-view-resolution 400))
+#+end_src
+
+* Custom
+#+name: custom
+#+begin_src elisp
+  (load-file "custom.el")
 #+end_src
