@@ -277,11 +277,16 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
     (setf inferior-lisp-program '("sbcl" "--dynamic-space-size" "4GB"))
 
     ;; add sly-mrepl hook for C-return
-    (add-hook
-     'sly-mrepl-mode-hook
-     #'(lambda ()
-         (define-key sly-mrepl-mode-map (kbd "RET") nil)
-         (define-key sly-mrepl-mode-map (kbd "C-<return>") #'sly-mrepl-return))))
+    (require 'sly-mrepl)
+    (define-key sly-mrepl-mode-map (kbd "RET") nil)
+    (define-key sly-mrepl-mode-map (kbd "C-<return>") #'sly-mrepl-return)
+    (define-key sly-mrepl-mode-map (kbd "S-<return>") #'sly-mrepl-return)
+
+    ;; some help keys
+    (define-key lisp-mode-map (kbd "C-l v") #'sly-describe-symbol)
+    (define-key lisp-mode-map (kbd "C-l f") #'sly-describe-function)
+    (define-key lisp-mode-map (kbd "C-l c") #'sly-who-calls)
+    (define-key lisp-mode-map (kbd "C-l b") #'sly-who-binds))
 #+end_src
 
 *** Complete Box
@@ -454,19 +459,38 @@ than company-mode.
 #+end_src
 
 ** For Editing Documents
-*** Smart Input Sources
+*** Emacs Rime
+#+name: emacs-rime
+#+begin_src elisp
+  (use-package rime
+    :load-path "emacs-rime"
+    :custom (default-input-method "rime")
+    :config
+    (setf rime-user-data-dir  (expand-file-name "rime-ice" user-emacs-directory)
+          rime-show-candidate 'posframe)
+    (setf rime-disable-predicates
+          '(rime-predicate-after-alphabet-char-p
+            rime-predicate-punctuation-after-ascii-p
+            rime-predicate-org-latex-mode-p
+            rime-predicate-prog-in-code-p          
+            rime-predicate-tex-math-or-command-p
+            rime-predicate-space-after-cc-p
+            rime-predicate-in-code-string-p
+            rime-predicate-in-code-string-after-ascii-p))
+    (when (eq system-type 'darwin)
+      (setf rime-librime-root
+            (expand-file-name "librime/dist" user-emacs-directory))
+      (setf rime-emacs-module-header-root
+            "/opt/homebrew/opt/emacs-plus@29/include")))
+#+end_src
+
+*** COMMENT Smart Input Sources
 #+name: sis
 #+begin_src elisp
   (use-package sis
     :load-path "emacs-smart-input-source"
     :config
-    ;; For MacOS
-    (when (eq system-type 'darwin)
-      (sis-ism-lazyman-config
-       ;; English input source
-       "com.apple.keylayout.ABC"
-       ;; Chinese input
-       "com.apple.inputmethod.SCIM.ITABC"))
+    (sis-ism-lazyman-config nil "rime" 'native)  
 
     ;; enable the /respect/ mode
     (sis-global-respect-mode t)
@@ -575,6 +599,15 @@ than company-mode.
   ;; add xeCJK for Chinese support
   (add-to-list 'org-latex-packages-alist
                '("" "xeCJK" t ("xelatex")))
+
+  ;; add listing for LaTeX code block
+  (setf org-latex-listings 'minted
+        org-latex-pdf-process
+        '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "%latex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+  (add-to-list 'org-latex-packages-alist
+               '("" "minted" t ("xelatex")))
 
   ;; org-mode latex-preview enable
   (plist-put (cdr (assoc 'dvisvgm org-latex-preview-process-alist))

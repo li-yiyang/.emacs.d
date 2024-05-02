@@ -161,6 +161,15 @@
   (add-to-list 'org-latex-packages-alist
                '("" "xeCJK" t ("xelatex")))
   
+  ;; add listing for LaTeX code block
+  (setf org-latex-listings 'minted
+        org-latex-pdf-process
+        '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "%latex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+  (add-to-list 'org-latex-packages-alist
+               '("" "minted" t ("xelatex")))
+  
   ;; org-mode latex-preview enable
   (plist-put (cdr (assoc 'dvisvgm org-latex-preview-process-alist))
              :image-converter
@@ -250,11 +259,16 @@
   (setf inferior-lisp-program '("sbcl" "--dynamic-space-size" "4GB"))
 
   ;; add sly-mrepl hook for C-return
-  (add-hook
-   'sly-mrepl-mode-hook
-   #'(lambda ()
-       (define-key sly-mrepl-mode-map (kbd "RET") nil)
-       (define-key sly-mrepl-mode-map (kbd "C-<return>") #'sly-mrepl-return))))
+  (require 'sly-mrepl)
+  (define-key sly-mrepl-mode-map (kbd "RET") nil)
+  (define-key sly-mrepl-mode-map (kbd "C-<return>") #'sly-mrepl-return)
+  (define-key sly-mrepl-mode-map (kbd "S-<return>") #'sly-mrepl-return)
+
+  ;; some help keys
+  (define-key lisp-mode-map (kbd "C-l v") #'sly-describe-symbol)
+  (define-key lisp-mode-map (kbd "C-l f") #'sly-describe-function)
+  (define-key lisp-mode-map (kbd "C-l c") #'sly-who-calls)
+  (define-key lisp-mode-map (kbd "C-l b") #'sly-who-binds))
 
 (use-package company
   :hook (((lisp-mode sly-mrepl-mode) . company-mode)))
@@ -358,26 +372,26 @@ Examples: endmodule // module_name             → endmodule : module_name
 
   (verilog-ext-mode-setup))
 
-(use-package sis
-  :load-path "emacs-smart-input-source"
+(use-package rime
+  :load-path "emacs-rime"
+  :custom (default-input-method "rime")
   :config
-  ;; For MacOS
+  (setf rime-user-data-dir  (expand-file-name "rime-ice" user-emacs-directory)
+        rime-show-candidate 'posframe)
+  (setf rime-disable-predicates
+        '(rime-predicate-after-alphabet-char-p
+          rime-predicate-punctuation-after-ascii-p
+          rime-predicate-org-latex-mode-p
+          rime-predicate-prog-in-code-p          
+          rime-predicate-tex-math-or-command-p
+          rime-predicate-space-after-cc-p
+          rime-predicate-in-code-string-p
+          rime-predicate-in-code-string-after-ascii-p))
   (when (eq system-type 'darwin)
-    (sis-ism-lazyman-config
-     ;; English input source
-     "com.apple.keylayout.ABC"
-     ;; Chinese input
-     "com.apple.inputmethod.SCIM.ITABC"))
-
-  ;; enable the /respect/ mode
-  (sis-global-respect-mode t)
-  ;; enable the /context/ mode for all buffers
-  (sis-global-context-mode t)
-  ;; enable the /inline english/ mode for all buffers
-  (sis-global-inline-mode t)
-
-  (set-face-foreground 'sis-inline-face "gray60")
-  )
+    (setf rime-librime-root
+          (expand-file-name "librime/dist" user-emacs-directory))
+    (setf rime-emacs-module-header-root
+          "/opt/homebrew/opt/emacs-plus@29/include")))
 
 ;;; Use CDLaTeX for quick LaTeX equation input
 (use-package cdlatex

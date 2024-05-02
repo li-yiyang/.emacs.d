@@ -64,3 +64,6 @@
 [submodule "gnu-apl-mode"]
 	path = gnu-apl-mode
 	url = https://github.com/lokedhs/gnu-apl-mode.git
+[submodule "emacs-rime"]
+	path = emacs-rime
+	url = https://github.com/DogLooksGood/emacs-rime.git
