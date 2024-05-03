@@ -259,10 +259,12 @@
   (setf inferior-lisp-program '("sbcl" "--dynamic-space-size" "4GB"))
 
   ;; add sly-mrepl hook for C-return
-  (require 'sly-mrepl)
-  (define-key sly-mrepl-mode-map (kbd "RET") nil)
-  (define-key sly-mrepl-mode-map (kbd "C-<return>") #'sly-mrepl-return)
-  (define-key sly-mrepl-mode-map (kbd "S-<return>") #'sly-mrepl-return)
+  (defun ryo:register-sly-mrepl-key-map ()
+    (require 'sly-mrepl)
+    (define-key sly-mrepl-mode-map (kbd "RET") nil)
+    (define-key sly-mrepl-mode-map (kbd "C-<return>") #'sly-mrepl-return)
+    (define-key sly-mrepl-mode-map (kbd "S-<return>") #'sly-mrepl-return))
+  (add-hook 'sly-mrepl-mode-hook 'ryo:register-sly-mrepl-key-map)
 
   ;; some help keys
   (define-key lisp-mode-map (kbd "C-l v") #'sly-describe-symbol)
