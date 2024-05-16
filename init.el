@@ -144,8 +144,11 @@
       ("\\sqrt"   . ?√)
       ("\\updownarrow" . ?↕)
       ("\\boldsymbol" . ?𝐛)
+      ("\\mathbb" . ?𝐁)
       ("\\mathrm" . ?𝐫)
-      ("\\mathcal" . ?𝐜)))
+      ("\\mathcal" . ?𝐜)
+      ("\\left\\Vert" . ?‖)
+      ("\\right\\Vert" . ?‖)))
   
   (defun ryo:setup-org-pretty-symbol-mode ()
     (setq-local prettify-symbols-alist
@@ -160,15 +163,37 @@
   ;; add xeCJK for Chinese support
   (add-to-list 'org-latex-packages-alist
                '("" "xeCJK" t ("xelatex")))
+  (add-to-list 'org-latex-packages-alist
+               '("" "amsmath" t ("xelatex")))
+  (add-to-list 'org-latex-packages-alist
+               '("" "amsfonts" t ("xelatex")))
   
   ;; add listing for LaTeX code block
-  (setf org-latex-listings 'minted
-        org-latex-pdf-process
-        '("%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
-          "%latex -shell-escape -interaction nonstopmode -output-directory %o %f"
-          "%latex -shell-escape -interaction nonstopmode -output-directory %o %f"))
-  (add-to-list 'org-latex-packages-alist
-               '("" "minted" t ("xelatex")))
+  (setf org-latex-listings 'listings)
+  (setf org-latex-custom-lang-environments
+        '((python "pythoncode")
+          (lisp   "common-lispcode")
+          (elisp  "common-lispcode")))
+  (setf org-latex-listings-options
+        '(("showspaces" "false")
+          ("breaklines" "true")
+          ("keepspaces" "true")
+          ("showstringspaces" "false")
+          ("basicstyle" "\\ttfamily")
+          ("numbers" "left")
+          ("numberstyle" "\\footnotesize")
+          ("frame" "single")
+          ("captionpos" "b")        
+          ("extendedchars" "true")))
+  
+  (add-to-list 'org-latex-packages-alist '("" "listings"))
+  (add-to-list 'org-latex-packages-alist '("" "color"))
+  
+  (setq org-latex-listings-options
+        '(("frame" "lines")
+          ("basicstyle" "\\footnotesize")
+          ("numbers" "left")
+          ("numberstyle" "\\tiny")))
   
   ;; org-mode latex-preview enable
   (plist-put (cdr (assoc 'dvisvgm org-latex-preview-process-alist))
@@ -256,7 +281,7 @@
   (setf org-babel-lisp-eval-fn #'sly-eval)
 
   ;; sbcl with larger dynamic space size
-  (setf inferior-lisp-program '("sbcl" "--dynamic-space-size" "4GB"))
+  (setf inferior-lisp-program '("sbcl" "--dynamic-space-size" "4096" "--control-stack-size" "24"))
 
   ;; add sly-mrepl hook for C-return
   (defun ryo:register-sly-mrepl-key-map ()
@@ -401,7 +426,8 @@ Examples: endmodule // module_name             → endmodule : module_name
   :hook ((org-mode . turn-on-org-cdlatex))
   :config
   (setf cdlatex-math-modify-alist
-        '(( ?b "\\boldsymbol" "\\textbf" t nil nil ))))
+        '(( ?b "\\boldsymbol" "\\textbf" t nil nil )
+          ( ?B "\\mathbb"     "\\textbf" t nil nil))))
 
 ;;; AUCTeX
 (use-package tex
