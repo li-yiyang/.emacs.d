@@ -1,15 +1,9 @@
 [submodule "blink-search"]
 	path = blink-search
 	url = https://github.com/manateelazycat/blink-search.git
-[submodule "pix2tex-el"]
-	path = pix2tex-el
-	url = https://github.com/li-yiyang/pix2tex-el.git
 [submodule "lsp-bridge"]
 	path = lsp-bridge
 	url = https://github.com/manateelazycat/lsp-bridge.git
-[submodule "jupyter"]
-	path = jupyter
-	url = https://github.com/emacs-jupyter/jupyter.git
 [submodule "emojishell"]
 	path = emojishell
 	url = https://github.com/li-yiyang/emojishell.git
@@ -34,9 +28,6 @@
 [submodule "sly"]
 	path = sly
 	url = https://github.com/joaotavora/sly.git
-[submodule "emacs-smart-input-source"]
-	path = emacs-smart-input-source
-	url = https://github.com/laishulu/emacs-smart-input-source.git
 [submodule "cdlatex"]
 	path = cdlatex
 	url = https://github.com/cdominik/cdlatex.git
@@ -61,9 +52,6 @@
 [submodule "gnuplot"]
 	path = gnuplot
 	url = https://github.com/emacs-gnuplot/gnuplot.git
-[submodule "gnu-apl-mode"]
-	path = gnu-apl-mode
-	url = https://github.com/lokedhs/gnu-apl-mode.git
-[submodule "emacs-rime"]
-	path = emacs-rime
-	url = https://github.com/DogLooksGood/emacs-rime.git
+[submodule "valign"]
+	path = valign
+	url = https://github.com/casouri/valign.git

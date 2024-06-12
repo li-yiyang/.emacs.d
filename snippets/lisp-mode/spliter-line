@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: spliter-line
+# key: ;;=
+# --
+;; ========== $1 ==========$0

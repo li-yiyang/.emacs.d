@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: asdf-defsystem-template
+# key: asdf:defsystem
+# --
+(defsystem #:$1
+  :author ("${2:`(user-full-name)`}")
+  :version "0"
+  :description "${3:This is a package that does ... }"
+  :depends-on ($4)
+  :components ((:file "package")
+               (:file "$5")))

@@ -135,7 +135,7 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
 #+end_src
 
 ** Editing
-*** Autopair
+*** COMMENT Autopair
 #+name: autopair-pars
 #+begin_src elisp
   (electric-pair-mode 1)
@@ -230,19 +230,26 @@ Ref: [[https://snarfed.org/gnu_emacs_backup_files][gnu emacs backup files]]
     ;; sbcl with larger dynamic space size
     (setf inferior-lisp-program '("sbcl" "--dynamic-space-size" "4096" "--control-stack-size" "24"))
 
+    (defvar ryo:sly-keymap-function-bind
+      '(("C-<return>" #'sly-mrepl-return)
+        ("S-<return>" #'sly-mrepl-return)
+        ("C-l v"      #'sly-describe-symbol)
+        ("C-l f"      #'sly-describe-function)
+        ("C-l c"      #'sly-who-calls)
+        ("C-l b"      #'sly-who-binds)
+        ("C-l C-l"    #'recenter-top-bottom))
+      "The key binding for sly. ")
+
     ;; add sly-mrepl hook for C-return
     (defun ryo:register-sly-mrepl-key-map ()
       (require 'sly-mrepl)
-      (define-key sly-mrepl-mode-map (kbd "RET") nil)
-      (define-key sly-mrepl-mode-map (kbd "C-<return>") #'sly-mrepl-return)
-      (define-key sly-mrepl-mode-map (kbd "S-<return>") #'sly-mrepl-return))
+      (loop for (key func) in (cons '("RET" nil) ryo:sly-keymap-function-bind)
+            do (define-key sly-mrepl-mode-map (kbd key) func)))
     (add-hook 'sly-mrepl-mode-hook 'ryo:register-sly-mrepl-key-map)
 
     ;; some help keys
-    (define-key lisp-mode-map (kbd "C-l v") #'sly-describe-symbol)
-    (define-key lisp-mode-map (kbd "C-l f") #'sly-describe-function)
-    (define-key lisp-mode-map (kbd "C-l c") #'sly-who-calls)
-    (define-key lisp-mode-map (kbd "C-l b") #'sly-who-binds))
+    (loop for (key func) in ryo:sly-keymap-function-bind
+          do (define-key lisp-mode-map (kbd key) func)))
 #+end_src
 
 *** Complete Box
@@ -257,50 +264,6 @@ than company-mode.
   ;; company with posframe for better UI
   (use-package company-posframe
     :hook (((company-mode) . company-posframe-mode)))
-#+end_src
-
-*** April (APL)
-#+name: april
-#+begin_src elisp
-  (use-package gnu-apl-mode
-    :load-path "gnu-apl-mode"
-    :config
-    (let ((last-output ""))
-      (defun org-babel-gnu-apl-capture-output (raw-output)
-        (setf last-output (car (string-split raw-output ""))))
-      (defun org-babel-execute:gnu-apl (body params)
-        (with-temp-buffer
-          (gnu-apl-mode)
-          (insert body)
-          (gnu-apl-interactive-send-string body)
-          (gnu-apl-interactive-send-string "⊣⍬\n")
-          (mapcar #'split-string (string-split last-output "\n")))))  
-
-    (add-hook 'gnu-apl-interactive-mode-hook
-              (lambda ()
-                (add-hook 'comint-output-filter-functions
-                          'org-babel-gnu-apl-capture-output
-                          nil 'local)))
-
-    (defvar org-babel-default-header-args:gnu-apl
-      '((:results . "table") (:exports . "results"))
-      "Default arguments to use when evaluating a GNU APL source block. "))
-#+end_src
-
-** COMMENT C Programming Language
-*** Irony
-#+name: irony
-#+begin_src elisp
-  (use-package irony
-    :hook (((c++-mode c-mode) . irony-mode)
-           ((c++-mode c-mode) . lsp)))
-
-  (use-package flycheck-irony
-    :after (irony))
-
-  (use-package irony-eldoc
-    :hook ((irony-mode . irony-eldoc))
-    :after (irony))
 #+end_src
 
 ** LSP
@@ -337,14 +300,6 @@ than company-mode.
 #+end_src
 
 ** Other Programming Language
-*** COMMENT ROOT
-#+name: root
-#+begin_src elisp
-  (use-package cern-root-mode
-    :config
-    (setf cern-root-filepath (executable-find "root")))
-#+end_src
-
 *** Verilog
 #+name: verilog
 #+begin_src elisp
@@ -354,25 +309,10 @@ than company-mode.
     :hook ((verilog-mode . verilog-ext-mode))
     :init
     (setf verilog-ext-feature-list
-          '(font-lock
-            xref
-            capf
-            hierarchy
-            eglot
-            lsp
-            flycheck
-            beautify
-            navigation
-            template
-            formatter
-            compilation
-            imenu
-            which-func
-            hideshow
-            typedefs
-            time-stamp
-            block-end-comments
-            ports))
+          '(font-lock xref capf hierarchy
+            lsp flycheck beautify navigation template
+            formatter compilation imenu which-func hideshow
+            typedefs time-stamp block-end-comments ports))
     :config
     (defconst verilog-ext-block-end-keywords-complete-re
       (concat
@@ -400,65 +340,7 @@ than company-mode.
     (verilog-ext-mode-setup))
 #+end_src
 
-*** COMMENT Swift
-#+name: swift
-#+begin_src elisp
-  (use-package swift-mode
-    :hook ((swift-mode . lsp)))
-
-  (use-package lsp-sourcekit
-    :after (lsp-mode)
-    :config
-    (when (eq system-type 'darwin)
-      (setf lsp-sourcekit-executable
-            (string-trim (shell-command-to-string "xcrun --find sourcekit-lsp")))))
-#+end_src
-
 ** For Editing Documents
-*** Emacs Rime
-#+name: emacs-rime
-#+begin_src elisp
-  (use-package rime
-    :load-path "emacs-rime"
-    :custom (default-input-method "rime")
-    :config
-    (setf rime-user-data-dir  (expand-file-name "rime-ice" user-emacs-directory)
-          rime-show-candidate 'posframe)
-    (setf rime-disable-predicates
-          '(rime-predicate-after-alphabet-char-p
-            rime-predicate-punctuation-after-ascii-p
-            rime-predicate-org-latex-mode-p
-            rime-predicate-prog-in-code-p          
-            rime-predicate-tex-math-or-command-p
-            rime-predicate-space-after-cc-p
-            rime-predicate-in-code-string-p
-            rime-predicate-in-code-string-after-ascii-p))
-    (when (eq system-type 'darwin)
-      (setf rime-librime-root
-            (expand-file-name "librime/dist" user-emacs-directory))
-      (setf rime-emacs-module-header-root
-            "/opt/homebrew/opt/emacs-plus@29/include")))
-#+end_src
-
-*** COMMENT Smart Input Sources
-#+name: sis
-#+begin_src elisp
-  (use-package sis
-    :load-path "emacs-smart-input-source"
-    :config
-    (sis-ism-lazyman-config nil "rime" 'native)  
-
-    ;; enable the /respect/ mode
-    (sis-global-respect-mode t)
-    ;; enable the /context/ mode for all buffers
-    (sis-global-context-mode t)
-    ;; enable the /inline english/ mode for all buffers
-    (sis-global-inline-mode t)
-
-    (set-face-foreground 'sis-inline-face "gray60")
-    )
-#+end_src
-
 *** Markup Lanugages
 **** Org-Mode
 ***** Org Babel
@@ -529,6 +411,20 @@ than company-mode.
   (add-hook 'org-mode-hook #'ryo:setup-org-pretty-symbol-mode)
 #+end_src
 
+#+name: org-appear
+#+begin_src elisp
+  (use-package org-appear
+    :load-path "org-appear"
+    :after org
+    :hook ((org-mode . org-appear-mode))
+    :config
+    (setf org-hide-emphasis-markers t
+          org-appear-autolinks      nil
+          org-pretty-entities       t
+          org-appear-autoentities   t
+          org-appear-autokeywords   t))
+#+end_src
+
 ***** Org-Mode with LaTeX Support
 #+name: cdlatex-for-equation
 #+begin_src elisp
@@ -597,10 +493,12 @@ than company-mode.
              '("dvisvgm --page=1- --optimize --clipjoin --relative --no-fonts --bbox=preview -o %B-%%9p.svg %f"))
 #+end_src
 
+# Not used right now
+#+begin_comment
 Using pix2tex as LaTeX math equation OCR backend:
 
-#+name: pix2tex-el
-#+begin_src elisp
+,#+name: pix2tex-el
+,#+begin_src elisp
   (use-package epc)
 
   (use-package pix2tex-el
@@ -611,7 +509,8 @@ Using pix2tex as LaTeX math equation OCR backend:
       (local-set-key (kbd "C-c l") #'pix2tex-el-insert)
       (add-hook 'pix2tex-el-insert-hook #'org-latex-preview 0 nil))
     (add-hook 'org-mode-hook #'ryo:turn-on-pix2tex-el-in-org-mode))
-#+end_src
+,#+end_src
+#+end_comment
 
 ***** Ebib
 #+name: ebib
@@ -628,11 +527,6 @@ Using pix2tex as LaTeX math equation OCR backend:
      :export (lambda (&rest args)
                (apply #'org-ref-cite-export (cons "cite" args))))
 
-    (setf org-latex-pdf-process
-          '("%latex -interaction nonstopmode -output-directory %o %f"
-            "biber %b"                ; make sure to use bibtex backend
-            "%latex -interaction nonstopmode -output-directory %o %f"
-            "%latex -interaction nonstopmode -output-directory %o %f"))
     (setf (cdr (assoc 'org-mode ebib-citation-commands))
           '((("ebib" "[[ebib:%K]]")))))
 #+end_src
@@ -645,18 +539,11 @@ Using pix2tex as LaTeX math equation OCR backend:
 #+end_src
 
 ***** Pretty Looking
-#+name: org-appear
+#+name: valign-table
 #+begin_src elisp
-  (use-package org-appear
-    :load-path "org-appear"
-    :after org
-    :hook ((org-mode . org-appear-mode))
-    :config
-    (setf org-hide-emphasis-markers t
-          org-appear-autolinks      nil
-          org-pretty-entities       t
-          org-appear-autoentities   t
-          org-appear-autokeywords   t))
+  (use-package valign
+    :load-path "valign"
+    :hook ((org-mode . valign-mode)))
 #+end_src
 
 **** Markdown
@@ -666,7 +553,7 @@ Using pix2tex as LaTeX math equation OCR backend:
     :load-path "markdown-mode"
     :config
     ;; hide markups symbols and urls for better lookings
-    (setq-default markdown-hide-markup t
+    (setq-default markdown-hide-markup nil
                   markdown-hide-urls   t)
 
     ;; show code colorized
@@ -682,23 +569,6 @@ Using pix2tex as LaTeX math equation OCR backend:
                 ("C-c '" . separedit))
     :config
     (setq separedit-default-mode 'text-mode))
-#+end_src
-
-*** Graphic Lanugages
-**** Gnuplot
-#+name: gnuplot
-#+begin_src elisp
-  (use-package gnuplot
-    :load-path "gnuplot")
-#+end_src
-
-** For Reading Documents
-*** Docview
-#+name: docview
-#+begin_src elisp
-  (use-package doc-view
-    :config
-    (setf doc-view-resolution 400))
 #+end_src
 
 * Custom

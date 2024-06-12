@@ -5,43 +5,6 @@
 (setf debug-on-error nil)
 (setf warning-minimum-level :error)
 
-(when (eq system-type 'darwin)
-  ;; font scale and fonts
-  (cond
-   ((find-font (font-spec :family "Unifont"))
-    (set-face-attribute 'default nil
-                        :font "Unifont"
-                        :height 160))
-   ((find-font (font-spec :family "Sarasa Term SC"))
-    (set-face-attribute 'default nil
-                         :family "Sarasa Term SC"
-                         :height 160))
-   (t (set-face-attribute :height 130)))
-
-  ;; Set for how default frame looks like
-  (setq default-frame-alist '((menu-bar-lines . nil)
-                              (tool-bar-lines . nil)
-                              (vertical-scroll-bars . nil)))
-
-  ;; pixel scroll mode
-  (pixel-scroll-precision-mode t)
-
-  ;; I am using yabai
-  (when (executable-find "yabai")
-    (setf frame-resize-pixelwise t)
-    (add-to-list 'default-frame-alist '(undecorated . t))))
-
-(when (eq system-type 'gnu/linux)
-  ;; font scale
-  (set-face-attribute 'default nil :height 130)
-
-  ;; set for default frame
-  (setq default-frame-alist '((menu-bar-lines . nil)
-                              (tool-bar-lines . nil)))
-
-  ;; pixel scroll mode
-  (pixel-scroll-precision-mode))
-
 ;; Use space by default instead of tab for indention
 (setq-default indent-tabs-mode nil)
 
@@ -221,8 +184,6 @@
 
   (yas-global-mode 1))
 
-(electric-pair-mode 1)
-
 (use-package puni
   :load-path "puni"
   :config
@@ -283,19 +244,26 @@
   ;; sbcl with larger dynamic space size
   (setf inferior-lisp-program '("sbcl" "--dynamic-space-size" "4096" "--control-stack-size" "24"))
 
+  (defvar ryo:sly-keymap-function-bind
+    '(("C-<return>" #'sly-mrepl-return)
+      ("S-<return>" #'sly-mrepl-return)
+      ("C-l v"      #'sly-describe-symbol)
+      ("C-l f"      #'sly-describe-function)
+      ("C-l c"      #'sly-who-calls)
+      ("C-l b"      #'sly-who-binds)
+      ("C-l C-l"    #'recenter-top-bottom))
+    "The key binding for sly. ")
+
   ;; add sly-mrepl hook for C-return
   (defun ryo:register-sly-mrepl-key-map ()
     (require 'sly-mrepl)
-    (define-key sly-mrepl-mode-map (kbd "RET") nil)
-    (define-key sly-mrepl-mode-map (kbd "C-<return>") #'sly-mrepl-return)
-    (define-key sly-mrepl-mode-map (kbd "S-<return>") #'sly-mrepl-return))
+    (loop for (key func) in (cons '("RET" nil) ryo:sly-keymap-function-bind)
+          do (define-key sly-mrepl-mode-map (kbd key) func)))
   (add-hook 'sly-mrepl-mode-hook 'ryo:register-sly-mrepl-key-map)
 
   ;; some help keys
-  (define-key lisp-mode-map (kbd "C-l v") #'sly-describe-symbol)
-  (define-key lisp-mode-map (kbd "C-l f") #'sly-describe-function)
-  (define-key lisp-mode-map (kbd "C-l c") #'sly-who-calls)
-  (define-key lisp-mode-map (kbd "C-l b") #'sly-who-binds))
+  (loop for (key func) in ryo:sly-keymap-function-bind
+        do (define-key lisp-mode-map (kbd key) func)))
 
 (use-package company
   :hook (((lisp-mode sly-mrepl-mode) . company-mode)))
@@ -303,30 +271,6 @@
 ;; company with posframe for better UI
 (use-package company-posframe
   :hook (((company-mode) . company-posframe-mode)))
-
-(use-package gnu-apl-mode
-  :load-path "gnu-apl-mode"
-  :config
-  (let ((last-output ""))
-    (defun org-babel-gnu-apl-capture-output (raw-output)
-      (setf last-output (car (string-split raw-output ""))))
-    (defun org-babel-execute:gnu-apl (body params)
-      (with-temp-buffer
-        (gnu-apl-mode)
-        (insert body)
-        (gnu-apl-interactive-send-string body)
-        (gnu-apl-interactive-send-string "⊣⍬\n")
-        (mapcar #'split-string (string-split last-output "\n")))))  
-
-  (add-hook 'gnu-apl-interactive-mode-hook
-            (lambda ()
-              (add-hook 'comint-output-filter-functions
-                        'org-babel-gnu-apl-capture-output
-                        nil 'local)))
-
-  (defvar org-babel-default-header-args:gnu-apl
-    '((:results . "table") (:exports . "results"))
-    "Default arguments to use when evaluating a GNU APL source block. "))
 
 (use-package lsp-bridge
   :load-path "lsp-bridge"
@@ -354,25 +298,10 @@
   :hook ((verilog-mode . verilog-ext-mode))
   :init
   (setf verilog-ext-feature-list
-        '(font-lock
-          xref
-          capf
-          hierarchy
-          eglot
-          lsp
-          flycheck
-          beautify
-          navigation
-          template
-          formatter
-          compilation
-          imenu
-          which-func
-          hideshow
-          typedefs
-          time-stamp
-          block-end-comments
-          ports))
+        '(font-lock xref capf hierarchy
+          lsp flycheck beautify navigation template
+          formatter compilation imenu which-func hideshow
+          typedefs time-stamp block-end-comments ports))
   :config
   (defconst verilog-ext-block-end-keywords-complete-re
     (concat
@@ -399,26 +328,16 @@ Examples: endmodule // module_name             → endmodule : module_name
 
   (verilog-ext-mode-setup))
 
-(use-package rime
-  :load-path "emacs-rime"
-  :custom (default-input-method "rime")
+(use-package org-appear
+  :load-path "org-appear"
+  :after org
+  :hook ((org-mode . org-appear-mode))
   :config
-  (setf rime-user-data-dir  (expand-file-name "rime-ice" user-emacs-directory)
-        rime-show-candidate 'posframe)
-  (setf rime-disable-predicates
-        '(rime-predicate-after-alphabet-char-p
-          rime-predicate-punctuation-after-ascii-p
-          rime-predicate-org-latex-mode-p
-          rime-predicate-prog-in-code-p          
-          rime-predicate-tex-math-or-command-p
-          rime-predicate-space-after-cc-p
-          rime-predicate-in-code-string-p
-          rime-predicate-in-code-string-after-ascii-p))
-  (when (eq system-type 'darwin)
-    (setf rime-librime-root
-          (expand-file-name "librime/dist" user-emacs-directory))
-    (setf rime-emacs-module-header-root
-          "/opt/homebrew/opt/emacs-plus@29/include")))
+  (setf org-hide-emphasis-markers t
+        org-appear-autolinks      nil
+        org-pretty-entities       t
+        org-appear-autoentities   t
+        org-appear-autokeywords   t))
 
 ;;; Use CDLaTeX for quick LaTeX equation input
 (use-package cdlatex
@@ -434,17 +353,6 @@ Examples: endmodule // module_name             → endmodule : module_name
   :load-path "auctex"
   :ensure auctex)
 
-(use-package epc)
-
-(use-package pix2tex-el
-  :load-path "pix2tex-el"
-  :config
-  (setf pix2tex-el-python-path "python3.11")
-  (defun ryo:turn-on-pix2tex-el-in-org-mode ()
-    (local-set-key (kbd "C-c l") #'pix2tex-el-insert)
-    (add-hook 'pix2tex-el-insert-hook #'org-latex-preview 0 nil))
-  (add-hook 'org-mode-hook #'ryo:turn-on-pix2tex-el-in-org-mode))
-
 (use-package ebib
   :load-path "ebib"
   :bind ("C-c e" . ebib)
@@ -457,33 +365,21 @@ Examples: endmodule // module_name             → endmodule : module_name
    :export (lambda (&rest args)
              (apply #'org-ref-cite-export (cons "cite" args))))
 
-  (setf org-latex-pdf-process
-        '("%latex -interaction nonstopmode -output-directory %o %f"
-          "biber %b"                ; make sure to use bibtex backend
-          "%latex -interaction nonstopmode -output-directory %o %f"
-          "%latex -interaction nonstopmode -output-directory %o %f"))
   (setf (cdr (assoc 'org-mode ebib-citation-commands))
         '((("ebib" "[[ebib:%K]]")))))
 
 (use-package ox-pandoc
   :load-path "ox-pandoc")
 
-(use-package org-appear
-  :load-path "org-appear"
-  :after org
-  :hook ((org-mode . org-appear-mode))
-  :config
-  (setf org-hide-emphasis-markers t
-        org-appear-autolinks      nil
-        org-pretty-entities       t
-        org-appear-autoentities   t
-        org-appear-autokeywords   t))
+(use-package valign
+  :load-path "valign"
+  :hook ((org-mode . valign-mode)))
 
 (use-package markdown-mode
   :load-path "markdown-mode"
   :config
   ;; hide markups symbols and urls for better lookings
-  (setq-default markdown-hide-markup t
+  (setq-default markdown-hide-markup nil
                 markdown-hide-urls   t)
 
   ;; show code colorized
@@ -495,13 +391,6 @@ Examples: endmodule // module_name             → endmodule : module_name
               ("C-c '" . separedit))
   :config
   (setq separedit-default-mode 'text-mode))
-
-(use-package gnuplot
-  :load-path "gnuplot")
-
-(use-package doc-view
-  :config
-  (setf doc-view-resolution 400))
 
 (load-file (expand-file-name "custom.el" user-emacs-directory))
 
