@@ -2,8 +2,4 @@
 # name: equation
 # key:  eqs
 # --
-\begin{equation}
-\begin{array}{$1}
-$0
-\end{array}
-\end{equation}
+\begin{equation}\begin{array}{$1}$0\end{array}\end{equation}
