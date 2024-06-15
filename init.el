@@ -237,33 +237,38 @@
   :load-path "sly"
   :config
   (require 'sly-autoloads)
-
+  
   ;; org-mode babel
   (setf org-babel-lisp-eval-fn #'sly-eval)
 
   ;; sbcl with larger dynamic space size
-  (setf inferior-lisp-program '("sbcl" "--dynamic-space-size" "4096" "--control-stack-size" "24"))
+  (setf inferior-lisp-program
+        '("sbcl" "--dynamic-space-size" "4096" "--control-stack-size" "24"))
 
   (defvar ryo:sly-keymap-function-bind
-    '(("C-<return>" #'sly-mrepl-return)
-      ("S-<return>" #'sly-mrepl-return)
-      ("C-l v"      #'sly-describe-symbol)
-      ("C-l f"      #'sly-describe-function)
-      ("C-l c"      #'sly-who-calls)
-      ("C-l b"      #'sly-who-binds)
-      ("C-l C-l"    #'recenter-top-bottom))
+    `(("C-l v"   'sly-describe-symbol)
+      ("C-l f"   'sly-describe-function)
+      ("C-l c"   'sly-who-calls)
+      ("C-l b"   'sly-who-binds)
+      ("C-l C-l" 'recenter-top-bottom))
     "The key binding for sly. ")
 
   ;; add sly-mrepl hook for C-return
   (defun ryo:register-sly-mrepl-key-map ()
     (require 'sly-mrepl)
-    (loop for (key func) in (cons '("RET" nil) ryo:sly-keymap-function-bind)
-          do (define-key sly-mrepl-mode-map (kbd key) func)))
-  (add-hook 'sly-mrepl-mode-hook 'ryo:register-sly-mrepl-key-map)
+    (define-key sly-mrepl-mode-map (kbd "RET")        nil)
+    (define-key sly-mrepl-mode-map (kbd "C-<return>") #'sly-mrepl-return)
+    (define-key sly-mrepl-mode-map (kbd "S-<return>") #'sly-mrepl-return))
+  (add-hook 'sly-mrepl-mode-hook #'ryo:register-sly-mrepl-key-map)
+  (add-hook 'sly-mrepl-mode-hook #'electric-pair-local-mode)
 
   ;; some help keys
-  (loop for (key func) in ryo:sly-keymap-function-bind
-        do (define-key lisp-mode-map (kbd key) func)))
+  (add-hook 'sly-mrepl-mode-hook #'electric-pair-local-mode)
+  (define-key lisp-mode-map (kbd "C-l v")   #'sly-describe-symbol)
+  (define-key lisp-mode-map (kbd "C-l f")   #'sly-describe-function)
+  (define-key lisp-mode-map (kbd "C-l c")   #'sly-who-calls)
+  (define-key lisp-mode-map (kbd "C-l b")   #'sly-who-binds)
+  (define-key lisp-mode-map (kbd "C-l C-l") #'recenter-top-bottom))
 
 (use-package company
   :hook (((lisp-mode sly-mrepl-mode) . company-mode)))
