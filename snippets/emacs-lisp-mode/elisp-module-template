@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: elisp-module-template
+# key: make-module
+# --
+;;; $1.el --- $2
+
+$0
+
+(provide '$1)
+
+;;; $1.el ends here

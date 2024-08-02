@@ -1,0 +1,42 @@
+[submodule "magit"]
+	path = lisp/extensions/magit
+	url = https://github.com/magit/magit.git
+[submodule "yasnippet"]
+	path = lisp/extensions/yasnippet
+	url = https://github.com/joaotavora/yasnippet.git
+[submodule "acm-terminal"]
+	path = lisp/extensions/acm-terminal
+	url = https://github.com/twlz0ne/acm-terminal.git
+[submodule "auto-save"]
+	path = lisp/extensions/auto-save
+	url = https://github.com/manateelazycat/auto-save.git
+[submodule "compat"]
+	path = lisp/extensions/compat
+	url = https://github.com/emacs-compat/compat.git
+[submodule "dash.el"]
+	path = lisp/extensions/dash.el
+	url = https://github.com/magnars/dash.el.git
+[submodule "emacs-popon"]
+	path = lisp/extensions/emacs-popon
+	url = https://codeberg.org/akib/emacs-popon.git
+[submodule "lsp-bridge"]
+	path = lisp/extensions/lsp-bridge
+	url = https://github.com/manateelazycat/lsp-bridge
+[submodule "markdown-mode"]
+	path = lisp/extensions/markdown-mode
+	url = https://github.com/jrblevin/markdown-mode.git
+[submodule "sly"]
+	path = lisp/extensions/sly
+	url = https://github.com/joaotavora/sly.git
+[submodule "tao-theme-emacs"]
+	path = lisp/extensions/tao-theme-emacs
+	url = https://github.com/11111000000/tao-theme-emacs.git
+[submodule "vundo"]
+	path = lisp/extensions/vundo
+	url = https://github.com/casouri/vundo.git
+[submodule "with-editor"]
+	path = lisp/extensions/with-editor
+	url = https://github.com/magit/with-editor
+[submodule "transient"]
+	path = lisp/extensions/transient
+	url = https://github.com/magit/transient.git
