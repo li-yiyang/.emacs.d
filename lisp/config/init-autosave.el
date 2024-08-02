@@ -3,8 +3,6 @@
 ;; see https://github.com/manateelazycat/auto-save
 
 (require 'auto-save)
-
-(require 'auto-save)
 (auto-save-enable)
 
 ;; quietly save

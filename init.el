@@ -54,9 +54,16 @@
 
 (require 'init-git)
 (require 'init-autosave)
+(require 'init-recentf)
+(require 'init-blink-search)
 
 ;; Programming
 
 (require 'init-lsp)
 
 (require 'init-lisp)
+
+;; Privates
+
+(when (file-exists-p (expand-file-name "lisp/privates/init-privates.el" user-emacs-directory))
+  (require 'init-privates))

@@ -40,3 +40,6 @@
 [submodule "transient"]
 	path = lisp/extensions/transient
 	url = https://github.com/magit/transient.git
+[submodule "blink-search"]
+	path = lisp/extensions/blink-search
+	url = https://github.com/manateelazycat/blink-search.git
