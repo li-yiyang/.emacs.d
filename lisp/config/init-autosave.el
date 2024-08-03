@@ -25,16 +25,10 @@
 
 (require 'auto-sudoedit)
 
-(defun ryo.edit:ensure-auto-sudoedit ()
-  "Ensure auto sudoedit. "
-  (interactive)
-  (require 'auto-sudoedit)
-  (auto-sudoedit))
-
 ;; Just hook on `find-file-hook', don't hook `dired-mode-hook', it's unnecessary.
 ;; see https://github.com/manateelazycat/lazycat-emacs/blob/535b5527b495abb3cfd2bf03e5d242e5eddf8d47/site-lisp/config/init-auto-sudoedit.el#L84C1-L88C50
 
-(add-hook 'find-file-hook #'ryo.edit:ensure-auto-sudoedit)
+(add-hook 'find-file-hook #'auto-sudoedit)
 
 (provide 'init-autosave)
 
