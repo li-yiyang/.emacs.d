@@ -62,6 +62,7 @@
 (require 'init-lsp)
 
 (require 'init-lisp)
+  (require 'init-latex)
 
 ;; Privates
 

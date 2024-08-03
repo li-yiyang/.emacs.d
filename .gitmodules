@@ -46,3 +46,9 @@
 [submodule "auto-sudoedit"]
 	path = lisp/extensions/auto-sudoedit
 	url = https://github.com/ncaq/auto-sudoedit.git
+[submodule "auctex"]
+	path = lisp/extensions/auctex
+	url = https://git.savannah.gnu.org/git/auctex.git
+[submodule "cdlatex"]
+	path = lisp/extensions/cdlatex
+	url = https://github.com/cdominik/cdlatex.git
