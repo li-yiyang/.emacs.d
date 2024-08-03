@@ -43,3 +43,6 @@
 [submodule "blink-search"]
 	path = lisp/extensions/blink-search
 	url = https://github.com/manateelazycat/blink-search.git
+[submodule "auto-sudoedit"]
+	path = lisp/extensions/auto-sudoedit
+	url = https://github.com/ncaq/auto-sudoedit.git
