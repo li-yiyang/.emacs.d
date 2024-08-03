@@ -61,3 +61,6 @@
 [submodule "org-mode"]
 	path = lisp/extensions/org-mode
 	url = https://code.tecosaur.net/tec/org-mode.git
+[submodule "dirvish"]
+	path = lisp/extensions/dirvish
+	url = https://github.com/alexluigit/dirvish.git

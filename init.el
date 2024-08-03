@@ -49,28 +49,30 @@
 ;; from https://github.com/manateelazycat/lazycat-emacs/blob/535b5527b495abb3cfd2bf03e5d242e5eddf8d47/site-lisp/config/init.el#L29
 ;; subpress init message
 
-;; Looking
+(with-temp-message ""
+  ;; Looking
 
-(if (display-graphic-p)
-    (require 'init-ui)		; for GUI
-  (require 'init-tui))		; for TUI
+  (if (display-graphic-p)
+      (require 'init-ui)		; for GUI
+    (require 'init-tui))		; for TUI
 
-;; Project Management
+  ;; Project Management
 
-(require 'init-git)
-(require 'init-autosave)
-(require 'init-recentf)
-(require 'init-blink-search)
+  (require 'init-dired)
+  (require 'init-git)
+  (require 'init-autosave)
+  (require 'init-recentf)
+  (require 'init-blink-search)
 
-;; Programming
+  ;; Programming
 
-(require 'init-lsp)
-
-(require 'init-lisp)
+  (require 'init-lsp)
+  (require 'init-lisp)
   (require 'init-latex)
   (require 'init-org)
 
-;; Privates
+  ;; Privates
 
-(when (file-exists-p (expand-file-name "lisp/privates/init-privates.el" user-emacs-directory))
-  (require 'init-privates))
+  (when (file-exists-p (expand-file-name "lisp/privates/init-privates.el" user-emacs-directory))
+    (require 'init-privates))
+)

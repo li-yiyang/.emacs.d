@@ -35,6 +35,8 @@
   "The light theme. "
   :group 'ryo.ui)
 
+(custom-set-faces '(highlight ((t :inverse-video t))))
+
 (defun ryo.ui:mac-apply-theme (appearance)
   "Switch emacs theme according to `appearance'. "
   (mapc #'disable-theme custom-enabled-themes) ; unload all
