@@ -46,33 +46,52 @@
 
 (add-subdirs-to-load-path (expand-file-name "lisp" user-emacs-directory))
 
-;; from https://github.com/manateelazycat/lazycat-emacs/blob/535b5527b495abb3cfd2bf03e5d242e5eddf8d47/site-lisp/config/init.el#L29
-;; subpress init message
+;; from https://github.com/manateelazycat/lazycat-emacs/blob/535b5527b495abb3cfd2bf03e5d242e5eddf8d47/site-lisp/config/init.el#L7C1-L12C37
+(let (
+      ;; 加载的时候临时增大`gc-cons-threshold'以加速启动速度。
+      (gc-cons-threshold most-positive-fixnum)
+      (gc-cons-percentage 0.6)
+      ;; 清空避免加载远程文件的时候分析文件。
+      (file-name-handler-alist nil))
 
-(with-temp-message ""
-  ;; Looking
+  ;; from https://github.com/manateelazycat/lazycat-emacs/blob/535b5527b495abb3cfd2bf03e5d242e5eddf8d47/site-lisp/config/init.el#L14C1-L22C28
+  ;; 让窗口启动更平滑
+  (setq frame-inhibit-implied-resize t)
+  (setq-default inhibit-redisplay t
+		inhibit-message t)
+  (add-hook 'window-setup-hook
+            (lambda ()
+              (setq-default inhibit-redisplay nil
+                            inhibit-message nil)
+              (redisplay)))
 
-  (if (display-graphic-p)
-      (require 'init-ui)		; for GUI
-    (require 'init-tui))		; for TUI
+  ;; from https://github.com/manateelazycat/lazycat-emacs/blob/535b5527b495abb3cfd2bf03e5d242e5eddf8d47/site-lisp/config/init.el#L29
+  ;; subpress init message
 
-  ;; Project Management
+  (with-temp-message ""
+    ;; Looking
 
-  (require 'init-dired)
-  (require 'init-git)
-  (require 'init-autosave)
-  (require 'init-recentf)
-  (require 'init-blink-search)
+    (if (display-graphic-p)
+	(require 'init-ui)		; for GUI
+      (require 'init-tui))		; for TUI
 
-  ;; Programming
+    ;; Project Management
 
-  (require 'init-lsp)
-  (require 'init-lisp)
-  (require 'init-latex)
-  (require 'init-org)
+    (require 'init-dired)
+    (require 'init-git)
+    (require 'init-autosave)
+    (require 'init-recentf)
+    (require 'init-blink-search)
 
-  ;; Privates
+    ;; Programming
 
-  (when (file-exists-p (expand-file-name "lisp/privates/init-privates.el" user-emacs-directory))
-    (require 'init-privates))
-)
+    (require 'init-lsp)
+    (require 'init-lisp)
+    (require 'init-latex)
+    (require 'init-org)
+
+    ;; Privates
+
+    (when (file-exists-p (expand-file-name "lisp/privates/init-privates.el" user-emacs-directory))
+      (require 'init-privates))
+    ))
