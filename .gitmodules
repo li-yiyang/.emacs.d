@@ -58,3 +58,6 @@
 [submodule "s.el"]
 	path = lisp/extensions/s.el
 	url = https://github.com/magnars/s.el
+[submodule "org-mode"]
+	path = lisp/extensions/org-mode
+	url = https://code.tecosaur.net/tec/org-mode.git

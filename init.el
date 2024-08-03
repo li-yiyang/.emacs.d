@@ -37,6 +37,11 @@
         ;; 继续递归搜索子目录
         (add-subdirs-to-load-path subdir-path)))))
 
+;; nedd to be loaded first otherwise will load original org
+
+(add-to-list 'load-path
+	     (expand-file-name "lisp/extensions/org-mode/lisp" user-emacs-directory))
+
 ;; ~/.emacs.d/lisp/... for the elisp files
 
 (add-subdirs-to-load-path (expand-file-name "lisp" user-emacs-directory))
@@ -63,6 +68,7 @@
 
 (require 'init-lisp)
   (require 'init-latex)
+  (require 'init-org)
 
 ;; Privates
 
