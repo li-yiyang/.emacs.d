@@ -64,3 +64,6 @@
 [submodule "dirvish"]
 	path = lisp/extensions/dirvish
 	url = https://github.com/alexluigit/dirvish.git
+[submodule "emojishell"]
+	path = lisp/extensions/emojishell
+	url = git@github.com:li-yiyang/emojishell.git

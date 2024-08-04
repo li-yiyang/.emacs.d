@@ -95,3 +95,4 @@
     (when (file-exists-p (expand-file-name "lisp/privates/init-privates.el" user-emacs-directory))
       (require 'init-privates))
     ))
+	   (require 'init-eshell)
