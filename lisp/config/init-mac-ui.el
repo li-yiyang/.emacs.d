@@ -35,6 +35,8 @@
   "The light theme. "
   :group 'ryo.ui)
 
+;; patch `highlight' face for tao-theme
+
 (custom-set-faces '(highlight ((t :inverse-video t))))
 
 (defun ryo.ui:mac-apply-theme (appearance)

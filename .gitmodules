@@ -67,3 +67,6 @@
 [submodule "emojishell"]
 	path = lisp/extensions/emojishell
 	url = git@github.com:li-yiyang/emojishell.git
+[submodule "org-appear"]
+	path = lisp/extensions/org-appear
+	url = https://github.com/awth13/org-appear.git
