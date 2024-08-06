@@ -1,6 +1,8 @@
-;;; init.el --- Ryo's emacs configuration.
+;;; init.el --- Ryo's emacs configuration. -*- lexical-binding: t -*-
 
 ;;; This is main entrance of ryo's emacs configuration.
+
+(setq debug-on-error t)
 
 (require 'cl-lib)
 
