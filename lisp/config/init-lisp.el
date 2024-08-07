@@ -18,19 +18,22 @@
   (require 'sly-mrepl)
   (define-key sly-mrepl-mode-map (kbd "RET")        nil)
   (define-key sly-mrepl-mode-map (kbd "C-<return>") #'sly-mrepl-return)
-  (define-key sly-mrepl-mode-map (kbd "S-<return>") #'sly-mrepl-return))
+  (define-key sly-mrepl-mode-map (kbd "S-<return>") #'sly-mrepl-return)
+  (define-key sly-mrepl-mode-map (kbd "M-h v")   #'sly-describe-symbol)
+  (define-key sly-mrepl-mode-map (kbd "M-h f")   #'sly-describe-function)
+  (define-key sly-mrepl-mode-map (kbd "M-h c")   #'sly-who-calls)
+  (define-key sly-mrepl-mode-map (kbd "M-h b")   #'sly-who-binds)
+  (define-key sly-mrepl-mode-map (kbd "M-h h") #'sly-documentation-lookup))
 
 (add-hook 'sly-mrepl-mode-hook #'ryo:regist-sly-mrepl-key-map)
-(add-hook 'sly-mrepl-mode-hook #'electric-pair-local-mode)
 
 ;; some help keys
-(add-hook 'sly-mrepl-mode-hook #'electric-pair-local-mode)
 
-(define-key lisp-mode-map (kbd "C-l v")   #'sly-describe-symbol)
-(define-key lisp-mode-map (kbd "C-l f")   #'sly-describe-function)
-(define-key lisp-mode-map (kbd "C-l c")   #'sly-who-calls)
-(define-key lisp-mode-map (kbd "C-l b")   #'sly-who-binds)
-(define-key lisp-mode-map (kbd "C-l C-l") #'recenter-top-bottom)
+(define-key lisp-mode-map (kbd "M-h v") #'sly-describe-symbol)
+(define-key lisp-mode-map (kbd "M-h f") #'sly-describe-function)
+(define-key lisp-mode-map (kbd "M-h c") #'sly-who-calls)
+(define-key lisp-mode-map (kbd "M-h b") #'sly-who-binds)
+(define-key lisp-mode-map (kbd "M-h h") #'sly-documentation-lookup)
 
 ;; use acm as SLY completion front end
 ;; currently is only for patching
