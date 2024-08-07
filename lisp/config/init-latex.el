@@ -34,6 +34,7 @@
   '(("\\begin"  . ?▼)
     ("\\end"    . ?▲)
     ("\\mapsto" . ?↦)
+    ("\\multimap" . ?⊸)
     ("\\frac"   . ?𝐟)
     ("\\sqrt"   . ?√)
     ("\\updownarrow" . ?↕)

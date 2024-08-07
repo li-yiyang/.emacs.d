@@ -58,6 +58,8 @@
 	     '("" "amsmath"  t ("xelatex")))
 (add-to-list 'org-latex-packages-alist
 	     '("" "amsfonts" t ("xelatex")))
+(add-to-list 'org-latex-packages-alist
+	     '("" "amssymb" t ("xelatex")))
 
 ;; Org code block to LaTeX code environment
 ;; use listings for fast compile and no _minted folder
@@ -88,9 +90,10 @@
 
 ;; LaTeX preview support
 
-(plist-put (cdr (assoc 'dvisvgm org-latex-preview-process-alist))
-           :image-converter
-           '("dvisvgm --page=1- --optimize --clipjoin --relative --no-fonts --bbox=preview -o %B-%%9p.svg %f"))
+(plist-put
+ (cdr (assoc 'dvisvgm org-latex-preview-process-alist))
+ :image-converter
+ '("dvisvgm --page=1- --optimize --clipjoin --relative --no-fonts --bbox=preview -v4 -o %B-%%9p.svg %f"))
 
 ;; LaTeX equation input prettify
 
@@ -104,8 +107,8 @@
 (setq org-hide-emphasis-markers t)
 (setq org-appear-autoemphasis   t)
 (setq org-pretty-entities       t)
-(setq org-appear-autoentities   nil)
-(setq org-hidden-keywords       t)
+(setq org-appear-autoentities   t)
+(setq org-hidden-keywords       nil)
 (setq org-appear-autokeywords   t)
 (setq org-appear-inside-latex   nil)
 (setq org-appear-delay          0)
