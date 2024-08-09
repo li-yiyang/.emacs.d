@@ -82,7 +82,8 @@
 	(_ (sly-eval `(slynk:describe-symbol ,key)))))))
 
 (defun acm-update-candidates-append-sly-results (fn)
-  (if (and (derived-mode-p 'lisp-mode)
+  (if (and (or (derived-mode-p 'lisp-mode)
+	       (derived-mode-p 'sly-mrepl-mode))
 	   (sly-connected-p))
       (let* ((keyword (acm-get-input-prefix))
 	     (sly-res (acm-backend-sly-candidates keyword)))
