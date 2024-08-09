@@ -35,6 +35,16 @@
     ("\\end"    . ?▲)
     ("\\mapsto" . ?↦)
     ("\\multimap" . ?⊸)
+    ("\\hookrightarrow" . ?↪)
+    ("\\hookleftarrow" . ?↩)
+
+    ;; \xrightarrow and \xleftarrow should differ from
+    ;; normal \rightarrow and \leftarrow
+    ;;
+    ;; unicode from http://xahlee.info/comp/unicode_math_operators.html
+    ("\\xrightarrow" . ?⥅)
+    ("\\xleftarrow" . ?⥆)
+
     ("\\frac"   . ?𝐟)
     ("\\sqrt"   . ?√)
     ("\\updownarrow" . ?↕)
@@ -52,6 +62,14 @@
 	      (append prettify-symbols-alist
 		      ryo.ui:latex-prettify-symbols-alist))
   (prettify-symbols-mode t))
+
+;; overwrite default \longleftarrow and \longrightarrow
+;; to \xleftarrow and \xrightarrow (need amsmath package)
+
+(add-to-list 'cdlatex-math-symbol-alist
+	     '(60 ("\\leftarrow" "\\xleftarrow" "\\min")))
+(add-to-list 'cdlatex-math-symbol-alist
+	     '(62 ("\\rightarrow" "\\xrightarrow" "\\max")))
 
 ;; load for AUCTeX
 
