@@ -11,6 +11,7 @@
 (require 'dirvish-ls)
 (require 'dirvish-quick-access)
 (require 'dirvish-extras)
+(require 'dirvish-yank)
 
 (setq delete-by-moving-to-trash t)
 (setq dirvish-use-mode-line nil)
