@@ -8,6 +8,7 @@
 ;; 2. make
 
 (require 'org)
+(require 'valign)
 
 ;; babel
 
@@ -29,6 +30,10 @@
 ;; Org image preview
 
 (setq org-image-actual-width nil)
+
+;; Org Table prettify
+
+(add-hook 'org-mode-hook #'valign-mode)
 
 ;; Org LaTeX support
 
