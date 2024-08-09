@@ -42,33 +42,30 @@
 ;; and see `acm-icon-alist' for the icon mapping
 ;; from https://github.com/manateelazycat/lsp-bridge/blob/49b5497243873b1bddea09a4a988e3573ed7cc3e/acm/acm-icon.el#L94
 
-(defun acm-backend-sly-candidate-type (candidate)
-  (pcase (get-text-property 0 'sly--classification candidate)
-    ("fn"             "function")
-    ("generic-fn"     "method")
-    ("generic-fn,cla" "method")
-    ("cla,type"       "class")
-    ("cla"            "class")
-    ("special-op"     "operator")
-    ("type"           "class")
-    ("constant"       "constant")
-    ("var"            "variable")
-    ("pak"            "package")
-    ("pak,constant"   "package")
-    ("macro"          "macro")
-    (_                "unknown")))
-
 (defun acm-backend-sly-candidates (keyword)
-  (mapcar (lambda (candidate)
-	    (let ((type (acm-backend-sly-candidate-type candidate)))
-	      (list :key          candidate
-		    :icon         type
-		    :label        candidate
-		    :displayLabel candidate
-		    :annotation   (capitalize candidate)
-		    :backend      "sly")))
-	  (ignore-errors
-	    (car (funcall sly-complete-symbol-function keyword)))))
+  (mapcar
+   (lambda (candidate)
+     (let* ((sly-type (get-text-property 0 'sly--classification candidate))
+	    ;; use first part as icon
+	    (acm-icon (pcase (car (split-string sly-type ","))
+			("fn"             "function")
+			("generic-fn"     "method")
+			("cla"            "class")
+			("special-op"     "operator")
+			("type"           "class")
+			("constant"       "constant")
+			("var"            "variable")
+			("pak"            "package")
+			("macro"          "macro")
+			(_                "unknown"))))
+       (list :key          candidate
+	     :icon         acm-icon
+	     :label        candidate
+	     :displayLabel candidate
+	     :annotation   sly-type
+	     :backend      "sly")))
+   (ignore-errors
+     (car (funcall sly-complete-symbol-function keyword)))))
 
 ;; poor man's lisp doc
 
