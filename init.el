@@ -56,6 +56,11 @@
 
 (add-subdirs-to-load-path (expand-file-name "lisp" user-emacs-directory))
 
+;; Basic editing
+
+(setq indent-tabs-mode nil)
+(setq tab-width 2)
+
 ;; init acceleration
 ;; copied from https://github.com/manateelazycat/lazycat-emacs/blob/535b5527b495abb3cfd2bf03e5d242e5eddf8d47/site-lisp/config/init-accelerate.el#L86C1-L93C31
 
