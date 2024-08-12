@@ -12,6 +12,7 @@
 (require 'dirvish-quick-access)
 (require 'dirvish-extras)
 (require 'dirvish-yank)
+(require 'dirvish-history)
 
 (setq delete-by-moving-to-trash t)
 (setq dirvish-use-mode-line nil)
@@ -44,6 +45,8 @@
 (define-key dirvish-mode-map (kbd "TAB") #'dirvish-subtree-toggle)
 (define-key dirvish-mode-map (kbd "M-t") #'dirvish-layout-toggle)
 (define-key dirvish-mode-map (kbd "M-m") #'dirvish-mark-menu)
+(define-key dirvish-mode-map (kbd "b")   #'dirvish-history-go-backward)
+(define-key dirvish-mode-map (kbd "^")   #'dired-up-directory)
 
 ;; mouse support
 
