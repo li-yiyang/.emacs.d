@@ -13,10 +13,18 @@
 (setq inferior-lisp-program
       '("sbcl" "--dynamic-space-size" "4096" "--control-stack-size" "24"))
 
+(defun ryo:smart-sly-mrepl-return ()
+  "Run `sly-mrepl-return' according to cursor position. "
+  (interactive)
+  ;; (require 'sly-mrepl)
+  (if (eq (point) (point-max))
+      (sly-mrepl-return)
+    (newline)))
+
 (defun ryo:regist-sly-mrepl-key-map ()
   "Setup SLY mrepl mode key binding. "
   (require 'sly-mrepl)
-  (define-key sly-mrepl-mode-map (kbd "RET")        nil)
+  (define-key sly-mrepl-mode-map (kbd "RET")        #'ryo:smart-sly-mrepl-return)
   (define-key sly-mrepl-mode-map (kbd "C-<return>") #'sly-mrepl-return)
   (define-key sly-mrepl-mode-map (kbd "S-<return>") #'sly-mrepl-return)
   (define-key sly-mrepl-mode-map (kbd "M-h v")   #'sly-describe-symbol)
