@@ -123,4 +123,5 @@
 	   (require 'init-org)
 	   (require 'init-latex)
 	   (require 'init-eshell)
+	   (require 'init-c-c++)
 	   )))))
