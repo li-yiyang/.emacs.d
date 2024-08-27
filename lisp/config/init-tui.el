@@ -11,6 +11,10 @@
 
 (xterm-mouse-mode t)
 
+;; turn off the menu bar
+
+(menu-bar-mode -1)
+
 (provide 'init-tui)
 
 ;;; init-tui.el ends here
