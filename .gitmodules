@@ -73,3 +73,9 @@
 [submodule "valign"]
 	path = lisp/extensions/valign
 	url = https://github.com/casouri/valign.git
+[submodule "separedit.el"]
+	path = lisp/extensions/separedit.el
+	url = https://github.com/twlz0ne/separedit.el.git
+[submodule "edit-indirect"]
+	path = lisp/extensions/edit-indirect
+	url = https://github.com/Fanael/edit-indirect.git
