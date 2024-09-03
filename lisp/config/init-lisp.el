@@ -84,7 +84,18 @@
       (pcase type
 	((or "function" "method" "operator")
 	 (sly-eval `(slynk:describe-function ,key)))
-	(_ (sly-eval `(slynk:describe-symbol ,key)))))))
+	;; use slynk-apropos::briefly-describe-symbol-for-emacs
+	;; for variable (make sure it won't print too much of its value).
+	((or "variable")
+	 (sly-eval
+	    `(slynk::with-buffer-syntax
+	      ()
+	      (cl:format cl:nil "~A"
+			 (cl:getf (slynk-apropos::briefly-describe-symbol-for-emacs
+				   (slynk::parse-symbol-or-lose ,key) cl:nil)
+				  :variable)))))
+	(_
+	 (sly-eval `(slynk:describe-symbol ,key)))))))
 
 (defun acm-update-candidates-append-sly-results (fn)
   (if (and (or (derived-mode-p 'lisp-mode)
