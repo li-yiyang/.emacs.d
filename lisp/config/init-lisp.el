@@ -111,6 +111,9 @@
 (add-hook 'lisp-mode-hook      #'lsp-bridge-mode)
 (add-hook 'sly-mrepl-mode-hook #'lsp-bridge-mode)
 
+(add-hook 'lisp-mode-hook      #'hs-minor-mode)
+(define-key lisp-mode-map (kbd "C-c C-f") #'hs-toggle-hiding)
+
 (provide 'init-lisp)
 
 ;;; init-lisp.el ends here
