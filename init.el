@@ -120,4 +120,5 @@
 	   (require 'init-latex)
 	   (require 'init-eshell)
 	   (require 'init-c-c++)
+	   (require 'init-json)
 	   )))))

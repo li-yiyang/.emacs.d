@@ -79,3 +79,9 @@
 [submodule "edit-indirect"]
 	path = lisp/extensions/edit-indirect
 	url = https://github.com/Fanael/edit-indirect.git
+[submodule "json-mode"]
+	path = lisp/extensions/json-mode
+	url = https://github.com/json-emacs/json-mode.git
+[submodule "json-snatcher"]
+	path = lisp/extensions/json-snatcher
+	url = https://github.com/Sterlingg/json-snatcher.git
