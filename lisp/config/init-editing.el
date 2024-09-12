@@ -24,6 +24,14 @@
       large-hscroll-threshold 1000
       syntax-wholeline-max 1000)
 
+;; GhostScripts Support
+;; atomic-chrome
+;; see: https://github.com/alpha22jp/atomic-chrome
+
+(require 'atomic-chrome)
+(atomic-chrome-start-server)
+
+
 (provide 'init-editing)
 
 ;;; init-editing.el ends here

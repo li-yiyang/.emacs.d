@@ -85,3 +85,15 @@
 [submodule "json-snatcher"]
 	path = lisp/extensions/json-snatcher
 	url = https://github.com/Sterlingg/json-snatcher.git
+[submodule "lisp/extensions/atomic-chrome"]
+	path = lisp/extensions/atomic-chrome
+	url = https://github.com/alpha22jp/atomic-chrome.git
+[submodule "lisp/extensions/code-cells.el"]
+	path = lisp/extensions/code-cells.el
+	url = https://github.com/astoff/code-cells.el.git
+[submodule "lisp/extensions/emacs-websocket"]
+	path = lisp/extensions/emacs-websocket
+	url = https://github.com/ahyatt/emacs-websocket.git
+[submodule "lisp/extensions/json-navigator"]
+	path = lisp/extensions/json-navigator
+	url = https://github.com/DamienCassou/json-navigator.git
