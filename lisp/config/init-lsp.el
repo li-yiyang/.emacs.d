@@ -25,6 +25,10 @@
 
 (setq lsp-bridge-enable-hover-diagnostic t)
 
+;; my own lsp server support and config
+(setq lsp-bridge-user-langserver-dir
+      (expand-file-name "lspserver" user-emacs-directory))
+
 ;; enable lsp-bridge globally
 
 (global-lsp-bridge-mode)

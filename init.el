@@ -125,4 +125,6 @@
 	   (require 'init-c-c++)
 	   (require 'init-json)
 	   (require 'init-python)
+	   (require 'init-dot)
+     (require 'init-markdown)
 	   )))))

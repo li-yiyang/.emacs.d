@@ -1,0 +1,8 @@
+{
+  "name": "dot-language-server",
+  "languageId": "dot",
+  "command": [
+    "dot-language-server",
+    "--stdio"
+  ]
+}

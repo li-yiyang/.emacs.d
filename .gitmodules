@@ -97,3 +97,6 @@
 [submodule "lisp/extensions/json-navigator"]
 	path = lisp/extensions/json-navigator
 	url = https://github.com/DamienCassou/json-navigator.git
+[submodule "lisp/extensions/graphviz-dot-mode"]
+	path = lisp/extensions/graphviz-dot-mode
+	url = https://github.com/ppareit/graphviz-dot-mode.git
