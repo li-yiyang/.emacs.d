@@ -47,10 +47,13 @@
 	 (message-log-max nil))
      ,@body))
 
-;; nedd to be loaded first otherwise will load original org
+;; need to be loaded first otherwise will load original org and transient
 
 (add-to-list 'load-path
 	     (expand-file-name "lisp/extensions/org-mode/lisp" user-emacs-directory))
+
+(add-to-list 'load-path
+	     (expand-file-name "lisp/extensions/transient/lisp" user-emacs-directory))
 
 ;; ~/.emacs.d/lisp/... for the elisp files
 
