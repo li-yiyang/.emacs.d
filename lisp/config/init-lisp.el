@@ -4,36 +4,96 @@
 (require 'sly-autoloads)
 (require 'acm)
 
+(defgroup ryo.lisp ()
+  "Ryo's configures for Common Lisp. "
+  :prefix "ryo.lisp:")
+
+(defcustom ryo.lisp:sly-port 4005
+  "The default SLY mrepl connect port (\\=`ryo.lisp:sly-port\\=')
+used in \\=`ryo.lisp:start-or-connect-to-lisp\\=' function."
+  :group 'ryo.lisp
+  :type  'integer)
+
+(defcustom ryo.lisp:sbcl-dynamic-space-size 4096
+  "The default SBCL start dynamic space size.
+See \\=`ryo.lisp:make-inferior-lisp-program\\='. "
+  :group 'ryo.lisp
+  :type  'integer)
+
+(defcustom ryo.lisp:start-with-sly-connected-p nil
+  "Whether start with a SLY connected.
+If non-nil, will call \\=`ryo.lisp:start-or-connect-to-lisp\\='. "
+  :group 'ryo.lisp)
+
+(defun ryo.lisp:make-inferior-lisp-program ()
+  "Make a inferior lisp program list for
+\\=`inferior-lisp-program\\='. "
+  (list "sbcl" "--dynamic-space-size"
+        (format "%d" ryo.lisp:sbcl-dynamic-space-size)
+        "--control-stack-size" "24"))
+
 ;; org-mode babel
 
 (setq org-babel-lisp-eval-fn #'sly-eval)
 
 ;; sbcl with larger dynamic space size
 
-(setq inferior-lisp-program
-      '("sbcl" "--dynamic-space-size" "4096" "--control-stack-size" "24"))
+(setq inferior-lisp-program (ryo.lisp:make-inferior-lisp-program))
 
-(defun ryo:smart-sly-mrepl-return ()
-  "Run `sly-mrepl-return' according to cursor position. "
+(defun ryo.lisp:smart-sly-mrepl-return ()
+  "Run `sly-mrepl-return' according to cursor position.
+If at the end of buffer, call `sly-mrepl-return';
+otherwise, call `newline'. "
   (interactive)
   ;; (require 'sly-mrepl)
   (if (eq (point) (point-max))
       (sly-mrepl-return)
     (newline)))
 
-(defun ryo:regist-sly-mrepl-key-map ()
+(defun ryo.lisp:regist-sly-mrepl-key-map ()
   "Setup SLY mrepl mode key binding. "
   (require 'sly-mrepl)
-  (define-key sly-mrepl-mode-map (kbd "RET")        #'ryo:smart-sly-mrepl-return)
+  (define-key sly-mrepl-mode-map (kbd "RET")        #'ryo.lisp:smart-sly-mrepl-return)
   (define-key sly-mrepl-mode-map (kbd "C-<return>") #'sly-mrepl-return)
   (define-key sly-mrepl-mode-map (kbd "S-<return>") #'sly-mrepl-return)
-  (define-key sly-mrepl-mode-map (kbd "M-h v")   #'sly-describe-symbol)
-  (define-key sly-mrepl-mode-map (kbd "M-h f")   #'sly-describe-function)
-  (define-key sly-mrepl-mode-map (kbd "M-h c")   #'sly-who-calls)
-  (define-key sly-mrepl-mode-map (kbd "M-h b")   #'sly-who-binds)
-  (define-key sly-mrepl-mode-map (kbd "M-h h") #'sly-documentation-lookup))
+  (define-key sly-mrepl-mode-map (kbd "M-h v")      #'sly-describe-symbol)
+  (define-key sly-mrepl-mode-map (kbd "M-h f")      #'sly-describe-function)
+  (define-key sly-mrepl-mode-map (kbd "M-h c")      #'sly-who-calls)
+  (define-key sly-mrepl-mode-map (kbd "M-h b")      #'sly-who-binds)
+  (define-key sly-mrepl-mode-map (kbd "M-h h")      #'sly-documentation-lookup))
 
-(add-hook 'sly-mrepl-mode-hook #'ryo:regist-sly-mrepl-key-map)
+(add-hook 'sly-mrepl-mode-hook #'ryo.lisp:regist-sly-mrepl-key-map)
+
+;; init with sly-mrepl connected
+
+(defun ryo.lisp:start-or-connect-to-lisp ()
+  "Connect to a SLY server.
+
+This will only be avaliable if \\=`ryo.lisp:start-with-sly-connected-p\\='
+is non-nil. 
+
+If fails, try to open a daemon SBCL using screen if continued.
+The started lisp program will be use \\=`ryo.lisp:make-inferior-lisp-program\\='
+to create the starting env. "
+  (condition-case nil
+      (when ryo.lisp:start-with-sly-connected-p
+        (sly-connect "localhost" ryo.lisp:sly-port))
+    (error
+     (when (string= (completing-read "SLY not founded, create? [Y/n]"
+                                     '("y" "n")
+                                     nil t "y")
+                    "y")
+       (shell-command
+        (concat "screen -dmS sbcl "
+                (string-join (ryo.lisp:make-inferior-lisp-program) " ")
+                "--eval \"(ql:quickload :slynk)\" "
+                "--eval \"(slynk:create-server :dont-close t :port "
+                ryo.lisp:sly-port
+                ")\""))
+       (run-with-idle-timer
+        1 nil #'(lambda () (sly-connect "localhost" ryo.lisp:sly-port)))))))
+
+(add-hook 'emacs-startup-hook #'ryo.lisp:start-or-connect-to-lisp)
 
 ;; some help keys
 
