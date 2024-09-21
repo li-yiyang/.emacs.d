@@ -16,9 +16,6 @@
 [submodule "dash.el"]
 	path = lisp/extensions/dash.el
 	url = https://github.com/magnars/dash.el.git
-[submodule "emacs-popon"]
-	path = lisp/extensions/emacs-popon
-	url = https://codeberg.org/akib/emacs-popon.git
 [submodule "lsp-bridge"]
 	path = lisp/extensions/lsp-bridge
 	url = https://github.com/manateelazycat/lsp-bridge
