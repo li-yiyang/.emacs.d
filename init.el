@@ -127,4 +127,5 @@
 	   (require 'init-python)
 	   (require 'init-dot)
      (require 'init-markdown)
+     (require 'init-web)
 	   )))))
