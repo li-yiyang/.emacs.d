@@ -41,6 +41,11 @@
 
 (defun ryo.ui:mac-apply-theme (appearance)
   "Switch emacs theme according to `appearance'. "
+  (interactive
+   (list
+    (intern
+     (completing-read "Theme: " '("dark" "light") nil nil
+		      (symbol-name ns-system-appearance)))))
   (mapc #'disable-theme custom-enabled-themes) ; unload all
   (pcase appearance
     ('light (load-theme ryo.ui:mac-light-theme t))

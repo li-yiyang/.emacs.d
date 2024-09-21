@@ -2,8 +2,13 @@
 
 ;; Basic editing
 
-(setq indent-tabs-mode nil)
-(setq tab-width 2)
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
+
+(defun ryo.edit:tab-width-2 ()
+  "Set Tab width 2 for those obstinate mode. "
+  (setq-local indent-tabs-mode nil)
+  (setq-local tab-width 2))
 
 ;; Separedit
 ;; see https://github.com/twlz0ne/separedit.el
