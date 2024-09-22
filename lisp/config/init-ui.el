@@ -7,7 +7,8 @@
 (scroll-bar-mode -1)
 
 (defgroup ryo.ui nil
-  "Ryo's emacs's ui group.")
+  "Ryo's emacs's ui group."
+  :prefix "ryo.ui:")
 
 ;; emacs-plus patches for mac
 

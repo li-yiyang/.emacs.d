@@ -5,7 +5,16 @@
 
 (require 'tao-theme)
 (require 'tao-yang-theme)
-(load-theme 'tao-yang t)
+
+(defcustom ryo.ui:tui-theme 'tao-yang
+  "The default TUI theme. "
+  :group 'ryo.ui)
+
+(cl-defun ryo.ui:tui-load-theme (&optional (theme ryo.ui:tui-theme))
+  "Load theme for TUI. "
+  (load-theme theme t))
+
+(add-hook 'emacs-startup-hook #'ryo.ui:tui-load-theme)
 
 ;; who don't like mouse manipulation?
 

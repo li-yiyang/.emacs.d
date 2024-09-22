@@ -97,3 +97,6 @@
 [submodule "lisp/extensions/graphviz-dot-mode"]
 	path = lisp/extensions/graphviz-dot-mode
 	url = https://github.com/ppareit/graphviz-dot-mode.git
+[submodule "lisp/extensions/emacs-popon"]
+	path = lisp/extensions/emacs-popon
+	url = https://codeberg.org/akib/emacs-popon.git
