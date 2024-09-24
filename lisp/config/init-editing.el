@@ -5,6 +5,16 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 
+(defgroup ryo.edit ()
+  "Some basic editting configures. "
+  :prefix "ryo.edit:")
+
+(defun ryo.edit:gbk-to-utf-8 ()
+  "Change buffer encoding from GBK to UTF-8. "
+  (interactive)
+  (revert-buffer-with-coding-system 'gbk)
+  (set-buffer-file-coding-system    'utf-8))
+
 (defun ryo.edit:tab-width-2 ()
   "Set Tab width 2 for those obstinate mode. "
   (setq-local indent-tabs-mode nil)

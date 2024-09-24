@@ -70,14 +70,14 @@ otherwise, call `newline'. "
   "Connect to a SLY server.
 
 This will only be avaliable if \\=`ryo.lisp:start-with-sly-connected-p\\='
-is non-nil. 
+is non-nil.
 
 If fails, try to open a daemon SBCL using screen if continued.
 The started lisp program will be use \\=`ryo.lisp:make-inferior-lisp-program\\='
 to create the starting env. "
   (condition-case nil
       (when ryo.lisp:start-with-sly-connected-p
-        (sly-connect "localhost" ryo.lisp:sly-port))
+        (sly-connect "localhost" (format "%d" ryo.lisp:sly-port)))
     (error
      (when (string= (completing-read "SLY not founded, create? [Y/n]"
                                      '("y" "n")
