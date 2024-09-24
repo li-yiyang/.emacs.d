@@ -23,9 +23,16 @@
 
 (require 'lsp-bridge)
 
+;; hover and popout diagnostic
+
 (setq lsp-bridge-enable-hover-diagnostic t)
 
+;; tramp support by default
+
+(setq lsp-bridge-enable-with-tramp       t)
+
 ;; my own lsp server support and config
+
 (setq lsp-bridge-user-langserver-dir
       (expand-file-name "lspserver" user-emacs-directory))
 

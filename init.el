@@ -44,16 +44,16 @@
 (cl-defmacro ryo:minibuffer-shut-up! (&body body)
   "Shut up minibuffer message output"
   `(let ((inhibit-message t)
-	 (message-log-max nil))
+         (message-log-max nil))
      ,@body))
 
 ;; need to be loaded first otherwise will load original org and transient
 
 (add-to-list 'load-path
-	     (expand-file-name "lisp/extensions/org-mode/lisp" user-emacs-directory))
+             (expand-file-name "lisp/extensions/org-mode/lisp" user-emacs-directory))
 
 (add-to-list 'load-path
-	     (expand-file-name "lisp/extensions/transient/lisp" user-emacs-directory))
+             (expand-file-name "lisp/extensions/transient/lisp" user-emacs-directory))
 
 ;; ~/.emacs.d/lisp/... for the elisp files
 
@@ -84,7 +84,7 @@
   ;; 让窗口启动更平滑
   (setq frame-inhibit-implied-resize t)
   (setq-default inhibit-redisplay t
-		inhibit-message t)
+                inhibit-message t)
   (add-hook 'window-setup-hook
             (lambda ()
               (setq-default inhibit-redisplay nil
@@ -95,37 +95,37 @@
   ;; subpress init message
 
   (ryo:minibuffer-shut-up!
-    (if (display-graphic-p)
-	(require 'init-ui)		; for GUI
-      (require 'init-tui))		; for TUI
-    (require 'init-editing)
-    (require 'init-dired)
-    (require 'init-autosave)
-    (require 'init-recentf)
-    (require 'init-blink-search)
-    (require 'init-lsp)
+   (if (display-graphic-p)
+       (require 'init-ui)		; for GUI
+     (require 'init-tui))		; for TUI
+   (require 'init-editing)
+   (require 'init-dired)
+   (require 'init-autosave)
+   (require 'init-recentf)
+   (require 'init-blink-search)
+   (require 'init-lsp)
 
-    ;; Privates
+   ;; Privates
 
-    (when (file-exists-p (expand-file-name "lisp/privates/init-privates.el" user-emacs-directory))
-      (require 'init-privates))
+   (when (file-exists-p (expand-file-name "lisp/privates/init-privates.el" user-emacs-directory))
+     (require 'init-privates))
 
-    ;; Load later to accelerate init speed
-    ;; the programming language settings should go here
+   ;; Load later to accelerate init speed
+   ;; the programming language settings should go here
 
-    (run-with-idle-timer
-     1 nil
-     #'(lambda ()
-	 (ryo:minibuffer-shut-up!
-	   (require 'init-git)
-	   (require 'init-lisp)
-	   (require 'init-org)
-	   (require 'init-latex)
-	   (require 'init-eshell)
-	   (require 'init-c-c++)
-	   (require 'init-json)
-	   (require 'init-python)
-	   (require 'init-dot)
-     (require 'init-markdown)
-     (require 'init-web)
-	   )))))
+   (run-with-idle-timer
+    1 nil
+    #'(lambda ()
+        (ryo:minibuffer-shut-up!
+         (require 'init-git)
+         (require 'init-lisp)
+         (require 'init-org)
+         (require 'init-latex)
+         (require 'init-eshell)
+         (require 'init-c-c++)
+         (require 'init-json)
+         (require 'init-python)
+         (require 'init-dot)
+         (require 'init-markdown)
+         (require 'init-web)
+         )))))
