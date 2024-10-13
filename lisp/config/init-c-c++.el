@@ -1,5 +1,6 @@
 ;;; init-c-c++.el --- Set up for C and C++ like language.
 
+(require 'cc-mode)
 (require 'init-lsp)
 
 (define-key c-mode-map (kbd "M-h r") #'lsp-bridge-find-references)
