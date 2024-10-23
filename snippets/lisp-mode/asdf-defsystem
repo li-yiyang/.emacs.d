@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: asdf-defsystem
+# key: asdf:defsystem
+# --
+(asdf:defsystem #:$1
+  :author ("${2:`(ryo.yas:user-name)`}")
+  :version "0"
+  :description "${3:This is a package that does... }"
+  :depends-on ($4)
+  :serial t
+  :components
+  ($0))

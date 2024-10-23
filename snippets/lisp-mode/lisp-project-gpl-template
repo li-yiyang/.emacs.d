@@ -1,0 +1,39 @@
+# -*- mode: snippet -*-
+# name: lisp-project-gpl-template
+# key: init-gpl
+# --
+;;; ${1:`(file-name-nondirectory (buffer-file-name))`} --- ${2:Descriptions}
+
+;; File:        $1
+;; Description: $2
+;; Author:      ${3:`(ryo.yas:user-name)`}
+;; Maintainer:  $3
+;; Copyright (c) ${4:`(format-time-string "%Y")`}, $3, all rights reserved
+;; Created: ${5:`(format-time-string "%Y-%m-%d %H:%M")`}
+;; Version: ${6:0.0.0}
+;; Last-Updated: $5
+;;           By: $3
+;; URL: ${7:`(ryo.yas:project-url)`}
+;; Keywords: $8
+;; Compatibility: $9
+;;
+;;
+
+;;; License
+;;
+;; ${10:this package} is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published
+;; by the Free Software Foundation, either version 3 of the License,
+;; or (at your option) any later version.
+;;
+;; $10 is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with $9. If not, see <https://www.gnu.org/licenses/>.
+
+$0
+
+;;; $1 ends here

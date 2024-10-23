@@ -1,0 +1,11 @@
+# -*- mode: snippet -*-
+# name: details
+# key: details
+# expand-env: ((yas-indent-line 'fixed) (yas-wrap-around-region 'nil))
+# --
+<details>
+<summary>$1</summary>
+<div markdown="1">
+$0
+</div>
+</details>
