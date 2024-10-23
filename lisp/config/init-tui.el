@@ -10,9 +10,13 @@
   "The default TUI theme. "
   :group 'ryo.ui)
 
+(defvar ryo.ui:after-tui-theme-loaded ()
+  "Do some patches on TUI theme. ")
+
 (cl-defun ryo.ui:tui-load-theme (&optional (theme ryo.ui:tui-theme))
   "Load theme for TUI. "
-  (load-theme theme t))
+  (load-theme theme t)
+  (run-hooks 'ryo.ui:after-tui-theme-loaded))
 
 (add-hook 'emacs-startup-hook #'ryo.ui:tui-load-theme)
 
