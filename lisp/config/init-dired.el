@@ -47,6 +47,7 @@
 (define-key dirvish-mode-map (kbd "M-m") #'dirvish-mark-menu)
 (define-key dirvish-mode-map (kbd "b")   #'dirvish-history-go-backward)
 (define-key dirvish-mode-map (kbd "^")   #'dired-up-directory)
+(define-key dirvish-mode-map (kbd "RET") #'dired-find-file-other-window)
 
 ;; mouse support
 
