@@ -47,6 +47,8 @@ auto save (see `init-autosave.lisp' for config)"
 
 (global-set-key (kbd "C-x C-s") #'ryo.edit:manual-save)
 
+;; Project structures
+
 (defun ryo.edit:update-last-upated ()
   "Update Last-Updated infomation. "
   (when (buffer-file-name)

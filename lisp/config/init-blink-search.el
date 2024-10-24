@@ -12,6 +12,19 @@
   (setq blink-search-history-path
 	(expand-file-name "history" private-path)))
 
+;; set searching backend
+
+(setq blink-search-search-backends
+      '("Buffer List"
+        "Find File"
+        "History"
+        "Common Directory"
+        "Recent File"
+        "Current Buffer"
+        "Grep File"
+        "IMenu"
+        "Google Suggest"))
+
 ;; search bind with C-s
 
 (global-set-key (kbd "C-s") 'blink-search)
