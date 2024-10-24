@@ -3,7 +3,7 @@
 # key: asdf:defsystem
 # --
 (asdf:defsystem #:$1
-  :author ("${2:`(ryo.yas:user-name)`}")
+  :author ("${2:`(ryo.yas:user-full-name)`}")
   :version "0"
   :description "${3:This is a package that does... }"
   :depends-on ($4)

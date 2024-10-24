@@ -6,7 +6,7 @@
 
 ;; File:        $1
 ;; Description: $2
-;; Author:      ${3:`(ryo.yas:user-name)`}
+;; Author:      ${3:`(ryo.yas:user-full-name)`}
 ;; Maintainer:  $3
 ;; Copyright (c) ${4:`(format-time-string "%Y")`}, $3, all rights reserved
 ;; Created: ${5:`(format-time-string "%Y-%m-%d %H:%M")`}
