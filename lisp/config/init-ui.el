@@ -2,18 +2,23 @@
 
 ;; This is the basic GUI settings for Emacs.
 
-;; turn of scroll bar
-
-(scroll-bar-mode -1)
-
 (defgroup ryo.ui nil
   "Ryo's emacs's ui group."
   :prefix "ryo.ui:")
 
-;; emacs-plus patches for mac
+;; GUI Emacs
+(when (display-graphic-p)
+  ;; turn off scroll bar
+  (scroll-bar-mode -1)
 
-(when (eq system-type 'darwin) 		; for mac
-  (require 'init-mac-ui))
+  ;; emacs-plus patches for mac
+
+  (when (eq system-type 'darwin) 		; for mac
+    (require 'init-mac-ui)))
+
+;; TUI Emacs
+(unless (display-graphic-p)
+  (require 'init-tui))
 
 (provide 'init-ui)
 

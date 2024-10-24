@@ -95,9 +95,7 @@
   ;; subpress init message
 
   (ryo:minibuffer-shut-up!
-   (if (display-graphic-p)
-       (require 'init-ui)		; for GUI
-     (require 'init-tui))		; for TUI
+   (require 'init-ui)
    (require 'init-editing)
    (require 'init-dired)
    (require 'init-autosave)
