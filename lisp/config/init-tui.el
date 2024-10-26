@@ -22,7 +22,8 @@ see \\=`ryo.ui:tui-patch-color-values\\='. "
 
 (cl-defun ryo.ui:tui-load-theme (&optional (theme ryo.ui:tui-theme))
   "Load theme for TUI. "
-  (interactive)
+  (interactive "STheme: \n")
+  (mapc #'disable-theme custom-enabled-themes) ; unload all
   (load-theme theme t)
   (run-hooks 'ryo.ui:after-tui-theme-loaded))
 
