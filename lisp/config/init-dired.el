@@ -14,6 +14,59 @@
 (require 'dirvish-yank)
 (require 'dirvish-history)
 
+(dirvish-override-dired-mode)
+
+(defgroup ryo.dired ()
+  "Ryo's configures for dired. "
+  :prefix "ryo.dired:")
+
+(cl-defmacro extcase (file-name &body cases)
+  "Case by `file-name' extension.
+Return `t' if matches, otherwise `nil'.
+
+Syntax:
+ * `file-name': expr for file-name
+ * `cases': case should be like (ext-type . progn)
+   + `ext-type' can be
+     + string for single ext pattern
+     + list of string for multiple ext pattern
+     + `:otherwise' (should be the last case)
+       for otherwise
+"
+  (let ((ext-name (gensym "EXT-NAME")))
+    `(let ((,ext-name (file-name-extension ,file-name)))
+       (cond
+        ,@(cl-loop for (ext-type* . progn) in cases
+                   if (listp ext-type*)
+                   collect `((or ,@(mapcar (lambda (ext-type)
+                                             `(string= ,ext-name ,ext-type))
+                                           ext-type*))
+                             ,@progn
+                             t)
+                   else if (stringp ext-type*)
+                   collect `((string= ,ext-name ,ext-type*) ,@progn)
+                   else if (eq ext-type* :otherwise)
+                   collect `(t ,@progn nil)
+                   while (not (eq ext-type* :otherwise)))))))
+
+;; tar xzf tar.gz
+
+(defun ryo.dired:dired-uncompress-file ()
+  "In Dired, uncompress this file (if it is a tar file) right here. "
+  (interactive)
+  (let ((file-name (dired-get-file-for-visit)))
+    (when (extcase file-name
+                   (("gz" "tar")
+                    (message (concat "Untar " file-name " ..."))
+                    (shell-command (concat "tar xzf " file-name)))
+                   ("zip"
+                    (message (concat "Unzip " file-name " ..."))
+                    (shell-command (concat "unzip " file-name)))
+                   (:otherwise
+                    (message "Not a known compressed file")))
+      (message (concat "Finish uncompress " file-name))
+      (revert-buffer-quick))))
+
 (setq delete-by-moving-to-trash t)
 (setq dirvish-use-mode-line nil)
 
@@ -48,6 +101,7 @@
 (define-key dirvish-mode-map (kbd "b")   #'dirvish-history-go-backward)
 (define-key dirvish-mode-map (kbd "^")   #'dired-up-directory)
 (define-key dirvish-mode-map (kbd "RET") #'dired-find-file-other-window)
+(define-key dirvish-mode-map (kbd "X")   #'ryo.dired:dired-uncompress-file)
 
 ;; mouse support
 
@@ -63,8 +117,6 @@
 
 (when (eq system-type 'darwin)
   (setq insert-directory-program "gls"))
-
-(dirvish-override-dired-mode)
 
 (provide 'init-dired)
 
