@@ -56,7 +56,19 @@
 
 (unless (display-graphic-p)
   (require 'popon)
-  (require 'acm-terminal))
+  (require 'acm-terminal)
+
+  ;; make it able to switch faces
+  (defun ryo.ui:acm-terminal-patches ()
+    "acm-terminal theme patches under TUI"
+    (set-face-background 'acm-terminal-default-face
+                         (face-attribute 'default :background))
+    (set-face-background 'acm-terminal-select-face
+                         (face-attribute 'highlight :background))
+    (set-face-foreground 'acm-terminal-select-face
+                         (face-attribute 'highlight :foreground)))
+  (add-hook 'ryo.ui:after-tui-theme-loaded-hook
+            #'ryo.ui:acm-terminal-patches))
 
 (provide 'init-lsp)
 

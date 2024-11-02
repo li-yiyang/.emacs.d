@@ -17,7 +17,7 @@ see \\=`ryo.ui:tui-patch-color-values\\='. "
   :group 'ryo.ui
   :type  'list)
 
-(defvar ryo.ui:after-tui-theme-loaded ()
+(defvar ryo.ui:after-tui-theme-loaded-hook ()
   "Do some patches on TUI theme. ")
 
 (cl-defun ryo.ui:tui-load-theme (&optional (theme ryo.ui:tui-theme))
@@ -25,7 +25,7 @@ see \\=`ryo.ui:tui-patch-color-values\\='. "
   (interactive "STheme: \n")
   (mapc #'disable-theme custom-enabled-themes) ; unload all
   (load-theme theme t)
-  (run-hooks 'ryo.ui:after-tui-theme-loaded))
+  (run-hooks 'ryo.ui:after-tui-theme-loaded-hook))
 
 (add-hook 'emacs-startup-hook #'ryo.ui:tui-load-theme)
 
@@ -48,7 +48,7 @@ see \\=`ryo.ui:tui-patch-color-values\\='. "
   (set-face-attribute 'font-lock-comment-delimiter-face nil
                       :foreground "dimgrey"))
 
-(add-hook 'ryo.ui:after-tui-theme-loaded #'ryo.ui:tao-theme-tui-patch)
+(add-hook 'ryo.ui:after-tui-theme-loaded-hook #'ryo.ui:tao-theme-tui-patch)
 
 ;; blink-search patch for undefined-bg
 ;; this was done by patching `color-values' and give
