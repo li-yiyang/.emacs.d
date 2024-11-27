@@ -8,9 +8,9 @@
 
 (let ((private-path (expand-file-name "privates/blink-search/" user-emacs-directory)))
   (setq blink-search-db-path
-	(expand-file-name "blink-search.db" private-path))
+        (expand-file-name "blink-search.db" private-path))
   (setq blink-search-history-path
-	(expand-file-name "history" private-path)))
+        (expand-file-name "history" private-path)))
 
 ;; set searching backend
 
@@ -24,6 +24,10 @@
         "Grep File"
         "IMenu"
         "Google Suggest"))
+
+;; google suggest using xwidget-webview
+
+(setq blink-search-browser-function #'xwidget-webkit-browse-url)
 
 ;; search bind with C-s
 

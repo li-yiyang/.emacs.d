@@ -15,6 +15,11 @@
 
 (setq lsp-bridge-python-lsp-server "ruff")
 
+;; lsp-bridge keybinding
+
+(define-key python-mode-map (kbd "M-h f") #'lsp-bridge-popup-documentation)
+(define-key python-mode-map (kbd "M-h v") #'lsp-bridge-popup-documentation)
+
 (provide 'init-python)
 
 ;;; init-python.el ends here

@@ -16,6 +16,10 @@
 
 (add-hook 'markdown-mode #'ryo.edit:tab-width-2)
 
+;; some key bindings
+
+(define-key markdown-mode-map (kbd "C-<return>") #'markdown-follow-link-at-point)
+
 (provide 'init-markdown)
 
 ;;; init-markdown.el ends here

@@ -34,7 +34,7 @@
 ;; my own lsp server support and config
 
 (setq lsp-bridge-user-langserver-dir
-      (expand-file-name "lspserver" user-emacs-directory))
+      (expand-file-name "lspserver/" user-emacs-directory))
 
 ;; no tab and no return to complete, use only C-m to complete
 

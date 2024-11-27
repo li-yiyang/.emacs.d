@@ -39,6 +39,11 @@
 
 (custom-set-faces '(highlight ((t :inverse-video t))))
 
+(defun ryo.ui:tao-theme-ui-patch ()
+  "Patches for `tao-theme'. "
+  (set-face-italic-p 'font-lock-string-face nil nil)
+  (set-face-italic-p 'font-lock-doc-face nil nil))
+
 (defun ryo.ui:mac-apply-theme (appearance)
   "Switch emacs theme according to `appearance'. "
   (interactive
@@ -49,7 +54,8 @@
   (mapc #'disable-theme custom-enabled-themes) ; unload all
   (pcase appearance
     ('light (load-theme ryo.ui:mac-light-theme t))
-    ('dark  (load-theme ryo.ui:mac-dark-theme  t))))
+    ('dark  (load-theme ryo.ui:mac-dark-theme  t)))
+  (ryo.ui:tao-theme-ui-patch))
 
 (add-hook 'ns-system-appearance-change-functions #'ryo.ui:mac-apply-theme)
 
