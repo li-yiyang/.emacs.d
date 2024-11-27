@@ -100,3 +100,6 @@
 [submodule "lisp/extensions/emacs-popon"]
 	path = lisp/extensions/emacs-popon
 	url = https://codeberg.org/akib/emacs-popon.git
+[submodule "lisp/extensions/maxima"]
+	path = lisp/extensions/maxima
+	url = https://github.com/emacsmirror/maxima.git
