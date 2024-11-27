@@ -16,6 +16,7 @@
  'org-babel-load-languages
  '((emacs-lisp . t)
    (lisp       . t)
+   (maxima     . t)
    (dot        . t)
    (C          . t)
    (python     . t)

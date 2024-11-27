@@ -55,6 +55,9 @@
 (add-to-list 'load-path
              (expand-file-name "lisp/extensions/transient/lisp" user-emacs-directory))
 
+(add-to-list 'load-path
+             (expand-file-name "lisp/extensions/maxima" user-emacs-directory))
+
 ;; ~/.emacs.d/lisp/... for the elisp files
 
 (add-subdirs-to-load-path (expand-file-name "lisp" user-emacs-directory))
