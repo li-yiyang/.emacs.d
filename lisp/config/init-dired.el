@@ -20,6 +20,244 @@
   "Ryo's configures for dired. "
   :prefix "ryo.dired:")
 
+;; Extensions matching (see image-file.el)
+
+(defcustom ryo.dired:video-file-name-extensions
+  (purecopy '("mp4" "wav" "avi"))
+  "A list of video-file filename extensions.
+Filenames having one of these extensions are considered video files,
+in addition to those matching `ryo.dired:video-file-name-regexps'. "
+  :type  '(repeat string)
+  :group 'ryo.dired)
+
+(defcustom ryo.dired:video-file-name-regexps
+  ()
+  "A list of video-file filename extensions regexp.
+Filenames having one of these extensions are considered video files,
+in addition to those matching `ryo.dired:video-file-name-regexps'. "
+  :type  '(repeat regexp)
+  :group 'ryo.dired)
+
+(defun ryo.dired:get-filename-image-p ()
+  "Test if current dired file is a image file by filename. "
+  (string-match-p (image-file-name-regexp)
+                  (file-name-extension (dired-get-filename nil t) t)))
+
+(defun ryo.dired:video-file-name-regexp ()
+  "Retur a regular expression matching video filenames. "
+  (let ((exts-regexp
+         (and ryo.dired:video-file-name-extensions
+              (concat "\\."
+                      (regexp-opt
+                       (append (mapcar #'upcase ryo.dired:video-file-name-extensions)
+                               ryo.dired:video-file-name-extensions)
+                       t)
+                      "\\'"))))
+    (mapconcat #'identity
+               (delq nil (nconc (list exts-regexp)
+                                (ensure-list ryo.dired:video-file-name-regexps)))
+               "\\|")))
+
+(defun ryo.dired:get-filename-video-p ()
+  "Test if current dired file is a video file by filename. "
+  (string-match-p (ryo.dired:video-file-name-regexp)
+                  (file-name-extension (dired-get-filename nil t) t)))
+
+;; Function Implementation
+;;; Compress Toolbox
+
+(defun ryo.dired:gzip-compress-dir ()
+  (interactive)
+  (let* ((file (dired-get-filename nil t))
+         (dir  (file-name-nondirectory file))
+         (gzip (file-name-with-extension file "tar.gz"))
+         (cmd  (concat "cd " dir " && tar czf " gzip " *")))
+    (message "Run with: %s" cmd)
+    (shell-command cmd)
+    (revert-buffer-quick)))
+
+(defun ryo.dired:tar-compress-dir ()
+  (interactive)
+  (let* ((file (dired-get-filename nil t))
+         (dir  (file-name-nondirectory file))
+         (tar  (file-name-with-extension file "tar"))
+         (cmd  (concat "cd " dir " && tar cf " tar " *")))
+    (message "Run with: %s" cmd)
+    (shell-command cmd)
+    (revert-buffer-quick)))
+
+(defun ryo.dired:zip-compress-dir ()
+  (interactive)
+  (let* ((file (dired-get-filename nil t))
+         (dir  (file-name-nondirectory file))
+         (gzip (file-name-with-extension file "zip"))
+         (cmd  (concat "cd " dir " && zip -R " file " *")))
+    (message "Run with: %s" cmd)
+    (shell-command cmd)
+    (revert-buffer-quick)))
+
+;;; ImageMagick Toolbox
+
+(defun ryo.dired:imagemagick-append-images (output)
+  "ImageMagick append images:
+magick montage -geometry +0+0 <dirvish--marked-files> <output>"
+  (interactive "FOutput: \n")
+  (cl-flet ((escape (filename)
+              (concat "\"" (eshell-escape-arg filename)"\"")))
+    (let ((cmd (concat "magick montage -geometry +0+0 "
+                       (string-join
+                        (mapcar #'escape
+                                (cl-remove-if-not
+                                 (lambda (file)
+                                   (string-match-p (image-file-name-regexp)
+                                                   (file-name-extension file)))
+                                 (dired-get-marked-files nil)))
+                        " ")
+                        " "
+                        (escape (file-truename output)))))
+      (message cmd)
+      (shell-command cmd)
+      (revert-buffer-quick))))
+
+(defun ryo.dired:imagemagick-ordered-dither-images-inplace (threshold)
+  "ImageMagick ordered dither images:
+magick -ordered-dither <threshold> <dirvish--marked-files> <same-as-input>"
+  (interactive "sThreshold Method: \n")
+  (cl-flet ((escape (filename)
+              (concat "\"" (eshell-escape-arg filename)"\"")))
+    (let ((cmds (mapcar (lambda (file)
+                          (concat "magick "
+                                  (escape file)
+                                  "  -ordered-dither "
+                                  threshold
+                                  " "
+                                  (escape file)))
+                        (cl-remove-if-not
+                         (lambda (file) (string-match-p (image-file-name-regexp)
+                                                        (file-name-extension file)))
+                         (dired-get-marked-files nil)))))
+      (mapcar (lambda (cmd)
+                (message cmd)
+                (shell-command cmd))
+              cmds)
+      (revert-buffer-quick))))
+
+(defun ryo.dired:open-externally ()
+  (interactive)
+  (when (eq system-type 'darwin)
+    (shell-command (concat "open " (dired-get-filename nil t)))))
+
+(defun ryo.dired:ffmpeg-convert-video (to-type vf)
+  "ffmpeg -i <input> -o <input>.<to-type>"
+  (interactive
+   (list (completing-read "To: " ryo.dired:video-file-name-extensions
+                          nil t nil)
+         ""))
+  (cl-flet ((escape (filename)
+              (concat "\"" (eshell-escape-arg filename)"\"")))
+    (let ((cmds (mapcar (lambda (file)
+                          (concat "ffmpeg -i"
+                                  (escape file)
+                                  " -vf "
+                                  (escape vf)
+                                  " -o "
+                                  (escape (file-name-with-extension file to-type))))
+                        (cl-remove-if-not
+                         (lambda (file)
+                           (string-match-p (ryo.dired:video-file-name-regexp)
+                                           (file-name-extension file)))
+                         (dired-get-marked-files nil)))))
+      (mapcar (lambda (cmd)
+                (message cmd)
+                (shell-command cmd))
+              cmds))))
+
+;; Toolbox Menu
+
+(transient-define-prefix ryo.dired:compress-toolbox-menu ()
+  "Popup a Compress Toolbox menu. "
+  [:description
+   (lambda () (dirvish--format-menu-heading
+               (concat "Compress Dir: " (dired-current-directory nil))
+               (dirvish--marked-files-as-info-string)))
+   ("g" "Compress with GZIP" ryo.dired:gzip-compress-dir)
+   ("t" "Compress with TAR"  ryo.dired:tar-compress-dir)
+   ("z" "Compress with ZIP"  ryo.dired:zip-compress-dir)])
+
+
+(transient-define-prefix ryo.dired:imagemagick-ordered-dither-menu ()
+  "Popup a ImageMagick Toolbox for Ordered Dither menu. "
+  [:description
+   (lambda () (dirvish--format-menu-heading
+               "ImageMagick Ordered Dither"
+               (dirvish--marked-files-as-info-string)))
+   ("N" "Threshold by..."
+    ryo.dired:imagemagick-ordered-dither-images-inplace)
+   ("n" "Threshold 1x1 (non-dither)"
+    (lambda () (interactive)
+      (ryo.dired:imagemagick-ordered-dither-images-inplace "1x1")))
+   ("c" "Checkerboard 2x1 (dither)"
+    (lambda () (interactive)
+      (ryo.dired:imagemagick-ordered-dither-images-inplace "2x1")))
+   ("2" "Ordered 2x2 (dispersed)"
+    (lambda () (interactive)
+      (ryo.dired:imagemagick-ordered-dither-images-inplace "o2x2")))
+   ("3" "Ordered 3x3 (dispersed)"
+    (lambda () (interactive)
+      (ryo.dired:imagemagick-ordered-dither-images-inplace "o3x3")))
+   ("4" "Ordered 4x4 (dispersed)"
+    (lambda () (interactive)
+      (ryo.dired:imagemagick-ordered-dither-images-inplace "o4x4")))
+   ("8" "Ordered 8x8 (dispersed)"
+    (lambda () (interactive)
+      (ryo.dired:imagemagick-ordered-dither-images-inplace "o8x8")))
+
+   ])
+
+(transient-define-prefix ryo.dired:imagemagick-toolbox-menu ()
+  "Popup a ImageMagick Toolbox menu. "
+  [:description
+   (lambda () (dirvish--format-menu-heading
+               "ImageMagick"
+               (dirvish--marked-files-as-info-string)))
+   ("a" "append selected images"   ryo.dired:imagemagick-append-images)
+   ("d" "dither selected image(s)" ryo.dired:imagemagick-ordered-dither-menu)
+   ("D" "dither quick (o4x4)"
+    (lambda () (interactive)
+      (ryo.dired:imagemagick-ordered-dither-images-inplace "o4x4")))
+   ])
+
+(transient-define-prefix ryo.dired:ffmpeg-toolbox-menu ()
+  "Popup a FFmpeg Toolbox menu. "
+  [:description
+   (lambda () (dirvish--format-menu-heading
+               "FFmpeg"
+               (dirvish--marked-files-as-info-string)))
+   ("c" "convert video quick"      ryo.dired:ffmpeg-convert-video)
+   ("C" "concat  video"            ryo.dired:ffmpeg-concat-videos)
+   ("g" "convert video to GIF (fps=6,width=800)"
+    (lambda () (interactive)
+      (ryo.dired:ffmpeg-convert-video "gif" "fps=6,scale=800:-1:flags=lanczos")))
+   ])
+
+(transient-define-prefix ryo.dired:dirvish-file-toolbox-menu ()
+  "Popup a Toolbox menu. "
+  [:description
+   (lambda () (dirvish--format-menu-heading
+               "Apply on File"
+               (dirvish--marked-files-as-info-string)))
+   ("f" "Dirvish File Info"   dirvish-file-info-menu)
+   ("o" "Open externally"     ryo.dired:open-externally)
+   ("c" "Compress Toolbox"    ryo.dired:compress-toolbox-menu
+    :if (lambda () (not (dired-nondirectory-p (dired-get-filename nil t)))))
+   ("i" "ImageMagick Toolbox" ryo.dired:imagemagick-toolbox-menu
+    :if ryo.dired:get-filename-image-p)
+   ("f" "FFmpeg Toolbox"      ryo.dired:ffmegp-toolbox-menu
+    :if ryo.dired:get-filename-video-p)
+   ])
+
+;;;;
+
 (cl-defmacro extcase (file-name &body cases)
   "Case by `file-name' extension.
 Return `t' if matches, otherwise `nil'.
@@ -93,7 +331,6 @@ Syntax:
 (define-key dirvish-mode-map (kbd "y")   #'dirvish-yank-menu)
 (define-key dirvish-mode-map (kbd "N")   #'dirvish-fd)
 (define-key dirvish-mode-map (kbd "s")   #'dirvish-quicksort)
-(define-key dirvish-mode-map (kbd "f")   #'dirvish-file-info-menu)
 (define-key dirvish-mode-map (kbd "v")   #'dirvish-vc-menu)
 (define-key dirvish-mode-map (kbd "TAB") #'dirvish-subtree-toggle)
 (define-key dirvish-mode-map (kbd "M-t") #'dirvish-layout-toggle)
@@ -102,6 +339,7 @@ Syntax:
 (define-key dirvish-mode-map (kbd "^")   #'dired-up-directory)
 (define-key dirvish-mode-map (kbd "RET") #'dired-find-file-other-window)
 (define-key dirvish-mode-map (kbd "X")   #'ryo.dired:dired-uncompress-file)
+(define-key dirvish-mode-map (kbd "f")   #'ryo.dired:dirvish-file-toolbox-menu)
 
 ;; mouse support
 
