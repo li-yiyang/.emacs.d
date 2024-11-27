@@ -114,24 +114,24 @@ to create the starting env. "
   (mapcar
    (lambda (candidate)
      (let* ((sly-type (get-text-property 0 'sly--classification candidate))
-	    ;; use first part as icon
-	    (acm-icon (pcase (car (split-string sly-type ","))
-			("fn"             "function")
-			("generic-fn"     "method")
-			("cla"            "class")
-			("special-op"     "operator")
-			("type"           "class")
-			("constant"       "constant")
-			("var"            "variable")
-			("pak"            "package")
-			("macro"          "macro")
-			(_                "unknown"))))
+            ;; use first part as icon
+            (acm-icon (pcase (car (split-string sly-type ","))
+                        ("fn"             "function")
+                        ("generic-fn"     "method")
+                        ("cla"            "class")
+                        ("special-op"     "operator")
+                        ("type"           "class")
+                        ("constant"       "constant")
+                        ("var"            "variable")
+                        ("pak"            "package")
+                        ("macro"          "macro")
+                        (_                "unknown"))))
        (list :key          candidate
-	     :icon         acm-icon
-	     :label        candidate
-	     :displayLabel candidate
-	     :annotation   sly-type
-	     :backend      "sly")))
+             :icon         acm-icon
+             :label        candidate
+             :displayLabel candidate
+             :annotation   sly-type
+             :backend      "sly")))
    (ignore-errors
      (car (funcall sly-complete-symbol-function keyword)))))
 
@@ -140,33 +140,33 @@ to create the starting env. "
 (defun acm-backend-sly-candidate-doc (candidate)
   (when (sly-connected-p)
     (let ((type (plist-get candidate :icon))
-	  (key  (plist-get candidate :key)))
+          (key  (plist-get candidate :key)))
       (pcase type
-	((or "function" "method" "operator")
-	 (sly-eval `(slynk:describe-function ,key)))
-	;; use slynk-apropos::briefly-describe-symbol-for-emacs
-	;; for variable (make sure it won't print too much of its value).
-	((or "variable")
-	 (sly-eval
-	    `(slynk::with-buffer-syntax
-	      ()
-	      (cl:format cl:nil "~A"
-			 (cl:getf (slynk-apropos::briefly-describe-symbol-for-emacs
-				   (slynk::parse-symbol-or-lose ,key) cl:nil)
-				  :variable)))))
-	(_
-	 (sly-eval `(slynk:describe-symbol ,key)))))))
+        ((or "function" "method" "operator")
+         (sly-eval `(slynk:describe-function ,key)))
+        ;; use slynk-apropos::briefly-describe-symbol-for-emacs
+        ;; for variable (make sure it won't print too much of its value).
+        ((or "variable")
+         (sly-eval
+          `(slynk::with-buffer-syntax
+            ()
+            (cl:format cl:nil "~A"
+                       (cl:getf (slynk-apropos::briefly-describe-symbol-for-emacs
+                                 (slynk::parse-symbol-or-lose ,key) cl:nil)
+                                :variable)))))
+        (_
+         (sly-eval `(slynk:describe-symbol ,key)))))))
 
 (defun acm-update-candidates-append-sly-results (fn)
   (if (and (or (derived-mode-p 'lisp-mode)
-	       (derived-mode-p 'sly-mrepl-mode))
-	   (sly-connected-p))
+               (derived-mode-p 'sly-mrepl-mode))
+           (sly-connected-p))
       (let* ((keyword (acm-get-input-prefix))
-	     (sly-res (acm-backend-sly-candidates keyword)))
-	(append sly-res (funcall fn)))
+             (sly-res (acm-backend-sly-candidates keyword)))
+        (append sly-res (funcall fn)))
     (funcall fn)))
 (advice-add 'acm-update-candidates
-	    :around #'acm-update-candidates-append-sly-results)
+            :around #'acm-update-candidates-append-sly-results)
 
 (add-hook 'lisp-mode-hook      #'lsp-bridge-mode)
 (add-hook 'sly-mrepl-mode-hook #'lsp-bridge-mode)
