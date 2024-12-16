@@ -56,16 +56,16 @@
 ;; LaTeX xeCJK 中文字符
 
 (add-to-list 'org-latex-packages-alist
-	     '("" "xeCJK"    t ("xelatex")))
+             '("" "xeCJK"    t ("xelatex")))
 
 ;; amsmath and amsfonts for \mathcal \mathbb like
 
 (add-to-list 'org-latex-packages-alist
-	     '("" "amsmath"  t ("xelatex")))
+             '("" "amsmath"  t ("xelatex")))
 (add-to-list 'org-latex-packages-alist
-	     '("" "amsfonts" t ("xelatex")))
+             '("" "amsfonts" t ("xelatex")))
 (add-to-list 'org-latex-packages-alist
-	     '("" "amssymb" t ("xelatex")))
+             '("" "amssymb" t ("xelatex")))
 
 ;; Org code block to LaTeX code environment
 ;; use listings for fast compile and no _minted folder
@@ -73,8 +73,8 @@
 (setq org-latex-listings 'listings)
 (setq org-latex-custom-lang-environments
       '((python "pythoncode")
-	(lisp   "commonlispcode")
-	(elisp  "common-lispcode")))
+        (lisp   "commonlispcode")
+        (elisp  "common-lispcode")))
 
 ;; overwrite the default listing options
 
@@ -87,7 +87,7 @@
         ("frame" "single")
         ("captionpos" "b")
         ("extendedchars" "true")
-	("frame" "lines")
+        ("frame" "lines")
         ("numbers" "left")
         ("numberstyle" "\\tiny")))
 
@@ -105,7 +105,6 @@
 
 (add-hook 'org-mode-hook #'ryo.ui:setup-latex-prettify-symbol-mode)
 
-
 (setq org-pretty-entities-include-sub-superscripts nil)
 
 (require 'org-appear)
@@ -121,6 +120,34 @@
 (setq org-appear-trigger        'always)
 
 (add-hook 'org-mode-hook #'org-appear-mode)
+
+;; org-ref
+;; https://github.com/jkitchin/org-ref/
+
+(require 'org-ref)
+(require 'doi-utils)
+
+;; (define-key org-mode-map (kbd "C-c ]") #'
+
+(setq org-latex-pdf-process
+      (list "latexmk -shell-escape -bibtex -f -pdf -%latex -interaction=nonstopmode -output-directory=%o %f"))
+
+(setq bibtex-completion-notes-template-multiple-files
+      "* ${author-or-editor}, ${title}, ${journal}, (${year}) :${=type=}: \n\nSee [[cite:&${=key=}]]\n"
+      bibtex-completion-additional-search-fields '(keywords)
+      bibtex-completion-display-formats
+      '((article
+         . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${journal:40}")
+        (inbook
+         . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} Chapter ${chapter:32}")
+        (incollection
+         . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
+        (inproceedings
+         . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
+        (t
+         . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*}"))
+      bibtex-completion-pdf-open-function
+      (lambda (fpath) (call-process "open" nil 0 nil fpath)))
 
 (provide 'init-org)
 

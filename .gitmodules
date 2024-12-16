@@ -103,3 +103,42 @@
 [submodule "lisp/extensions/maxima"]
 	path = lisp/extensions/maxima
 	url = https://github.com/emacsmirror/maxima.git
+[submodule "lisp/extensions/avy"]
+	path = lisp/extensions/avy
+	url = https://github.com/abo-abo/avy.git
+[submodule "lisp/extensions/biblio.el"]
+	path = lisp/extensions/biblio.el
+	url = https://github.com/cpitclaudel/biblio.el.git
+[submodule "lisp/extensions/citeproc-el"]
+	path = lisp/extensions/citeproc-el
+	url = https://github.com/andras-simonyi/citeproc-el.git
+[submodule "lisp/extensions/ebib"]
+	path = lisp/extensions/ebib
+	url = https://github.com/joostkremers/ebib.git
+[submodule "lisp/extensions/emacs-async"]
+	path = lisp/extensions/emacs-async
+	url = https://github.com/jwiegley/emacs-async
+[submodule "lisp/extensions/emacs-request"]
+	path = lisp/extensions/emacs-request
+	url = https://github.com/tkf/emacs-request.git
+[submodule "lisp/extensions/helm-bibtex"]
+	path = lisp/extensions/helm-bibtex
+	url = https://github.com/tmalsburg/helm-bibtex.git
+[submodule "lisp/extensions/org-ref"]
+	path = lisp/extensions/org-ref
+	url = https://github.com/jkitchin/org-ref.git
+[submodule "lisp/extensions/queue"]
+	path = lisp/extensions/queue
+	url = https://github.com/emacs-straight/queue.git
+[submodule "lisp/extensions/ht.el"]
+	path = lisp/extensions/ht.el
+	url = https://github.com/Wilfred/ht.el.git
+[submodule "lisp/extensions/hydra"]
+	path = lisp/extensions/hydra
+	url = https://github.com/abo-abo/hydra.git
+[submodule "lisp/extensions/ox-pandoc"]
+	path = lisp/extensions/ox-pandoc
+	url = https://github.com/kawabata/ox-pandoc.git
+[submodule "lisp/extensions/parsebib"]
+	path = lisp/extensions/parsebib
+	url = https://github.com/joostkremers/parsebib.git

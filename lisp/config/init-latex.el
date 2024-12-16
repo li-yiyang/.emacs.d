@@ -28,7 +28,7 @@
 
 (setq cdlatex-math-modify-alist
       '((?b "\\boldsymbol" "\\textbf" t nil nil)
-	(?B "\\mathbb"     "\\textbf" t nil nil)))
+        (?B "\\mathbb"     "\\textbf" t nil nil)))
 
 (defvar ryo.ui:latex-prettify-symbols-alist
   '(("\\begin"  . ?▼)
@@ -59,22 +59,28 @@
   "Set up LaTeX prettify symbol. "
   (interactive)
   (setq-local prettify-symbols-alist
-	      (append prettify-symbols-alist
-		      ryo.ui:latex-prettify-symbols-alist))
+              (append prettify-symbols-alist
+                      ryo.ui:latex-prettify-symbols-alist))
   (prettify-symbols-mode t))
 
 ;; overwrite default \longleftarrow and \longrightarrow
 ;; to \xleftarrow and \xrightarrow (need amsmath package)
 
 (add-to-list 'cdlatex-math-symbol-alist
-	     '(60 ("\\leftarrow" "\\xleftarrow" "\\min")))
+             '(?< ("\\leftarrow" "\\xleftarrow" "\\min")))
 (add-to-list 'cdlatex-math-symbol-alist
-	     '(62 ("\\rightarrow" "\\xrightarrow" "\\max")))
+             '(?> ("\\rightarrow" "\\xrightarrow" "\\max")))
+(add-to-list 'cdlatex-math-symbol-alist
+             '(?* ("\\times" "\\circ" "\\otimes")))
 
 ;; load for AUCTeX
 
 (add-hook 'LaTeX-mode-hook #'turn-on-cdlatex)
 (add-hook 'LaTeX-mode-hook #'ryo.ui:setup-latex-prettify-symbol-mode)
+
+;; ebib
+
+(require 'ebib)
 
 (provide 'init-latex)
 
