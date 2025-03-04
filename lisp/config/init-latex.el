@@ -52,6 +52,8 @@
     ("\\mathbb" . ?𝐁)
     ("\\mathrm" . ?𝐫)
     ("\\mathcal" . ?𝐜)
+    ("\\Vert" . ?‖)
+    ("\\Vert" . ?‖)
     ("\\left\\Vert" . ?‖)
     ("\\right\\Vert" . ?‖)))
 
