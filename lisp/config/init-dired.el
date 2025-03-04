@@ -23,7 +23,7 @@
 ;; Extensions matching (see image-file.el)
 
 (defcustom ryo.dired:video-file-name-extensions
-  (purecopy '("mp4" "wav" "avi"))
+  (purecopy '("mp4" "wav" "avi" "mov"))
   "A list of video-file filename extensions.
 Filenames having one of these extensions are considered video files,
 in addition to those matching `ryo.dired:video-file-name-regexps'. "
@@ -147,30 +147,36 @@ magick -ordered-dither <threshold> <dirvish--marked-files> <same-as-input>"
   (when (eq system-type 'darwin)
     (shell-command (concat "open " (dired-get-filename nil t)))))
 
+(cl-defun ryo:ffmpeg-video-vf (in to &key (vf nil vf-p) (message? t))
+  "FFMPEG generation.
+
+    ffmpeg -i <input> -o <input>.<to-type>
+
+Arguments:
++ `in' should be input file pathname
++ `vf' should be video effect
++ `to' should be output file pathname
++ `message?' if non-nil, output `cmd' to *Message*
+"
+  (with-current-buffer (get-buffer-create "*FFMPEG*")
+    (erase-buffer)
+    (let ((cmd (concat "ffmpeg -y "
+                       " -i \"" (file-truename in) "\" "
+                       (when vf-p (concat " -vf \"" vf "\" "))
+                       " \"" (file-truename to) "\" ")))
+      (when message? (message cmd))
+      (shell-command cmd (current-buffer)))))
+
 (defun ryo.dired:ffmpeg-convert-video (to-type vf)
   "ffmpeg -i <input> -o <input>.<to-type>"
   (interactive
    (list (completing-read "To: " ryo.dired:video-file-name-extensions
                           nil t nil)
          ""))
-  (cl-flet ((escape (filename)
-              (concat "\"" (eshell-escape-arg filename)"\"")))
-    (let ((cmds (mapcar (lambda (file)
-                          (concat "ffmpeg -i"
-                                  (escape file)
-                                  " -vf "
-                                  (escape vf)
-                                  " -o "
-                                  (escape (file-name-with-extension file to-type))))
-                        (cl-remove-if-not
-                         (lambda (file)
-                           (string-match-p (ryo.dired:video-file-name-regexp)
-                                           (file-name-extension file)))
-                         (dired-get-marked-files nil)))))
-      (mapcar (lambda (cmd)
-                (message cmd)
-                (shell-command cmd))
-              cmds))))
+  (mapcar (lambda (file)
+            (ryo:ffmpeg-video-vf file (file-name-with-extension file to-type)
+                                 :vf vf))
+          (dired-get-marked-files nil)))
 
 ;; Toolbox Menu
 
@@ -234,7 +240,7 @@ magick -ordered-dither <threshold> <dirvish--marked-files> <same-as-input>"
                "FFmpeg"
                (dirvish--marked-files-as-info-string)))
    ("c" "convert video quick"      ryo.dired:ffmpeg-convert-video)
-   ("C" "concat  video"            ryo.dired:ffmpeg-concat-videos)
+   ;; ("C" "concat  video"            ryo.dired:ffmpeg-concat-videos)
    ("g" "convert video to GIF (fps=6,width=800)"
     (lambda () (interactive)
       (ryo.dired:ffmpeg-convert-video "gif" "fps=6,scale=800:-1:flags=lanczos")))
@@ -246,13 +252,13 @@ magick -ordered-dither <threshold> <dirvish--marked-files> <same-as-input>"
    (lambda () (dirvish--format-menu-heading
                "Apply on File"
                (dirvish--marked-files-as-info-string)))
-   ("f" "Dirvish File Info"   dirvish-file-info-menu)
+   ("F" "Dirvish File Info"   dirvish-file-info-menu)
    ("o" "Open externally"     ryo.dired:open-externally)
    ("c" "Compress Toolbox"    ryo.dired:compress-toolbox-menu
     :if (lambda () (not (dired-nondirectory-p (dired-get-filename nil t)))))
    ("i" "ImageMagick Toolbox" ryo.dired:imagemagick-toolbox-menu
     :if ryo.dired:get-filename-image-p)
-   ("f" "FFmpeg Toolbox"      ryo.dired:ffmegp-toolbox-menu
+   ("f" "FFmpeg Toolbox"      ryo.dired:ffmpeg-toolbox-menu
     :if ryo.dired:get-filename-video-p)
    ])
 
