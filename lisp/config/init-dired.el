@@ -162,7 +162,7 @@ Arguments:
     (erase-buffer)
     (let ((cmd (concat "ffmpeg -y "
                        " -i \"" (file-truename in) "\" "
-                       (when vf-p (concat " -vf \"" vf "\" "))
+                       (when (and vf-p vf) (concat " -vf \"" vf "\" "))
                        " \"" (file-truename to) "\" ")))
       (when message? (message cmd))
       (shell-command cmd (current-buffer)))))
@@ -172,7 +172,7 @@ Arguments:
   (interactive
    (list (completing-read "To: " ryo.dired:video-file-name-extensions
                           nil t nil)
-         ""))
+         nil))
   (mapcar (lambda (file)
             (ryo:ffmpeg-video-vf file (file-name-with-extension file to-type)
                                  :vf vf))

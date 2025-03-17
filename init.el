@@ -135,7 +135,8 @@
          (require 'init-dot)
          (require 'init-markdown)
          (require 'init-web)
-         (require 'init-maxima)
+         ;; (require 'init-maxima)
+         (require 'init-artist)
          )))))
 
 ;;; init.el ends here
