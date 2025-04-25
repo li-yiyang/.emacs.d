@@ -98,26 +98,114 @@ in addition to those matching `ryo.dired:video-file-name-regexps'. "
 
 ;;; ImageMagick Toolbox
 
-(defun ryo.dired:imagemagick-append-images (output)
-  "ImageMagick append images:
-magick montage -geometry +0+0 <dirvish--marked-files> <output>"
-  (interactive "FOutput: \n")
-  (cl-flet ((escape (filename)
-              (concat "\"" (eshell-escape-arg filename)"\"")))
-    (let ((cmd (concat "magick montage -geometry +0+0 "
-                       (string-join
-                        (mapcar #'escape
-                                (cl-remove-if-not
-                                 (lambda (file)
-                                   (string-match-p (image-file-name-regexp)
-                                                   (file-name-extension file)))
-                                 (dired-get-marked-files nil)))
-                        " ")
-                        " "
-                        (escape (file-truename output)))))
+(defun ryo.dired:imagemagick-convert-images (format)
+  "Use `magick' command to convert between image format.
+
+    (dolist (img images) magick <img> <img>.<output>)
+"
+  (interactive (list (completing-read "To: " image-file-name-extensions
+                                      nil t nil)))
+  (with-current-buffer (get-buffer-create "*IMAGEMAGICK*")
+    (erase-buffer)
+    (dolist (file (dired-get-marked-files nil))
+      (when (string-match-p (image-file-name-regexp) file)
+        (let* ((output (file-name-with-extension file format))
+               (cmd    (concat "magick \"" (file-truename file) "\""
+                               "\"" (file-truename output) "\"")))
+          (message cmd)
+          (shell-command cmd (current-buffer)))))))
+
+(cl-defun ryo.dired:imagemagick-montage-images
+    (files output &key (background "#FFFFFF") (geometry "+0+0"))
+  "Use ImageMagick to merge images:
+
+    magick montage -background <background> -geometry <geometry> <files> <output>"
+  (with-current-buffer (get-buffer-create "*IMAGEMAGICK*")
+    (erase-buffer)
+    (let ((cmd (concat
+                 "magick montage"
+                 (when background
+                   (format " -background '%s'" background))
+                 (format " -geometry %s" geometry)
+                 (string-join (mapcar (lambda (file)
+                                        (format " \"%s\"" file))
+                                      files)
+                              " ")
+                 (format " \"%s\"" output))))
       (message cmd)
-      (shell-command cmd)
-      (revert-buffer-quick))))
+      (shell-command cmd (current-buffer)))))
+
+(cl-defun ryo.dired:imagemagick-image-size (image &optional (fmt "%wx%h"))
+  "Use ImageMagick to get `image' size by `fmt'. "
+  (with-current-buffer (get-buffer-create "*IMAGEMAGICK*")
+    (erase-buffer)
+    (let ((cmd (concat "magick identify -format \"" fmt "\" \""
+                       (expand-file-name image) "\"")))
+      (shell-command cmd (current-buffer))
+      (buffer-string))))
+
+(defun ryo.dired:imagemagick-resize-images (size images)
+  "Use ImageMagick to resize images to size:
+
+    magick <image> -resize <size> <image>
+
+Parameters:
++ `size': magick resize param
++ `image': file name or (from to)"
+  (with-current-buffer (get-buffer-create "*IMAGEMAGICK*")
+    (erase-buffer)
+    (dolist (image images)
+      (let* ((from (if (listp image) (first  image) image))
+             (to   (if (listp image) (second image) image))
+             (cmd  (concat
+                    "magick "
+                    (format "\"%s\" " from)
+                    (format "-resize %s " size)
+                    (format "\"%s\""  to))))
+        (message cmd)
+        (shell-command cmd (current-buffer))))))
+
+(defun ryo.dired:imagemagick-append-images (output geometry-x geometry-y)
+  "For dired usage. "
+  (interactive (list (let ((dir (dired-current-directory)))
+                       (read-file-name "Merge To: "
+                                       dir
+                                       (expand-file-name "output.png" dir)
+                                       nil))
+                     (read-number "Geometry X: " 0)
+                     (read-number "Geometry Y: " 0)))
+  (ryo.dired:imagemagick-montage-images
+   (dired-get-marked-files nil)
+   (expand-file-name output (dired-current-directory))
+   :geometry (format "+%d+%d" geometry-x geometry-y)))
+
+(defcustom ryo.dired:imagemagick-ordered-dither-thresholds
+  '("threshold" "1x1" "checks" "2x1" "o2x2" "2x2" "o3x3" "3x3" "o4x4" "4x4"
+    "o8x8" "8x8" "h4x4a" "4x1" "h6x6a" "6x1" "h8x8a" "8x1" "h4x4o" "h6x6o"
+    "h8x8o" "h16x16o" "c5x5b" "c5x5" "c5x5w" "c6x6b" "c6x6" "c6x6w" "c7x7b"
+    "c7x7w" "c7x7")
+  "All the ordered dither thresholds methods. "
+  :group 'ryo.dired)
+
+(defun ryo.dired:imagemagick-ordered-dither-images (ordered-dither)
+  "ImageMagick ordered dither images:
+
+    magick <from>.<ext> -ordered-dither <ordered-dither> <from>.dither.png
+"
+  (interactive (list (completing-read
+                      "Ordered Dither Thresholds: "
+                      ryo.dired:imagemagick-ordered-dither-thresholds
+                      nil t "o")))
+  (let ((files (dired-get-marked-files nil)))
+    (with-current-buffer (get-buffer-create "*IMAGEMAGICK*")
+      (erase-buffer)
+      (dolist (file files)
+        (let ((cmd (concat
+                    "magick \"" file "\""
+                    " -ordered-dither " ordered-dither
+                    " \"" (file-name-with-extension file ".dither.png") "\"")))
+          (message cmd)
+          (shell-command cmd (current-buffer)))))))
 
 (defun ryo.dired:imagemagick-ordered-dither-images-inplace (threshold)
   "ImageMagick ordered dither images:
@@ -198,26 +286,25 @@ Arguments:
                "ImageMagick Ordered Dither"
                (dirvish--marked-files-as-info-string)))
    ("N" "Threshold by..."
-    ryo.dired:imagemagick-ordered-dither-images-inplace)
+    ryo.dired:imagemagick-ordered-dither-images)
    ("n" "Threshold 1x1 (non-dither)"
     (lambda () (interactive)
-      (ryo.dired:imagemagick-ordered-dither-images-inplace "1x1")))
+      (ryo.dired:imagemagick-ordered-dither-images "1x1")))
    ("c" "Checkerboard 2x1 (dither)"
     (lambda () (interactive)
-      (ryo.dired:imagemagick-ordered-dither-images-inplace "2x1")))
+      (ryo.dired:imagemagick-ordered-dither-images "2x1")))
    ("2" "Ordered 2x2 (dispersed)"
     (lambda () (interactive)
-      (ryo.dired:imagemagick-ordered-dither-images-inplace "o2x2")))
+      (ryo.dired:imagemagick-ordered-dither-images "o2x2")))
    ("3" "Ordered 3x3 (dispersed)"
     (lambda () (interactive)
-      (ryo.dired:imagemagick-ordered-dither-images-inplace "o3x3")))
+      (ryo.dired:imagemagick-ordered-dither-images "o3x3")))
    ("4" "Ordered 4x4 (dispersed)"
     (lambda () (interactive)
-      (ryo.dired:imagemagick-ordered-dither-images-inplace "o4x4")))
+      (ryo.dired:imagemagick-ordered-dither-images "o4x4")))
    ("8" "Ordered 8x8 (dispersed)"
     (lambda () (interactive)
-      (ryo.dired:imagemagick-ordered-dither-images-inplace "o8x8")))
-
+      (ryo.dired:imagemagick-ordered-dither-images "o8x8")))
    ])
 
 (transient-define-prefix ryo.dired:imagemagick-toolbox-menu ()
@@ -227,10 +314,36 @@ Arguments:
                "ImageMagick"
                (dirvish--marked-files-as-info-string)))
    ("a" "append selected images"   ryo.dired:imagemagick-append-images)
-   ("d" "dither selected image(s)" ryo.dired:imagemagick-ordered-dither-menu)
-   ("D" "dither quick (o4x4)"
+   ("D" "dither selected image(s)" ryo.dired:imagemagick-ordered-dither-menu)
+   ("r" "resize selected image(s)"
     (lambda () (interactive)
-      (ryo.dired:imagemagick-ordered-dither-images-inplace "o4x4")))
+      (ryo.dired:imagemagick-resize-images
+       (completing-read "Size: "
+                        '("400x400" "400x400\\!" "400x400\\>" "400x400\\<"
+                          "50%" "1024@")
+                        nil nil)
+       (dired-get-marked-files))))
+   ("h" "resize selected image(s) to fit reference image height"
+    (lambda () (interactive)
+      (ryo.dired:imagemagick-resize-images
+       (ryo.dired:imagemagick-image-size
+        (read-file-name "Image height to fit: "
+                        (dired-current-directory)
+                        (dired-get-filename))
+         "x%h")
+        (dired-get-marked-files))))
+   ("w" "resize selected image(s) to fit reference image width"
+    (lambda () (interactive)
+      (ryo.dired:imagemagick-resize-images
+       (ryo.dired:imagemagick-image-size
+        (read-file-name "Image width to fit: "
+                        (dired-current-directory)
+                        (dired-get-filename))
+         "%wx")
+        (dired-get-marked-files))))
+   ("d" "dither quick (o4x4)"
+    (lambda () (interactive)
+      (ryo.dired:imagemagick-ordered-dither-images "o4x4")))
    ])
 
 (transient-define-prefix ryo.dired:ffmpeg-toolbox-menu ()
@@ -361,6 +474,16 @@ Syntax:
 
 (when (eq system-type 'darwin)
   (setq insert-directory-program "gls"))
+
+;; W opens file
+
+(require 'image-mode)
+(when (eq system-type 'darwin)
+  (define-key image-mode-map (kbd "W")
+              (lambda () (interactive)
+                (let ((file (buffer-file-name)))
+                  (when file
+                    (shell-command (format "open \"%s\"" file)))))))
 
 (provide 'init-dired)
 

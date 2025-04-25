@@ -3,3 +3,8 @@ privates/
 /tramp
 /tmp
 .DS_Store
+/eshell/
+/ielm-history.eld
+/eln-cache/
+/.org-id-locations
+/transient/

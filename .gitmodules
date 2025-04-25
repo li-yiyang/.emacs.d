@@ -142,3 +142,15 @@
 [submodule "lisp/extensions/parsebib"]
 	path = lisp/extensions/parsebib
 	url = https://github.com/joostkremers/parsebib.git
+[submodule "lisp/extensions/emacs-eat"]
+	path = lisp/extensions/emacs-eat
+	url = https://codeberg.org/akib/emacs-eat.git
+[submodule "lisp/extensions/pcmpl-args.el"]
+	path = lisp/extensions/pcmpl-args.el
+	url = https://github.com/JonWaltman/pcmpl-args.el.git
+[submodule "lisp/extensions/gnuplot"]
+	path = lisp/extensions/gnuplot
+	url = https://github.com/emacs-gnuplot/gnuplot.git
+[submodule "lisp/extensions/consult"]
+	path = lisp/extensions/consult
+	url = https://github.com/minad/consult.git

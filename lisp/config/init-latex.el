@@ -55,7 +55,9 @@
     ("\\Vert" . ?‖)
     ("\\Vert" . ?‖)
     ("\\left\\Vert" . ?‖)
-    ("\\right\\Vert" . ?‖)))
+    ("\\right\\Vert" . ?‖)
+    ("\\left\\langle" . ?⟨ )
+    ("\\right\\rangle" . ?⟩ )))
 
 (defun ryo.ui:setup-latex-prettify-symbol-mode ()
   "Set up LaTeX prettify symbol. "

@@ -14,7 +14,7 @@ used in \\=`ryo.lisp:start-or-connect-to-lisp\\=' function."
   :group 'ryo.lisp
   :type  'integer)
 
-(defcustom ryo.lisp:sbcl-dynamic-space-size 4096
+(defcustom ryo.lisp:sbcl-dynamic-space-size 20480
   "The default SBCL start dynamic space size.
 See \\=`ryo.lisp:make-inferior-lisp-program\\='. "
   :group 'ryo.lisp
@@ -99,9 +99,14 @@ to create the starting env. "
 
 (define-key lisp-mode-map (kbd "M-h v") #'sly-describe-symbol)
 (define-key lisp-mode-map (kbd "M-h f") #'sly-describe-function)
+(define-key lisp-mode-map (kbd "M-h d") #'sly-edit-definition)
 (define-key lisp-mode-map (kbd "M-h c") #'sly-who-calls)
 (define-key lisp-mode-map (kbd "M-h b") #'sly-who-binds)
+(define-key lisp-mode-map (kbd "M-h s") #'sly-who-sets)
+(define-key lisp-mode-map (kbd "M-h p") #'sly-who-specializes)
 (define-key lisp-mode-map (kbd "M-h h") #'sly-documentation-lookup)
+(define-key lisp-mode-map (kbd "M-h l") #'sly-hyperspec-lookup)
+
 
 ;; use acm as SLY completion front end
 ;; currently is only for patching
@@ -173,6 +178,75 @@ to create the starting env. "
 
 (add-hook 'lisp-mode-hook      #'hs-minor-mode)
 (define-key lisp-mode-map (kbd "C-c C-f") #'hs-toggle-hiding)
+
+;; hypersec-lookup--hyperspec-lookup-eww
+;; see: http://dnaeon.github.io/common-lisp-hyperspec-lookup-using-w3m/
+
+;; should set common-lisp-hyperspec-root to /path/to/your/local/HyperSpec
+(defun hyperspec-lookup--hyperspec-lookup-eww (orig-fun &rest args)
+  (let ((browse-url-browser-function 'eww-open-file))
+    (apply orig-fun args)))
+(advice-add 'hyperspec-lookup :around #'hyperspec-lookup--hyperspec-lookup-eww)
+
+;; sly-db-insert-condition wrapper
+;; make it better for reading
+
+(cl-defun ryo:wrap-string-into-lines (string &optional (length 70))
+  "Wrap long string into shorter lines. "
+  (with-temp-buffer
+    (let ((fill-column length))
+      (insert string)
+      (fill-region (point-min) (point-max))
+      (buffer-string))))
+
+(defun sly-db-insert-condition--wrap-into-lines (orig-fun &rest args)
+  (cl-destructuring-bind (msg type extras) (first args)
+    (funcall orig-fun (list (ryo:wrap-string-into-lines msg) type extras))))
+(advice-add 'sly-db-insert-condition :around
+            #'sly-db-insert-condition--wrap-into-lines)
+
+(defun ryo.lisp:fold-all ()
+  "Fold All Lisp lists. "
+  (interactive)
+  (save-excursion
+    (goto-char (point-max))
+    (cl-loop for point = (forward-list -1)
+             while (/= point 1)
+             do (hs-hide-block)
+             do (move-beginning-of-line 1))))
+
+;; Org babel
+
+(setq org-babel-lisp-dir-fmt "(uiop:with-current-directory (#P%S)\n %%s\n)")
+
+(defun org-babel-expand-body:lisp (body params)
+  "Expand BODY according to PARAMS, return the expanded body."
+  (let* ((vars (org-babel--get-vars params))
+         (result-params (cdr (assq :result-params params)))
+         (print-level nil) (print-length nil)
+         (prologue (cdr (assq :prologue params)))
+         (epilogue (cdr (assq :epilogue params)))
+         (body (if (null vars) (org-trim body)
+                 (concat "(let ("
+                         (mapconcat
+                          (lambda (var)
+                            (format "(%S (quote %S))" (car var) (cdr var)))
+                          vars "\n      ")
+                         ")\n"
+
+                         ;; Make lisp code variable ignorable
+                         "  (declare (ignorable "
+                         (mapconcat (lambda (var) (format "%S" (car var))) vars " ")
+                         "))\n"
+
+                         (and prologue (concat prologue "\n"))
+                         body
+                         (and epilogue (concat "\n" epilogue "\n"))
+                         ")"))))
+    (if (or (member "code" result-params)
+            (member "pp" result-params))
+        (format "(pprint %s)" body)
+      body)))
 
 (provide 'init-lisp)
 

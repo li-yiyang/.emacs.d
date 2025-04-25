@@ -2,7 +2,9 @@
 
 (require 'cl-lib)
 (require 'eshell)
+(require 'eat)
 (require 'emojishell)
+(require 'pcmpl-args)
 
 ;; by default using ssh
 
@@ -38,8 +40,8 @@
   (let ((ebuff '()))
     (cl-dolist (buff (buffer-list))
       (with-current-buffer buff
-  (when (derived-mode-p 'eshell-mode)
-    (push buff ebuff))))
+        (when (derived-mode-p 'eshell-mode)
+          (push buff ebuff))))
     ebuff))
 
 ;; default open new eshell buffer when calling `eshell'
@@ -79,46 +81,88 @@ Click to switch to eshell buffer. "
                                      (buffer-name buffer) "'. ")
                 'follow-link t))))
 
+(cl-defmacro push-plist (key val plist)
+  `(setq ,plist (cons ,key (cons ,val ,plist))))
+
 ;; imgcat: show image in eshell
 ;; see https://emacs-china.org/t/imgcat-eshell/3439
 (defun eshell/imgcat (&rest args)
   "Display `images' in eshell. "
   (if eshell-in-pipeline-p
       (error "Elisp function does not support piped input. ")
-    (let (width height max-width max-height scale)
-      (eshell-eval-using-options
-       "imgcat" args
-       '((nil "width"      t width      "width of image(s)")
-         (nil "height"     t height     "height of image(s)")
-         (nil "max-width"  t max-width  "max width of image(s) [default 400]")
-         (nil "max-height" t max-height "max height of image(s)")
-         (?h  "help"   nil nil "show this usage screen")
-         :show-usage
-         :usage "[OPTION] IMAGE...
+    (eshell-eval-using-options
+     "imgcat" args
+     '((nil "width"      t width      "width of image(s)")
+       (nil "height"     t height     "height of image(s)")
+       (nil "max-width"  t max-width  "max width of image(s) [default 400]")
+       (nil "max-height" t max-height "max height of image(s)")
+       (?h  "help"   nil nil "show this usage screen")
+       :show-usage
+       :usage "[OPTION] IMAGE...
 Show IMAGE(s) file in eshell. ")
-       ;; TODO: better arg parse
-       (let ((property `(,@(when max-width
-                             (list :max-width (string-to-number max-width)))
-                         ,@(when max-height
-                             (list :max-height (string-to-number max-height)))
-                         ,@(when (and width
-                                      (or (not max-width)
-                                          (< (string-to-number width)
-                                             (string-to-number max-width))))
-                             (list :width (string-to-number width)))
-                         ,@(when (and height (or (not max-height)
-                                                 (< (string-to-number height)
-                                                    (string-to-number max-height))))
-                             (list :height (string-to-number height))))))
-         (when (endp property)
-           (setf property '(:max-width 400)))
-         (if (endp args)
-             (eshell-show-usage "image" nil)
-           (dolist (img (eshell-flatten-list args))
-             (eshell-printn
-              (propertize
-               img
-               'display (apply #'create-image (expand-file-name img) nil nil property))))))))))
+     (let ((property ()))
+       (push-plist :max-width (string-to-number (or max-width "400")) property)
+       (when max-height (push-plist :max-height (string-to-number max-height) property))
+       (when width      (push-plist :width      (string-to-number width)      property))
+       (when height     (push-plist :height     (string-to-number height)     property))
+       (if (endp args)
+           (eshell-show-usage "image" nil)
+         (dolist (img (eshell-flatten-list args))
+           (eshell-printn
+            (propertize img 'display (apply #'create-image (expand-file-name img)
+                                            nil nil property)))))))))
+
+(when (eq system-type 'darwin)
+  (defun eshell/alert (&rest args)
+    "Use AppleScript to alert message. "
+    (eshell-eval-using-options
+     "alert" args
+     '((?h  "help"    nil nil     "show this usage screen")
+       (?T  "title"   t   title   "alert message title")
+       (?Y  "confirm" t   confirm "confirm text [default OK]")
+       (?N  "cancel"  t   cancel  "cancel  text [default NO]")
+       :show-usage
+       :usage "[OPTION] MESSAGE...
+Alert MESSAGE(s) using AppleScript.
+If given `title' parameters, alert with title attached;
+If given `confirm' or `cancel' parameters, alert with confirm and cancel button.")
+     (if (endp args)
+         (eshell-show-usage "alert" nil)
+       (shell-command
+        (concat "osascript -e 'display alert "
+                (when title (concat "\"" (eshell-escape-arg title) "\" message "))
+                "\"" (eshell-escape-arg (string-join (eshell-flatten-list args))) "\" "
+                (when (or confirm cancel)
+                  (concat "buttons {\""
+                          (eshell-escape-arg (or confirm "OK"))
+                          "\", \""
+                          (eshell-escape-arg (or cancel "NO"))
+                          "\"} default button \""
+                          (eshell-escape-arg (or confirm "OK"))
+                          "\""))
+                "'")
+        (get-buffer "*osascript*")))))
+
+    (defun eshell/notify (&rest args)
+      "Use AppleScript to nofity message. "
+      (eshell-eval-using-options
+       "alert" args
+       '((?h  "help"    nil nil     "show this usage screen")
+         (?s  "sound"   t   sound   "alert message title")
+         :show-usage
+         :usage "[OPTION] TITLE SUBTITLE...
+Alert message with TITLE and SUBTITLE(s) using AppleScript.
+If given `sound' parameters, alert with given sound. ")
+       (let* ((args     (eshell-flatten-list args))
+              (title    (first args))
+              (subtitle (rest args)))
+         (shell-command
+          (concat "osascript -e 'display notification"
+                  (when title (concat " with title \"" (eshell-escape-arg title) "\""))
+                  (unless (endp subtitle) (concat " subtitle \"" (string-join subtitle) "\""))
+                  (when sound (concat " sound \"" sound "\""))
+                  "'")
+          (get-buffer "*osascript*"))))))
 
 (provide 'init-eshell)
 

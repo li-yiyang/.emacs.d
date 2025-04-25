@@ -1,5 +1,11 @@
 ;;; init-editing.el --- Init some basic editing perferance.
 
+;; Version control and backups
+
+(setq version-control t)
+(setq delete-old-versions t)
+(setq kept-new-versions 10)
+
 ;; Basic editing
 
 (setq-default indent-tabs-mode nil)

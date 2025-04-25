@@ -109,7 +109,8 @@
    (require 'init-dired)
    (require 'init-autosave)
    (require 'init-recentf)
-   (require 'init-blink-search)
+
+   ;; (require 'init-blink-search)
    (require 'init-lsp)
 
    ;; Privates
