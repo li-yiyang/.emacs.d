@@ -154,3 +154,6 @@
 [submodule "lisp/extensions/consult"]
 	path = lisp/extensions/consult
 	url = https://github.com/minad/consult.git
+[submodule "lisp/extensions/org-imenu"]
+	path = lisp/extensions/org-imenu
+	url = https://github.com/rougier/org-imenu.git

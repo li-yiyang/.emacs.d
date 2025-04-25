@@ -25,6 +25,10 @@
 
 (setq eshell-prompt-function #'emojishell-emoji-prompt)
 
+;; use eat for terminal emulator
+
+(add-hook 'eshell-mode-hook #'eat-eshell-mode)
+
 ;; default clear command clears the buffer
 ;; using `eshell/clear-scrollback', aka `(eshell/clear t)' by default
 
