@@ -1,4 +1,4 @@
-;;; init-markdown.el --- Setup Markdown for Emacs
+;;; init-markdown.el --- Setup Markdown for Emacs -*- lexical-binding: t -*-
 
 (require 'markdown-mode)
 (require 'init-lsp)

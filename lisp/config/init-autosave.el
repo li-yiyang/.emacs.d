@@ -1,4 +1,4 @@
-;;; init-autosave.el --- Setting up autosave
+;;; init-autosave.el --- Setting up autosave -*- lexical-binding: t -*-
 
 ;; see https://github.com/manateelazycat/auto-save
 

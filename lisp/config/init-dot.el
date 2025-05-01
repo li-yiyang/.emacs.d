@@ -1,4 +1,4 @@
-;;; init-dot.el --- Setup Graphviz for Emacs
+;;; init-dot.el --- Setup Graphviz for Emacs -*- lexical-binding: t -*-
 
 (require 'init-lsp)
 (require 'graphviz-dot-mode)

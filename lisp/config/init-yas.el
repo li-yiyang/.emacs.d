@@ -1,4 +1,4 @@
-;;; init-yas.el --- Set up Yasnippet
+;;; init-yas.el --- Set up Yasnippet -*- lexical-binding: t -*-
 
 ;; see https://github.com/joaotavora/yasnippet
 

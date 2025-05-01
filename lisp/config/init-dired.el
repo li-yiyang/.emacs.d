@@ -1,4 +1,4 @@
-;;; init-dired.el --- Setup for dired
+;;; init-dired.el --- Setup for dired -*- lexical-binding: t -*-
 
 ;; dirvish --- replace dired
 ;; see https://github.com/alexluigit/dirvish

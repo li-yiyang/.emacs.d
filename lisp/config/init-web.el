@@ -1,4 +1,4 @@
-;;; init-web.el --- Set up web viewing for Emacs
+;;; init-web.el --- Set up web viewing for Emacs -*- lexical-binding: t -*-
 
 ;; url shall be stored as privates infomations
 

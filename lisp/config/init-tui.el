@@ -1,4 +1,4 @@
-;;; init-tui.el --- Init for TUI.
+;;; init-tui.el --- Init for TUI. -*- lexical-binding: t -*-
 
 ;; use tao-yang as theme, prevent blink-search error
 ;; see https://github.com/manateelazycat/blink-search/issues/16

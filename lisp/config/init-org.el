@@ -1,4 +1,4 @@
-;;; init-org.el --- Set up Org file
+;;; init-org.el --- Set up Org file -*- lexical-binding: t -*-
 
 ;; use https://code.tecosaur.net/tec/org-mode
 ;; with async LaTeX preview support

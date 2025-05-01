@@ -1,4 +1,4 @@
-;;; init-json.el --- JSON for emacs
+;;; init-json.el --- JSON for emacs -*- lexical-binding: t -*-
 
 ;; JSON mode
 ;; see https://github.com/json-emacs/json-mode

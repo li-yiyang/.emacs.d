@@ -2,7 +2,7 @@
 # name: elisp-module-template
 # key: make-module
 # --
-;;; $1.el --- $2
+;;; $1.el --- $2 -*- lexical-binding: t -*-
 
 $0
 

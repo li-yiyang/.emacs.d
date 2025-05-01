@@ -1,4 +1,4 @@
-;;; init-c-c++.el --- Set up for C and C++ like language.
+;;; init-c-c++.el --- Set up for C and C++ like language. -*- lexical-binding: t -*-
 
 (require 'cc-mode)
 (require 'init-lsp)

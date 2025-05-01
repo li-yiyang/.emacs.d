@@ -1,4 +1,4 @@
-;;; init-latex.el --- Set up for LaTeX
+;;; init-latex.el --- Set up for LaTeX -*- lexical-binding: t -*-
 
 ;; AUCTeX --- TeX support
 ;; requirement

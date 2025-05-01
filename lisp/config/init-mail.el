@@ -1,4 +1,4 @@
-;;; init-mail.el --- Emacs as mail client
+;;; init-mail.el --- Emacs as mail client -*- lexical-binding: t -*-
 
 (require 'rmail)
 (require 'smtpmail)

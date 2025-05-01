@@ -1,4 +1,4 @@
-;;; init-git.el --- Set up for git
+;;; init-git.el --- Set up for git -*- lexical-binding: t -*-
 
 ;; Magit
 ;;

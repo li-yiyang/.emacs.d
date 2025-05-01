@@ -1,4 +1,4 @@
-;;; init-maxima.el --- Maxima interface
+;;; init-maxima.el --- Maxima interface -*- lexical-binding: t -*-
 
 (require 'maxima)
 

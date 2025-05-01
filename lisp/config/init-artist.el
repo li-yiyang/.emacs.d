@@ -1,4 +1,4 @@
-;;; init-artist.el --- Artist mode made it easy to use
+;;; init-artist.el --- Artist mode made it easy to use -*- lexical-binding: t -*-
 
 (require 'artist)
 

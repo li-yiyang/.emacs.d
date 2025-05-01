@@ -1,4 +1,4 @@
-;;; init-lsp.el --- Set up Language Server Protocol.
+;;; init-lsp.el --- Set up Language Server Protocol. -*- lexical-binding: t -*-
 
 ;; This file setup the LSP.
 

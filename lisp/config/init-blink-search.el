@@ -1,4 +1,4 @@
-;;; init-blink-search.el --- Set up for blink-search
+;;; init-blink-search.el --- Set up for blink-search -*- lexical-binding: t -*-
 
 ;; see https://github.com/manateelazycat/blink-search
 

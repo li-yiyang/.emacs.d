@@ -1,4 +1,4 @@
-;;; init-mac-ui.el --- Init for mac UI (emacs-plus)
+;;; init-mac-ui.el --- Init for mac UI (emacs-plus) -*- lexical-binding: t -*-
 
 ;; This should be required in early loading.
 ;;

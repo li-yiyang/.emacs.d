@@ -1,4 +1,4 @@
-;;; init-editing.el --- Init some basic editing perferance.
+;;; init-editing.el --- Init some basic editing perferance. -*- lexical-binding: t -*-
 
 ;; Version control and backups
 

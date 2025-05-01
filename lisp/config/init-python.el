@@ -1,4 +1,4 @@
-;;; init-python.el --- Setup Python for Emacs
+;;; init-python.el --- Setup Python for Emacs -*- lexical-binding: t -*-
 
 ;; code-cells:
 ;; open, edit Jupyter notebook in Emacs

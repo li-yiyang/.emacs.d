@@ -1,4 +1,4 @@
-;;; init-ui.el --- Set up Emacs UI
+;;; init-ui.el --- Set up Emacs UI -*- lexical-binding: t -*-
 
 ;; This is the basic GUI settings for Emacs.
 
