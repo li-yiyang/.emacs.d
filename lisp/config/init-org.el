@@ -8,6 +8,8 @@
 ;; 2. make
 
 (require 'org)
+(require 'org-imenu)
+(require 'htmlize)
 (require 'valign)
 
 ;; babel
@@ -35,6 +37,15 @@
 ;; Org Table prettify
 
 (add-hook 'org-mode-hook #'valign-mode)
+
+;; Org structure template
+
+(setf (cdr (assoc "l" org-structure-template-alist)) "src lisp")
+(add-to-list 'org-structure-template-alist '("L" . "export latex"))
+
+;; htmlize
+
+
 
 ;; Org LaTeX support
 

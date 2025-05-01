@@ -125,6 +125,7 @@
     1 nil
     #'(lambda ()
         (ryo:minibuffer-shut-up!
+         (require 'init-mail)
          (require 'init-git)
          (require 'init-lisp)
          (require 'init-org)

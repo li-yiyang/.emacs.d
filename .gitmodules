@@ -157,3 +157,9 @@
 [submodule "lisp/extensions/org-imenu"]
 	path = lisp/extensions/org-imenu
 	url = https://github.com/rougier/org-imenu.git
+[submodule "lisp/extensions/imenu-list"]
+	path = lisp/extensions/imenu-list
+	url = https://github.com/bmag/imenu-list.git
+[submodule "lisp/extensions/emacs-htmlize"]
+	path = lisp/extensions/emacs-htmlize
+	url = https://github.com/hniksic/emacs-htmlize.git
