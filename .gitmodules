@@ -163,3 +163,30 @@
 [submodule "lisp/extensions/emacs-htmlize"]
 	path = lisp/extensions/emacs-htmlize
 	url = https://github.com/hniksic/emacs-htmlize.git
+[submodule "lisp/extensions/posframe"]
+	path = lisp/extensions/posframe
+	url = https://github.com/tumashu/posframe.git
+[submodule "lisp/extensions/corfu"]
+	path = lisp/extensions/corfu
+	url = https://github.com/minad/corfu.git
+[submodule "lisp/extensions/orderless"]
+	path = lisp/extensions/orderless
+	url = https://github.com/oantolin/orderless.git
+[submodule "lisp/extensions/vertico"]
+	path = lisp/extensions/vertico
+	url = https://github.com/minad/vertico.git
+[submodule "lisp/extensions/vertico-posframe"]
+	path = lisp/extensions/vertico-posframe
+	url = https://github.com/tumashu/vertico-posframe.git
+[submodule "lisp/extensions/marginalia"]
+	path = lisp/extensions/marginalia
+	url = https://github.com/minad/marginalia.git
+[submodule "lisp/extensions/poly-org"]
+	path = lisp/extensions/poly-org
+	url = https://github.com/polymode/poly-org.git
+[submodule "lisp/extensions/polymode"]
+	path = lisp/extensions/polymode
+	url = https://github.com/polymode/polymode.git
+[submodule "lisp/extensions/pdf-tools"]
+	path = lisp/extensions/pdf-tools
+	url = https://github.com/vedang/pdf-tools.git

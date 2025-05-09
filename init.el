@@ -49,14 +49,11 @@
 
 ;; need to be loaded first otherwise will load original org and transient
 
-(add-to-list 'load-path
-             (expand-file-name "lisp/extensions/org-mode/lisp" user-emacs-directory))
-
-(add-to-list 'load-path
-             (expand-file-name "lisp/extensions/transient/lisp" user-emacs-directory))
-
-(add-to-list 'load-path
-             (expand-file-name "lisp/extensions/maxima" user-emacs-directory))
+(dolist (extension '("lisp/extensions/org-mode/lisp"
+                     "lisp/extensions/transient/lisp"
+                     ;; "lisp/extensions/maxima"
+                     ))
+  (add-to-list 'load-path (expand-file-name extension user-emacs-directory)))
 
 ;; ~/.emacs.d/lisp/... for the elisp files
 
@@ -68,77 +65,41 @@
 
 (ryo:refresh-submodules)
 
-;; init acceleration
-;; copied from https://github.com/manateelazycat/lazycat-emacs/blob/535b5527b495abb3cfd2bf03e5d242e5eddf8d47/site-lisp/config/init-accelerate.el#L86C1-L93C31
-
 (setq
  ;; 不要缩放frame.
  frame-inhibit-implied-resize t
- ;; 默认用最简单的模式
- initial-major-mode 'fundamental-mode
  ;; 不要自动启用package
  package-enable-at-startup nil
  package--init-file-ensured t)
 
-;; from https://github.com/manateelazycat/lazycat-emacs/blob/535b5527b495abb3cfd2bf03e5d242e5eddf8d47/site-lisp/config/init.el#L7C1-L12C37
+(require 'init-ui)
+(require 'init-editing)
+(require 'init-dired)
+(require 'init-autosave)
+(require 'init-recentf)
 
-(let (
-      ;; 加载的时候临时增大`gc-cons-threshold'以加速启动速度。
-      (gc-cons-threshold most-positive-fixnum)
-      (gc-cons-percentage 0.6)
-      ;; 清空避免加载远程文件的时候分析文件。
-      (file-name-handler-alist nil))
+;; (require 'init-blink-search)
+(require 'init-vertico)
+(require 'init-lsp)
 
-  ;; from https://github.com/manateelazycat/lazycat-emacs/blob/535b5527b495abb3cfd2bf03e5d242e5eddf8d47/site-lisp/config/init.el#L14C1-L22C28
-  ;; 让窗口启动更平滑
-  (setq frame-inhibit-implied-resize t)
-  (setq-default inhibit-redisplay t
-                inhibit-message t)
-  (add-hook 'window-setup-hook
-            (lambda ()
-              (setq-default inhibit-redisplay nil
-                            inhibit-message nil)
-              (redisplay)))
+(when (file-exists-p (expand-file-name "lisp/privates/init-privates.el"
+                                       user-emacs-directory))
+  (require 'init-privates))
 
-  ;; from https://github.com/manateelazycat/lazycat-emacs/blob/535b5527b495abb3cfd2bf03e5d242e5eddf8d47/site-lisp/config/init.el#L29
-  ;; subpress init message
+(require 'init-mail)
+(require 'init-git)
+(require 'init-lisp)
+(require 'init-org)
+(require 'init-latex)
+(require 'init-eshell)
+(require 'init-c-c++)
+(require 'init-json)
+(require 'init-python)
+(require 'init-dot)
+(require 'init-markdown)
+(require 'init-web)
+;; (require 'init-maxima)
+(require 'init-artist)
 
-  (ryo:minibuffer-shut-up!
-   (require 'init-ui)
-   (require 'init-editing)
-   (require 'init-dired)
-   (require 'init-autosave)
-   (require 'init-recentf)
-
-   ;; (require 'init-blink-search)
-   (require 'init-lsp)
-
-   ;; Privates
-
-   (when (file-exists-p (expand-file-name "lisp/privates/init-privates.el" user-emacs-directory))
-     (require 'init-privates))
-
-   ;; Load later to accelerate init speed
-   ;; the programming language settings should go here
-
-   (run-with-idle-timer
-    1 nil
-    #'(lambda ()
-        (ryo:minibuffer-shut-up!
-         (require 'init-mail)
-         (require 'init-git)
-         (require 'init-lisp)
-         (require 'init-org)
-         (require 'init-latex)
-         (require 'init-eshell)
-         (require 'init-c-c++)
-         (require 'init-json)
-         (require 'init-python)
-         (require 'init-dot)
-         (require 'init-markdown)
-         (require 'init-web)
-         ;; (require 'init-maxima)
-         (require 'init-artist)
-         )))))
 
 ;;; init.el ends here

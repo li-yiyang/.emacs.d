@@ -34,7 +34,7 @@ By default it is \\=`ryo.yas:default-project-url\\='. "
 ;; private snippet
 
 (add-to-list 'yas-snippet-dirs
-	     (expand-file-name "privates/snippets" user-emacs-directory))
+	           (expand-file-name "privates/snippets" user-emacs-directory))
 
 ;; globally enable yasnippet
 

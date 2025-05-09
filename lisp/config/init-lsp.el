@@ -1,74 +1,42 @@
 ;;; init-lsp.el --- Set up Language Server Protocol. -*- lexical-binding: t -*-
 
 ;; This file setup the LSP.
+;; Use Eglot + lsp-boosted + Corfu
+;; Eglot came built-in after Emacs 29
 
-;; LSP-bridge Installation
-;; see https://github.com/manateelazycat/lsp-bridge/ for details
-;;
-;; + Python requirements
-;;   pip3 install epc orjson sexpdata six setuptools paramiko rapidfuzz
-;; + Emacs requirements
-;;   + markdown-mode
-;;     https://github.com/jrblevin/markdown-mode
+;; for lsp-bridge, see init-lsp-bridge.el
 
-(require 'markdown-mode)
-
-;;   + yasnippet
-;;     https://github.com/joaotavora/yasnippet
-;;     see init-yas.el for details
-
+(require 'eglot)
+(require 'corfu)
+(require 'orderless)
 (require 'init-yas)
 
-;; LSP-bridge Configuration
+;; Corfu completion
+(setq corfu-cycle                      t
+      corfu-quit-at-boundary           nil
+      corfu-quit-no-match              t
+      corfu-preview-current            nil
+      corfu-auto                       t
+      corfu-auto-delay                 0.1
+      corfu-aotu-prefix                0.1
 
-(require 'lsp-bridge)
+      text-mode-ispell-word-completion nil
+      tab-always-indent                'complete
+      read-extended-command-predicate  #'command-completion-default-include-p)
 
-;; hover and popout diagnostic
+(global-corfu-mode)
 
-(setq lsp-bridge-enable-hover-diagnostic t)
+;; Orderless
 
-;; tramp support by default
+(setq completion-styles '(orderless basic)
+      completion-category-defaults nil
+      completion-category-overrides '((file (styles partial-completion))))
 
-(setq lsp-bridge-enable-with-tramp       t)
+;; Eglot
 
-;; my own lsp server support and config
-
-(setq lsp-bridge-user-langserver-dir
-      (expand-file-name "lspserver/" user-emacs-directory))
-
-;; no tab and no return to complete, use only C-m to complete
-
-(define-key acm-mode-map [tab] nil)
-(define-key acm-mode-map "\t"  nil)
-(define-key acm-mode-map "\n"  nil)
-
-;; enable lsp-bridge globally
-
-(global-lsp-bridge-mode)
-
-;; acm-terminal
-;; lsp-bridge use acm for completion, this is for TUI usage
-;; see https://github.com/twlz0ne/acm-terminal
-;;
-;; Emacs requirements:
-;; + popon
-;;   https://github.com/twlz0ne/acm-terminal.git
-
-(unless (display-graphic-p)
-  (require 'popon)
-  (require 'acm-terminal)
-
-  ;; make it able to switch faces
-  (defun ryo.ui:acm-terminal-patches ()
-    "acm-terminal theme patches under TUI"
-    (set-face-background 'acm-terminal-default-face
-                         (face-attribute 'default :background))
-    (set-face-background 'acm-terminal-select-face
-                         (face-attribute 'highlight :background))
-    (set-face-foreground 'acm-terminal-select-face
-                         (face-attribute 'highlight :foreground)))
-  (add-hook 'ryo.ui:after-tui-theme-loaded-hook
-            #'ryo.ui:acm-terminal-patches))
+(define-key eglot-mode-map (kbd "M-h d") #'xref-find-definitions)
+(define-key eglot-mode-map (kbd "M-h v") #'eldoc)
+(define-key eglot-mode-map (kbd "M-h a") #'eglot-code-actions)
 
 (provide 'init-lsp)
 

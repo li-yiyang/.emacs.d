@@ -5,6 +5,7 @@
 
 (require 'tao-theme)
 (require 'tao-yang-theme)
+(require 'tao-yin-theme)
 
 (defcustom ryo.ui:tui-theme 'tao-yang
   "The default TUI theme. "
@@ -29,6 +30,16 @@ see \\=`ryo.ui:tui-patch-color-values\\='. "
 
 (add-hook 'emacs-startup-hook #'ryo.ui:tui-load-theme)
 
+(defun ryo.ui:dark-theme ()
+  "Dark! Duck! "
+  (interactive)
+  (ryo.ui:tui-load-theme 'tao-yin))
+
+(defun ryo.ui:light-theme ()
+  "Light! Bright! "
+  (interactive)
+  (ryo.ui:tui-load-theme 'tao-yang))
+
 ;; tao-theme patch
 
 (defun ryo.ui:tao-theme-tui-patch ()
@@ -37,16 +48,15 @@ see \\=`ryo.ui:tui-patch-color-values\\='. "
   (set-face-italic-p 'font-lock-doc-face nil nil)
   (set-face-background 'default "undefined-bg" nil)
 
-  ;; for visibility
-  (set-face-attribute 'lsp-bridge-diagnostics-error-face nil
-                      :background "orangered")
-  (set-face-attribute 'lsp-bridge-diagnostics-hint-face nil
-                      :background "gold")
-  (set-face-attribute 'lsp-bridge-diagnostics-info-face nil
-                      :background "orange")
-
   (set-face-attribute 'font-lock-comment-delimiter-face nil
-                      :foreground "dimgrey"))
+                      :foreground "dimgrey")
+
+  (set-face-background 'tty-menu-disabled-face "undefined-bg" nil)
+  (set-face-background 'tty-menu-enabled-face  "undefined-bg" nil)
+  (set-face-attribute  'tty-menu-enabled-face nil
+                       :foreground "dimgrey")
+  (set-face-attribute  'tty-menu-disabled-face nil
+                       :foreground "dimgrey"))
 
 (add-hook 'ryo.ui:after-tui-theme-loaded-hook #'ryo.ui:tao-theme-tui-patch)
 
@@ -63,9 +73,9 @@ see \\=`ryo.ui:tui-patch-color-values\\='. "
 
 (xterm-mouse-mode t)
 
-;; turn off the menu bar
+;; turn on the menu bar
 
-(menu-bar-mode -1)
+(menu-bar-mode 1)
 
 (provide 'init-tui)
 
