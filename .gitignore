@@ -8,3 +8,7 @@ privates/
 /eln-cache/
 /.org-id-locations
 /transient/
+/elpa/
+.*
+!.gitignore
+/request/

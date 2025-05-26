@@ -110,6 +110,24 @@ to create the starting env. "
 (add-hook 'lisp-mode-hook      #'hs-minor-mode)
 (define-key lisp-mode-map (kbd "C-c C-f") #'hs-toggle-hiding)
 
+(add-hook 'emacs-lisp-mode-hook  #'hs-minor-mode)
+(define-key emacs-lisp-mode-map (kbd "C-c C-f") #'hs-toggle-hiding)
+
+(defun ryo.lisp:emacs-lisp-macroexpand ()
+  "Expand emacs lisp in new buffer *elisp-macroexpand*. "
+  (interactive)
+  (save-excursion
+    (let ((sexp (sexp-at-point)))
+      (switch-to-buffer-other-window "*elisp-macroexpand*")
+      (emacs-lisp-mode)
+      (erase-buffer)
+      (insert (format "%S" sexp))
+      (goto-char (point-min))
+      (emacs-lisp-macroexpand)
+      (indent-region (point-min) (point-max)))))
+
+(define-key emacs-lisp-mode-map (kbd "C-c <RET>") #'ryo.lisp:emacs-lisp-macroexpand)
+
 ;; hypersec-lookup--hyperspec-lookup-eww
 ;; see: http://dnaeon.github.io/common-lisp-hyperspec-lookup-using-w3m/
 
@@ -145,6 +163,24 @@ to create the starting env. "
              while (/= point 1)
              do (hs-hide-block)
              do (move-beginning-of-line 1))))
+
+(defun ryo.lisp:json->sexp (beg end)
+  "Turn selected JSON region to Lisp SEXP. "
+  (interactive "r")
+  (let ((json (buffer-substring beg end)))
+    (kill-region beg end)
+    (insert (sly-eval `(cl:with-output-to-string
+                         (out)
+                         (cl:with-input-from-string
+                          (stream ,json)
+                          (trivial-formatter:print-as-code
+                           (shasht:read-json* :stream        stream
+                                              :true-value    :true
+                                              :false-value   :false
+                                              :null-value    :null
+                                              :array-format  :list
+                                              :object-format :alist)
+                           out)))))))
 
 ;; Org babel
 

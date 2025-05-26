@@ -190,3 +190,12 @@
 [submodule "lisp/extensions/pdf-tools"]
 	path = lisp/extensions/pdf-tools
 	url = https://github.com/vedang/pdf-tools.git
+[submodule "lisp/extensions/tablist"]
+	path = lisp/extensions/tablist
+	url = https://github.com/politza/tablist.git
+[submodule "lisp/extensions/sly-el-indent"]
+	path = lisp/extensions/sly-el-indent
+	url = https://github.com/cireu/sly-el-indent.git
+[submodule "lisp/extensions/emacs-deferred"]
+	path = lisp/extensions/emacs-deferred
+	url = https://github.com/kiwanami/emacs-deferred.git

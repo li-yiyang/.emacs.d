@@ -44,6 +44,7 @@
     ;; unicode from http://xahlee.info/comp/unicode_math_operators.html
     ("\\xrightarrow" . ?⥅)
     ("\\xleftarrow" . ?⥆)
+    ("\\underbrace" . ?⎵)
 
     ("\\frac"   . ?𝐟)
     ("\\sqrt"   . ?√)
@@ -56,6 +57,10 @@
     ("\\Vert" . ?‖)
     ("\\left\\Vert" . ?‖)
     ("\\right\\Vert" . ?‖)
+    ("\\left\\lfloor" . ?⌊)
+    ("\\right\\rfloor" . ?⌋)
+    ("\\left\\lceil"  . ?⌈)
+    ("\\right\\rceil" . ?⌉)
     ("\\left\\langle" . ?⟨ )
     ("\\right\\rangle" . ?⟩ )))
 
@@ -85,6 +90,8 @@
 ;; ebib
 
 (require 'ebib)
+
+(global-set-key (kbd "C-c e") #'ebib)
 
 (provide 'init-latex)
 
